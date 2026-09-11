@@ -29,7 +29,6 @@ class UIManager {
         this.hudWeatherPill = document.getElementById('hud-weather-pill');
         this.hudWeatherIcon = document.getElementById('hud-weather-icon');
         this.hudWeatherName = document.getElementById('hud-weather-name');
-        this.btnWeatherWidgetToggle = document.getElementById('btn-weather-widget-toggle');
         this.btnStartWave = document.getElementById('btn-start-wave');
         this.btnSpeed = document.getElementById('btn-speed');
         this.btnPause = document.getElementById('btn-pause');
@@ -47,45 +46,13 @@ class UIManager {
         this.drawerBuild = document.getElementById('drawer-build');
 
         // On-Map Weather Widget & Alert Banner
-        this.weatherStationWidget = document.getElementById('weather-station-widget');
-        this.wwIcon = document.getElementById('ww-icon');
-        this.wwName = document.getElementById('ww-name');
-        this.wwBiome = document.getElementById('ww-biome');
-        this.wwWind = document.getElementById('ww-wind');
-        this.wwIntensity = document.getElementById('ww-intensity');
-        this.wwEffects = document.getElementById('ww-effects');
-        this.wwBody = document.getElementById('ww-body');
-        this.btnWwCollapse = document.getElementById('btn-ww-collapse');
-        this.btnWwClose = document.getElementById('btn-ww-close');
-        this.btnWwLightning = document.getElementById('btn-ww-lightning');
-        this.btnWwAutoCycle = document.getElementById('btn-ww-autocycle');
-
         this.weatherBanner = document.getElementById('weather-banner');
         this.weatherBannerIcon = document.getElementById('weather-banner-icon');
         this.weatherBannerTitle = document.getElementById('weather-banner-title');
         this.weatherBannerSub = document.getElementById('weather-banner-sub');
         this.weatherBannerTimeout = null;
 
-        // In-Level Quick Weather Toolbar
-        this.hudQuickWeatherBar = document.getElementById('hud-quick-weather-bar');
-        this.btnQwbLightning = document.getElementById('btn-qwb-lightning');
-        this.btnQwbExpand = document.getElementById('btn-qwb-expand');
-
-        // Landing Weather Button
-        this.btnLandingWeather = document.getElementById('btn-landing-weather');
-
-        // Mission Launch & Weather Selector Modal
-        this.modalMissionLaunch = document.getElementById('modal-mission-launch');
-        this.mlBiomeTag = document.getElementById('ml-biome-tag');
-        this.mlTitle = document.getElementById('ml-title');
-        this.mlDesc = document.getElementById('ml-desc');
-        this.mwsDesc = document.getElementById('mws-desc');
-        this.btnMlBack = document.getElementById('btn-ml-back');
-        this.btnMlDeploy = document.getElementById('btn-ml-deploy');
-        // In-Level Weather Selection Button & Modal
-        this.btnInlevelWeather = document.getElementById('btn-inlevel-weather-selector');
-        this.btnInlevelWeatherIcon = document.getElementById('btn-inlevel-weather-icon');
-        this.btnInlevelWeatherText = document.getElementById('btn-inlevel-weather-text');
+        // In-Level Weather Selection Modal (Triggered by spells drawer weather button)
         this.modalInlevelWeather = document.getElementById('modal-inlevel-weather');
         this.btnIwLightning = document.getElementById('btn-iw-lightning');
         this.btnIwAutoCycle = document.getElementById('btn-iw-autocycle');
@@ -96,6 +63,8 @@ class UIManager {
         this.btnSpellMeteor = document.getElementById('spell-meteor');
         this.btnSpellFreeze = document.getElementById('spell-freeze');
         this.btnSpellRush = document.getElementById('spell-rush');
+        this.btnSpellWeather = document.getElementById('btn-spell-weather');
+        this.spellWeatherIcon = document.getElementById('spell-weather-icon');
     }
 
     bindEvents() {
@@ -119,12 +88,6 @@ class UIManager {
 
         if (this.btnLandingLevels) {
             this.btnLandingLevels.addEventListener('click', () => {
-                this.showLevelSelect();
-            });
-        }
-
-        if (this.btnLandingWeather) {
-            this.btnLandingWeather.addEventListener('click', () => {
                 this.showLevelSelect();
             });
         }
@@ -220,129 +183,11 @@ class UIManager {
             });
         }
 
-        // Weather toggle click in HUD
-        if (this.hudWeatherPill) {
-            this.hudWeatherPill.addEventListener('click', () => {
-                if (this.weatherStationWidget) {
-                    this.weatherStationWidget.classList.toggle('hidden');
-                    this.updateWeatherWidget();
-                }
-            });
-        }
-
-        if (this.btnWeatherWidgetToggle) {
-            this.btnWeatherWidgetToggle.addEventListener('click', () => {
-                if (this.weatherStationWidget) {
-                    this.weatherStationWidget.classList.toggle('hidden');
-                    this.updateWeatherWidget();
-                }
-            });
-        }
-
-        if (this.btnWwClose) {
-            this.btnWwClose.addEventListener('click', () => {
-                if (this.weatherStationWidget) this.weatherStationWidget.classList.add('hidden');
-            });
-        }
-
-        if (this.btnWwCollapse) {
-            this.btnWwCollapse.addEventListener('click', () => {
-                if (this.wwBody) {
-                    this.wwBody.classList.toggle('collapsed');
-                    this.btnWwCollapse.textContent = this.wwBody.classList.contains('collapsed') ? '+' : '−';
-                }
-            });
-        }
-
-        // Direct weather select buttons (in station widget)
-        document.querySelectorAll('.btn-weather-select').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const wKey = e.currentTarget.dataset.weather;
-                if (this.engine.weatherSystem) {
-                    this.engine.weatherSystem.setWeather(wKey, 1.2);
-                    this.updateHUD();
-                    this.updateWeatherWidget();
-                }
-            });
-        });
-
-        // In-Level Quick Weather Toolbar Buttons (Always visible during gameplay)
-        document.querySelectorAll('.qwb-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const wKey = e.currentTarget.dataset.weather;
-                if (this.engine.weatherSystem) {
-                    this.engine.weatherSystem.setWeather(wKey, 1.2);
-                    this.updateHUD();
-                    this.updateWeatherWidget();
-                }
-            });
-        });
-
-        if (this.btnQwbLightning) {
-            this.btnQwbLightning.addEventListener('click', () => {
-                if (this.engine.weatherSystem) {
-                    this.engine.weatherSystem.triggerLightningStrike();
-                }
-            });
-        }
-
-        if (this.btnQwbExpand) {
-            this.btnQwbExpand.addEventListener('click', () => {
-                if (this.weatherStationWidget) {
-                    this.weatherStationWidget.classList.toggle('hidden');
-                    this.updateWeatherWidget();
-                }
-            });
-        }
-
-        // Mission Launch Modal Weather Chips
-        const weatherDescMap = {
-            'default': '🎲 Natural dynamic atmospheric shifts and wave-triggered changes.',
-            'clear': '☀️ Golden sunbeams, crystal clear visibility, and gentle warm breeze.',
-            'rain_light': '🌦️ Tropical rain shower with soothing droplet sounds and ground ripples.',
-            'thunderstorm': '⛈️ Dark skies, heavy deluge, rolling thunder and dangerous lightning strikes!',
-            'fog': '🌫️ Thick volumetric rolling mist that blankets trails and spire bases.',
-            'windy': '🍃 Fast gale winds whipping through the realm with flying leaf vortexes.',
-            'snow_light': '❄️ Crisp sub-zero air with gentle drifting snow crystals.',
-            'blizzard': '🌨️ Howling sub-zero winds, near whiteout snow sheets, and severe frost.',
-            'aurora': '🌌 Celestial northern lights with undulating turquoise and violet curtain hues.'
-        };
-
-        document.querySelectorAll('.mws-chip').forEach(chip => {
-            chip.addEventListener('click', (e) => {
-                const wKey = e.currentTarget.dataset.weather;
-                this.pendingMissionWeather = wKey;
-                document.querySelectorAll('.mws-chip').forEach(c => c.classList.remove('active'));
-                e.currentTarget.classList.add('active');
-                if (this.mwsDesc && weatherDescMap[wKey]) {
-                    this.mwsDesc.textContent = weatherDescMap[wKey];
-                }
-            });
-        });
-
-        if (this.btnMlBack) {
-            this.btnMlBack.addEventListener('click', () => {
-                if (this.modalMissionLaunch) this.modalMissionLaunch.classList.add('hidden');
-                if (this.modalLevelSelect) this.modalLevelSelect.classList.remove('hidden');
-            });
-        }
-
-        if (this.btnMlDeploy) {
-            this.btnMlDeploy.addEventListener('click', () => {
-                if (this.modalMissionLaunch) this.modalMissionLaunch.classList.add('hidden');
-                if (this.modalLevelSelect) this.modalLevelSelect.classList.add('hidden');
-                if (this.pendingMissionLevel) {
-                    this.selectedLevelWeather = this.pendingMissionWeather;
-                    this.startLevel(this.pendingMissionLevel);
-                }
-            });
-        }
-
-        // In-Level Weather Selection Button (Top-left on screen during play)
-        if (this.btnInlevelWeather) {
-            this.btnInlevelWeather.addEventListener('click', () => {
+        // In-Level Weather Selection Modal (Opened solely via Spells Drawer weather button)
+        if (this.btnSpellWeather) {
+            this.btnSpellWeather.addEventListener('click', () => {
                 if (this.modalInlevelWeather) {
-                    this.modalInlevelWeather.classList.remove('hidden');
+                    this.modalInlevelWeather.classList.toggle('hidden');
                     this.updateInlevelWeatherModal();
                 }
             });
@@ -355,7 +200,6 @@ class UIManager {
                 if (this.engine.weatherSystem) {
                     this.engine.weatherSystem.setWeather(wKey, 1.2);
                     this.updateHUD();
-                    this.updateWeatherWidget();
                     this.updateInlevelWeatherModal();
                 }
             });
@@ -374,7 +218,6 @@ class UIManager {
                 if (this.engine.weatherSystem) {
                     this.engine.weatherSystem.autoCycle = !this.engine.weatherSystem.autoCycle;
                     this.updateInlevelWeatherModal();
-                    this.updateWeatherWidget();
                 }
             });
         }
@@ -384,51 +227,6 @@ class UIManager {
                 if (this.modalInlevelWeather) this.modalInlevelWeather.classList.add('hidden');
             });
         }
-
-        // Trigger lightning button
-        if (this.btnWwLightning) {
-            this.btnWwLightning.addEventListener('click', () => {
-                if (this.engine.weatherSystem) {
-                    this.engine.weatherSystem.triggerLightningStrike();
-                }
-            });
-        }
-
-        // Toggle Auto-Cycle button
-        if (this.btnWwAutoCycle) {
-            this.btnWwAutoCycle.addEventListener('click', () => {
-                if (this.engine.weatherSystem) {
-                    this.engine.weatherSystem.autoCycle = !this.engine.weatherSystem.autoCycle;
-                    this.updateWeatherWidget();
-                }
-            });
-        }
-
-        // Weather spell button (bottom-left in spells drawer)
-        const btnSpellWeather = document.getElementById('btn-spell-weather');
-        if (btnSpellWeather) {
-            btnSpellWeather.addEventListener('click', () => {
-                if (this.weatherStationWidget) {
-                    this.weatherStationWidget.classList.toggle('hidden');
-                    this.updateWeatherWidget();
-                }
-            });
-        }
-
-        // Level Select Weather Selector Pills
-        document.querySelectorAll('.btn-lsw').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const w = e.currentTarget.dataset.weather;
-                this.selectedLevelWeather = w;
-                document.querySelectorAll('.btn-lsw').forEach(b => b.classList.remove('active'));
-                e.currentTarget.classList.add('active');
-
-                const selectedLabel = document.getElementById('lsw-selected-text');
-                if (selectedLabel) {
-                    selectedLabel.textContent = (w === 'default') ? 'Default (Natural Cycle)' : `Custom: ${e.currentTarget.textContent}`;
-                }
-            });
-        });
 
         // Reset progress
         document.getElementById('btn-reset-data').addEventListener('click', () => {
@@ -535,15 +333,6 @@ class UIManager {
             this.engine.castSpell(this.engine.activeSpell, x, y);
             this.engine.activeSpell = null;
             document.querySelectorAll('.spell-btn').forEach(b => b.classList.remove('active'));
-            return;
-        }
-
-        // Check if tapping on-canvas tactical weather badge (top-left x: 12..230, y: 50..105)
-        if (x >= 12 && x <= 230 && y >= 50 && y <= 105) {
-            if (this.weatherStationWidget) {
-                this.weatherStationWidget.classList.toggle('hidden');
-                this.updateWeatherWidget();
-            }
             return;
         }
 
@@ -675,44 +464,17 @@ class UIManager {
                 starsDisplay += i <= data.stars ? '⭐' : '☆';
             }
 
-            const levelWeathers = {
-                1: '☀️ Sunlit Canopy',
-                2: '🌦️ Tropical Rain',
-                3: '☀️ Sunlit Canopy',
-                4: '🌫️ River Mist',
-                5: '⛈️ Tempest Boss',
-                6: '❄️ Snowfall',
-                7: '🌫️ Frost Mist',
-                8: '❄️ Snowfall',
-                9: '🌨️ Howling Blizzard',
-                10: '🌌 Celestial Aurora Boss'
-            };
-            const defaultWeather = levelWeathers[level.id] || '🌦️ Dynamic';
-
             card.innerHTML = `
                 <div class="level-num">Level ${level.id}</div>
                 <div class="level-title">${level.name}</div>
                 <div class="level-stars">${data.unlocked ? starsDisplay : '🔒 LOCKED'}</div>
                 <div class="level-tag">${level.difficulty}</div>
-                ${data.unlocked ? `
-                <button class="btn-card-weather-select" data-level="${level.id}" title="Choose weather for Level ${level.id}">
-                    <span class="bcw-text">${defaultWeather}</span>
-                    <span class="bcw-arrow">▾</span>
-                </button>
-                ` : `<div class="level-weather-tag">🔒 Weather Locked</div>`}
             `;
 
             if (data.unlocked) {
-                const weatherBtn = card.querySelector('.btn-card-weather-select');
-                if (weatherBtn) {
-                    weatherBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        this.showMissionLaunchModal(level);
-                    });
-                }
-
                 card.addEventListener('click', () => {
-                    this.showMissionLaunchModal(level);
+                    this.modalLevelSelect.classList.add('hidden');
+                    this.startLevel(level.id);
                 });
             }
 
@@ -724,44 +486,9 @@ class UIManager {
         });
     }
 
-    showMissionLaunchModal(level) {
-        this.pendingMissionLevel = level.id;
-        this.pendingMissionWeather = this.selectedLevelWeather || 'default';
-
-        if (this.modalLevelSelect) this.modalLevelSelect.classList.add('hidden');
-        if (this.modalMissionLaunch) this.modalMissionLaunch.classList.remove('hidden');
-
-        if (this.mlBiomeTag) {
-            this.mlBiomeTag.textContent = level.biome === 'jungle' ? '🌿 JUNGLE REALM' : '❄️ FROZEN TUNDRA';
-            this.mlBiomeTag.className = `mission-biome-badge ${level.biome}`;
-        }
-        if (this.mlTitle) {
-            this.mlTitle.textContent = `LEVEL ${level.id}: ${level.name.toUpperCase()}`;
-        }
-        if (this.mlDesc) {
-            const desc = level.description || `Tactical defense across ${level.waves ? level.waves.length : 5} enemy waves in ${level.biome === 'jungle' ? 'dense jungle terrain' : 'frigid arctic wastes'}.`;
-            this.mlDesc.textContent = desc;
-        }
-
-        // Sync chips
-        document.querySelectorAll('.mws-chip').forEach(c => {
-            if (c.dataset.weather === this.pendingMissionWeather) {
-                c.classList.add('active');
-            } else {
-                c.classList.remove('active');
-            }
-        });
-    }
-
     startLevel(levelId) {
         this.hideLandingScreen();
         this.engine.loadLevel(levelId);
-        if (this.selectedLevelWeather && this.selectedLevelWeather !== 'default' && this.engine.weatherSystem) {
-            this.engine.weatherSystem.setWeather(this.selectedLevelWeather, 0.1);
-        }
-        if (this.weatherStationWidget) {
-            this.updateWeatherWidget();
-        }
         this.hideBuildDrawer();
         this.hideTowerInfo();
         this.updateHUD();
@@ -805,11 +532,8 @@ class UIManager {
     showLandingScreen() {
         if (this.screenLanding) this.screenLanding.classList.remove('hidden');
         if (this.hudTopBar) this.hudTopBar.classList.add('hidden');
-        if (this.hudQuickWeatherBar) this.hudQuickWeatherBar.classList.add('hidden');
         if (this.spellsDrawer) this.spellsDrawer.classList.add('hidden');
-        if (this.weatherStationWidget) this.weatherStationWidget.classList.add('hidden');
         if (this.weatherBanner) this.weatherBanner.classList.add('hidden');
-        if (this.btnInlevelWeather) this.btnInlevelWeather.classList.add('hidden');
         if (this.modalInlevelWeather) this.modalInlevelWeather.classList.add('hidden');
         this.hideBuildDrawer();
         this.hideTowerInfo();
@@ -819,10 +543,7 @@ class UIManager {
     hideLandingScreen() {
         if (this.screenLanding) this.screenLanding.classList.add('hidden');
         if (this.hudTopBar) this.hudTopBar.classList.remove('hidden');
-        if (this.hudQuickWeatherBar) this.hudQuickWeatherBar.classList.remove('hidden');
         if (this.spellsDrawer) this.spellsDrawer.classList.remove('hidden');
-        if (this.btnInlevelWeather) this.btnInlevelWeather.classList.remove('hidden');
-        this.updateWeatherWidget();
     }
 
     showVictoryModal(stars, score) {
@@ -845,7 +566,6 @@ class UIManager {
         this.modalDefeat.classList.add('hidden');
         this.modalSettings.classList.add('hidden');
         if (this.modalCodex) this.modalCodex.classList.add('hidden');
-        if (this.modalMissionLaunch) this.modalMissionLaunch.classList.add('hidden');
         if (this.modalInlevelWeather) this.modalInlevelWeather.classList.add('hidden');
         this.hideBuildDrawer();
         this.hideTowerInfo();
@@ -893,13 +613,13 @@ class UIManager {
             this.showTowerInfo(this.engine.selectedTower);
         }
 
-        // Update Weather Pill & In-Level Weather Button
+        // Update Weather Pill & Spells Drawer Weather Icon
         if (this.engine.weatherSystem) {
             const wInfo = this.engine.weatherSystem.getCurrentWeatherInfo();
             if (this.hudWeatherPill) {
                 if (this.hudWeatherIcon) this.hudWeatherIcon.textContent = wInfo.icon;
                 if (this.hudWeatherName) this.hudWeatherName.textContent = wInfo.name;
-                this.hudWeatherPill.title = `${wInfo.name}: ${wInfo.desc} (Wind: ${wInfo.windSpeed} mph - Click to shift)`;
+                this.hudWeatherPill.title = `${wInfo.name}: ${wInfo.desc} (Wind: ${wInfo.windSpeed} mph)`;
 
                 // Update weather state CSS classes for dynamic styling
                 ['thunderstorm', 'blizzard', 'aurora', 'clear', 'fog', 'rain_light', 'snow_light', 'windy'].forEach(c => {
@@ -913,11 +633,10 @@ class UIManager {
                 }
             }
 
-            if (this.btnInlevelWeatherIcon) this.btnInlevelWeatherIcon.textContent = wInfo.icon;
-            if (this.btnInlevelWeatherText) this.btnInlevelWeatherText.textContent = `Weather: ${wInfo.name}`;
+            if (this.spellWeatherIcon) {
+                this.spellWeatherIcon.textContent = wInfo.icon;
+            }
         }
-
-        this.updateWeatherWidget();
     }
 
     showWeatherBanner(wInfo) {
@@ -939,56 +658,11 @@ class UIManager {
 
     onWeatherChanged(wInfo, showAlert = true) {
         this.updateHUD();
-        this.updateWeatherWidget();
+        this.updateInlevelWeatherModal();
         if (showAlert && this.screenLanding && !this.screenLanding.classList.contains('hidden')) return;
         if (showAlert) {
             this.showWeatherBanner(wInfo);
         }
-    }
-
-    updateWeatherWidget() {
-        if (!this.engine.weatherSystem) return;
-        const info = this.engine.weatherSystem.getCurrentWeatherInfo();
-
-        if (this.weatherStationWidget) {
-            if (this.wwIcon) this.wwIcon.textContent = info.icon;
-            if (this.wwName) this.wwName.textContent = info.name;
-            if (this.wwBiome) this.wwBiome.textContent = `${info.biomeGroup.toUpperCase()} • ${info.intensity.toUpperCase()}`;
-            if (this.wwWind) this.wwWind.textContent = `🌬️ ${info.windSpeed}`;
-            if (this.wwIntensity) this.wwIntensity.textContent = info.intensity;
-            if (this.wwEffects) this.wwEffects.textContent = info.effects;
-
-            // Active button highlight in station widget
-            document.querySelectorAll('.btn-weather-select').forEach(btn => {
-                if (btn.dataset.weather === info.id) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
-
-            // Auto-cycle state
-            if (this.btnWwAutoCycle) {
-                if (info.autoCycle) {
-                    this.btnWwAutoCycle.classList.add('active');
-                    this.btnWwAutoCycle.textContent = '🔄 Auto-Cycle: ON';
-                } else {
-                    this.btnWwAutoCycle.classList.remove('active');
-                    this.btnWwAutoCycle.textContent = '🔒 Locked (Manual)';
-                }
-            }
-        }
-
-        // Active button highlight in Quick Weather Toolbar
-        document.querySelectorAll('.qwb-btn').forEach(btn => {
-            if (btn.dataset.weather === info.id) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
-        });
-
-        this.updateInlevelWeatherModal();
     }
 
     updateInlevelWeatherModal() {

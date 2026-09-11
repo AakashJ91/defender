@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Frontier Defense: Jungle & Frost</title>
-    <link rel="stylesheet" href="css/game.css?v=weather_v4">
+    <link rel="stylesheet" href="css/game.css?v=weather_v5">
 </head>
 <body>
     <div id="game-wrapper">
@@ -44,13 +44,6 @@
                             <span id="landing-stars-sub" class="btn-sub-text">10 Missions • 0/30 ⭐</span>
                         </div>
                     </button>
-                    <button id="btn-landing-weather" class="landing-btn" style="border-color: rgba(56, 189, 248, 0.5);">
-                        <span class="btn-icon">🌦️</span>
-                        <div class="btn-text-group">
-                            <span class="btn-main-text">WEATHER SELECTOR</span>
-                            <span class="btn-sub-text">Change & Test 8 Dynamic Weathers</span>
-                        </div>
-                    </button>
                     <button id="btn-landing-codex" class="landing-btn">
                         <span class="btn-icon">📖</span>
                         <div class="btn-text-group">
@@ -83,13 +76,12 @@
                 <div class="hud-stat-pill gold">🪙 <span id="hud-gold">450</span></div>
                 <div class="hud-stat-pill wave">🌊 Wave <span id="hud-wave">0/5</span></div>
                 <div class="hud-stat-pill level" id="hud-level-name">L1: Emerald Trail</div>
-                <div class="hud-stat-pill weather" id="hud-weather-pill" title="Weather Controls (Click to open Weather Station)">
+                <div class="hud-stat-pill weather" id="hud-weather-pill" title="Current Level Weather">
                     <span id="hud-weather-icon">☀️</span> <span id="hud-weather-name">Sunlit Canopy</span>
                 </div>
             </div>
 
             <div class="hud-group">
-                <button id="btn-weather-widget-toggle" class="hud-btn weather-glow-btn" title="Toggle Weather Station & Atmospheric Controls">🌦️ Weather Selector</button>
                 <button id="btn-start-wave" class="hud-btn primary">NEXT WAVE ⚔️</button>
                 <button id="btn-speed" class="hud-btn">1x</button>
                 <button id="btn-pause" class="hud-btn">⏸️</button>
@@ -98,89 +90,12 @@
             </div>
         </header>
 
-        <!-- IN-LEVEL WEATHER SELECTION BUTTON (Prominent button directly in the level screen) -->
-        <button id="btn-inlevel-weather-selector" class="btn-inlevel-weather-selector hidden" title="Weather Selector (Click to change weather in this level)">
-            <span id="btn-inlevel-weather-icon">☀️</span>
-            <span id="btn-inlevel-weather-text">Weather: Sunlit Canopy</span>
-            <span style="font-size: 11px; color: #38bdf8; font-weight: 900;">▾</span>
-        </button>
-
-        <!-- IN-LEVEL QUICK WEATHER SELECTOR TOOLBAR (Always accessible inside the level) -->
-        <div id="hud-quick-weather-bar" class="hud-quick-weather-bar hidden">
-            <span class="qwb-title">🌦️ WEATHER:</span>
-            <div class="qwb-buttons">
-                <button class="qwb-btn" data-weather="clear" title="Clear Sun & Golden Rays">☀️ Sun</button>
-                <button class="qwb-btn" data-weather="rain_light" title="Tropical Rain & Ripples">🌦️ Rain</button>
-                <button class="qwb-btn" data-weather="thunderstorm" title="Monsoon Storm & Lightning">⛈️ Storm</button>
-                <button class="qwb-btn" data-weather="fog" title="Volumetric Mist">🌫️ Mist</button>
-                <button class="qwb-btn" data-weather="windy" title="Gale Winds & Flying Leaves">🍃 Wind</button>
-                <button class="qwb-btn" data-weather="snow_light" title="Gentle Snowfall">❄️ Snow</button>
-                <button class="qwb-btn" data-weather="blizzard" title="Blizzard Whiteout">🌨️ Blizzard</button>
-                <button class="qwb-btn" data-weather="aurora" title="Celestial Aurora Curtains">🌌 Aurora</button>
-            </div>
-            <div class="qwb-tools">
-                <button id="btn-qwb-lightning" class="qwb-tool-btn" title="Trigger Instant Lightning Strike">⚡ Strike</button>
-                <button id="btn-qwb-expand" class="qwb-tool-btn" title="Open Full Weather Station Widget">📊 Details</button>
-            </div>
-        </div>
-
         <!-- ON-MAP CINEMATIC WEATHER ALERT BANNER -->
         <div id="weather-banner" class="weather-banner hidden">
             <div class="weather-banner-icon" id="weather-banner-icon">⛈️</div>
             <div class="weather-banner-content">
                 <div class="weather-banner-title" id="weather-banner-title">WEATHER SHIFT: MONSOON TEMPEST</div>
                 <div class="weather-banner-sub" id="weather-banner-sub">Heavy tropical downpour with dangerous lightning strikes!</div>
-            </div>
-        </div>
-
-        <!-- ON-MAP WEATHER DETAILS & SELECTOR WIDGET -->
-        <div id="weather-station-widget" class="weather-widget hidden">
-            <div class="weather-widget-header">
-                <div class="weather-widget-title-group">
-                    <span class="weather-widget-icon" id="ww-icon">☀️</span>
-                    <div>
-                        <div class="weather-widget-name" id="ww-name">Sunlit Canopy</div>
-                        <div class="weather-widget-biome" id="ww-biome">JUNGLE REALM • CALM</div>
-                    </div>
-                </div>
-                <div style="display: flex; gap: 4px;">
-                    <button id="btn-ww-collapse" class="weather-widget-toggle" title="Collapse / Expand Controls">−</button>
-                    <button id="btn-ww-close" class="weather-widget-toggle" title="Close Weather Station">✕</button>
-                </div>
-            </div>
-
-            <div class="weather-widget-body" id="ww-body">
-                <div class="weather-metrics">
-                    <div class="weather-metric-item">
-                        <span class="metric-label">Wind</span>
-                        <span class="metric-val" id="ww-wind">🌬️ 8 mph E</span>
-                    </div>
-                    <div class="weather-metric-item">
-                        <span class="metric-label">Atmosphere</span>
-                        <span class="metric-val" id="ww-intensity">Calm & Warm</span>
-                    </div>
-                    <div class="weather-metric-item">
-                        <span class="metric-label">Effects</span>
-                        <span class="metric-val" id="ww-effects">Sunbeams</span>
-                    </div>
-                </div>
-
-                <div class="weather-change-title">SELECT WEATHER (INSTANT MAP CHANGE):</div>
-                <div class="weather-buttons-grid">
-                    <button class="btn-weather-select" data-weather="clear" title="Golden Sunbeams & Gentle Breeze">☀️ Clear</button>
-                    <button class="btn-weather-select" data-weather="rain_light" title="Tropical Rain & Water Ripples">🌦️ Drizzle</button>
-                    <button class="btn-weather-select" data-weather="thunderstorm" title="Monsoon Storm & Lightning">⛈️ Tempest</button>
-                    <button class="btn-weather-select" data-weather="fog" title="Dense Volumetric Mist">🌫️ Mist</button>
-                    <button class="btn-weather-select" data-weather="windy" title="Gale Winds & Flying Leaves">🍃 Gale</button>
-                    <button class="btn-weather-select" data-weather="snow_light" title="Gentle Snowfall">❄️ Snow</button>
-                    <button class="btn-weather-select" data-weather="blizzard" title="Howling Blizzard Whiteout">🌨️ Blizzard</button>
-                    <button class="btn-weather-select" data-weather="aurora" title="Celestial Aurora Curtains">🌌 Aurora</button>
-                </div>
-
-                <div class="weather-widget-actions">
-                    <button id="btn-ww-lightning" class="btn-ww-action">⚡ Strike Lightning</button>
-                    <button id="btn-ww-autocycle" class="btn-ww-action active">🔄 Auto-Cycle: ON</button>
-                </div>
             </div>
         </div>
 
@@ -204,8 +119,8 @@
                 <span class="spell-cost">50G</span>
                 <div class="spell-cooldown-text"></div>
             </button>
-            <button id="btn-spell-weather" class="spell-btn weather-spell-btn" title="Weather Selector & Atmospheric Controls (Instant Shift)">
-                <span class="spell-icon">🌦️</span>
+            <button id="btn-spell-weather" class="spell-btn weather-spell-btn" title="Weather Selector (Change Level Atmosphere)">
+                <span class="spell-icon" id="spell-weather-icon">🌦️</span>
                 <span class="spell-cost" style="font-size: 8px; font-weight: 800; color: #38bdf8;">WEATHER</span>
                 <div class="spell-cooldown-text"></div>
             </button>
@@ -285,25 +200,6 @@
             <div class="modal-card">
                 <h2>Campaign Mission Select</h2>
 
-                <!-- STARTING MISSION WEATHER SELECTOR -->
-                <div class="level-select-weather-box">
-                    <div class="level-select-weather-header">
-                        <span class="lsw-label">🌦️ CHOOSE STARTING MISSION WEATHER:</span>
-                        <span class="lsw-selected" id="lsw-selected-text">Default (Natural Cycle)</span>
-                    </div>
-                    <div class="level-select-weather-pills" id="level-weather-pills">
-                        <button class="btn-lsw active" data-weather="default">🎲 Default</button>
-                        <button class="btn-lsw" data-weather="clear">☀️ Sunlit</button>
-                        <button class="btn-lsw" data-weather="rain_light">🌦️ Drizzle</button>
-                        <button class="btn-lsw" data-weather="thunderstorm">⛈️ Tempest</button>
-                        <button class="btn-lsw" data-weather="fog">🌫️ Mist</button>
-                        <button class="btn-lsw" data-weather="windy">🍃 Gale</button>
-                        <button class="btn-lsw" data-weather="snow_light">❄️ Snow</button>
-                        <button class="btn-lsw" data-weather="blizzard">🌨️ Blizzard</button>
-                        <button class="btn-lsw" data-weather="aurora">🌌 Aurora</button>
-                    </div>
-                </div>
-
                 <div class="biome-section-title jungle">
                     <span>🌿</span> JUNGLE REALM (Levels 1 - 5)
                 </div>
@@ -320,66 +216,9 @@
             </div>
         </div>
 
-        <!-- MISSION LAUNCH & WEATHER SELECTOR MODAL (Prompts when picking any level) -->
-        <div id="modal-mission-launch" class="modal-overlay hidden">
-            <div class="modal-card" style="max-width: 540px; text-align: center;">
-                <div id="ml-biome-tag" class="mission-biome-badge">🌿 JUNGLE REALM</div>
-                <h2 id="ml-title" style="margin-top: 6px; font-size: 22px;">LEVEL 1: EMERALD TRAIL</h2>
-                <p id="ml-desc" style="color: #94a3b8; font-size: 13px; margin: 0 0 10px 0;">Dense canopy trail leading into ancient temple ruins.</p>
-
-                <div class="mission-weather-selector-section">
-                    <div class="mws-title">🌦️ CHOOSE STARTING LEVEL WEATHER:</div>
-                    <div class="mws-grid" id="mws-grid">
-                        <button class="mws-chip active" data-weather="default">
-                            <span class="mws-icon">🎲</span>
-                            <span class="mws-name">Natural Cycle</span>
-                        </button>
-                        <button class="mws-chip" data-weather="clear">
-                            <span class="mws-icon">☀️</span>
-                            <span class="mws-name">Sunlit</span>
-                        </button>
-                        <button class="mws-chip" data-weather="rain_light">
-                            <span class="mws-icon">🌦️</span>
-                            <span class="mws-name">Rain</span>
-                        </button>
-                        <button class="mws-chip" data-weather="thunderstorm">
-                            <span class="mws-icon">⛈️</span>
-                            <span class="mws-name">Tempest</span>
-                        </button>
-                        <button class="mws-chip" data-weather="fog">
-                            <span class="mws-icon">🌫️</span>
-                            <span class="mws-name">Mist</span>
-                        </button>
-                        <button class="mws-chip" data-weather="windy">
-                            <span class="mws-icon">🍃</span>
-                            <span class="mws-name">Gale</span>
-                        </button>
-                        <button class="mws-chip" data-weather="snow_light">
-                            <span class="mws-icon">❄️</span>
-                            <span class="mws-name">Snow</span>
-                        </button>
-                        <button class="mws-chip" data-weather="blizzard">
-                            <span class="mws-icon">🌨️</span>
-                            <span class="mws-name">Blizzard</span>
-                        </button>
-                        <button class="mws-chip" data-weather="aurora">
-                            <span class="mws-icon">🌌</span>
-                            <span class="mws-name">Aurora</span>
-                        </button>
-                    </div>
-                    <div id="mws-desc" class="mws-weather-description">🎲 Natural atmospheric cycles and dynamic biome shifts.</div>
-                </div>
-
-                <div class="modal-actions" style="margin-top: 14px;">
-                    <button id="btn-ml-back" class="modal-btn secondary">Back to Levels</button>
-                    <button id="btn-ml-deploy" class="modal-btn primary" style="font-size: 15px; font-weight: 800;">DEPLOY TO LEVEL ⚔️</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- IN-LEVEL WEATHER SELECTION MODAL (Opened via the Weather Selector button inside the level) -->
+        <!-- IN-LEVEL WEATHER SELECTION MODAL (Opened via the Weather Selector button in the spells drawer) -->
         <div id="modal-inlevel-weather" class="modal-overlay hidden">
-            <div class="modal-card" style="max-width: 580px; text-align: center;">
+            <div class="modal-card" style="max-width: 680px; text-align: center;">
                 <h2>🌦️ WEATHER SELECTOR</h2>
                 <p style="color: #94a3b8; font-size: 13px; margin: -6px 0 10px 0;">
                     Select an atmospheric weather system for this level in real-time
@@ -605,12 +444,12 @@
     </div>
 
     <!-- SCRIPTS -->
-    <script src="js/audio.js?v=weather_v4"></script>
-    <script src="js/config.js?v=weather_v4"></script>
-    <script src="js/levels.js?v=weather_v4"></script>
-    <script src="js/weather.js?v=weather_v4"></script>
-    <script src="js/engine.js?v=weather_v4"></script>
-    <script src="js/ui.js?v=weather_v4"></script>
+    <script src="js/audio.js?v=weather_v5"></script>
+    <script src="js/config.js?v=weather_v5"></script>
+    <script src="js/levels.js?v=weather_v5"></script>
+    <script src="js/weather.js?v=weather_v5"></script>
+    <script src="js/engine.js?v=weather_v5"></script>
+    <script src="js/ui.js?v=weather_v5"></script>
     <script>
         window.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById('game-canvas');
