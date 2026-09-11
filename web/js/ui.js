@@ -44,6 +44,9 @@ class UIManager {
         this.btnCloseCodex = document.getElementById('btn-close-codex');
         this.panelTowerInspect = document.getElementById('panel-tower-inspect');
         this.drawerBuild = document.getElementById('drawer-build');
+        this.bdSlotIndicator = document.getElementById('bd-slot-indicator');
+        this.bdGoldDisplay = document.getElementById('bd-gold-display');
+        this.btnCloseBuild = document.getElementById('btn-close-build');
 
         // On-Map Weather Widget & Alert Banner
         this.weatherBanner = document.getElementById('weather-banner');
@@ -255,6 +258,13 @@ class UIManager {
             });
         });
 
+        if (this.btnCloseBuild) {
+            this.btnCloseBuild.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.hideBuildDrawer();
+            });
+        }
+
         // Tower inspector action buttons
         document.getElementById('btn-upgrade-tower').addEventListener('click', () => {
             if (this.engine.selectedTower) {
@@ -391,14 +401,25 @@ class UIManager {
     showBuildDrawer(slot) {
         this.drawerBuild.classList.remove('hidden');
 
-        // Update affordability of tower buttons
+        if (this.bdSlotIndicator && slot) {
+            this.bdSlotIndicator.textContent = `Plot #${slot.id}`;
+        }
+        if (this.bdGoldDisplay) {
+            this.bdGoldDisplay.textContent = this.engine.gold;
+        }
+
+        // Update affordability and tooltips of tower buttons
         document.querySelectorAll('.btn-build-tower').forEach(btn => {
             const type = btn.dataset.type;
             const config = GAME_CONFIG.towers[type];
+            if (!config) return;
+
             if (this.engine.gold < config.cost) {
                 btn.classList.add('disabled');
+                btn.title = `Need ${config.cost - this.engine.gold} more Gold to deploy ${config.name}`;
             } else {
                 btn.classList.remove('disabled');
+                btn.title = `Deploy ${config.name} (${config.cost}G) - ${config.description}`;
             }
         });
     }
@@ -636,6 +657,25 @@ class UIManager {
             if (this.spellWeatherIcon) {
                 this.spellWeatherIcon.textContent = wInfo.icon;
             }
+        }
+
+        // Keep Build Drawer gold and buttons synced in real time
+        if (this.bdGoldDisplay) {
+            this.bdGoldDisplay.textContent = this.engine.gold;
+        }
+        if (this.drawerBuild && !this.drawerBuild.classList.contains('hidden')) {
+            document.querySelectorAll('.btn-build-tower').forEach(btn => {
+                const type = btn.dataset.type;
+                const config = GAME_CONFIG.towers[type];
+                if (!config) return;
+                if (this.engine.gold < config.cost) {
+                    btn.classList.add('disabled');
+                    btn.title = `Need ${config.cost - this.engine.gold} more Gold to deploy ${config.name}`;
+                } else {
+                    btn.classList.remove('disabled');
+                    btn.title = `Deploy ${config.name} (${config.cost}G) - ${config.description}`;
+                }
+            });
         }
     }
 

@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Frontier Defense: Jungle & Frost</title>
-    <link rel="stylesheet" href="css/game.css?v=weather_v5">
+    <link rel="stylesheet" href="css/game.css?v=build_v9">
 </head>
 <body>
     <div id="game-wrapper">
@@ -128,36 +128,129 @@
 
         <!-- TOWER BUILD DRAWER (Appears when empty build plot tapped) -->
         <div id="drawer-build" class="hidden">
-            <button class="btn-build-tower" data-type="archer">
-                <span class="tower-icon-badge">🎯</span>
-                <span class="tower-label">Dart Spire</span>
-                <span class="gold-badge">100G</span>
-            </button>
-            <button class="btn-build-tower" data-type="cannon">
-                <span class="tower-icon-badge">💣</span>
-                <span class="tower-label">Bombard</span>
-                <span class="gold-badge">150G</span>
-            </button>
-            <button class="btn-build-tower" data-type="frost">
-                <span class="tower-icon-badge">❄️</span>
-                <span class="tower-label">Cryo Obelisk</span>
-                <span class="gold-badge">125G</span>
-            </button>
-            <button class="btn-build-tower" data-type="tesla">
-                <span class="tower-icon-badge">⚡</span>
-                <span class="tower-label">Tesla Tower</span>
-                <span class="gold-badge">175G</span>
-            </button>
-            <button class="btn-build-tower" data-type="flame">
-                <span class="tower-icon-badge">🔥</span>
-                <span class="tower-label">Solar Spire</span>
-                <span class="gold-badge">160G</span>
-            </button>
-            <button class="btn-build-tower" data-type="wave">
-                <span class="tower-icon-badge">🌊</span>
-                <span class="tower-label">Wake Spire</span>
-                <span class="gold-badge">140G</span>
-            </button>
+            <div class="build-drawer-glass">
+                <div class="build-drawer-header">
+                    <div class="bd-header-left">
+                        <div class="bd-title-badge">
+                            <span class="bd-pulse-dot"></span>
+                            <span class="bd-title-text">DEPLOY TOWER</span>
+                        </div>
+                        <span class="bd-slot-badge" id="bd-slot-indicator">Plot #1</span>
+                    </div>
+                    <div class="bd-header-right">
+                        <div class="bd-gold-pill">
+                            <span class="bd-gold-icon">🪙</span>
+                            <span class="bd-gold-amount" id="bd-gold-display">450</span>
+                            <span class="bd-gold-label">GOLD</span>
+                        </div>
+                        <button id="btn-close-build" class="bd-close-btn" title="Cancel Build">✕</button>
+                    </div>
+                </div>
+
+                <div class="build-cards-container">
+                    <!-- Dart Spire -->
+                    <button class="btn-build-tower type-archer" data-type="archer">
+                        <div class="tower-card-glow"></div>
+                        <div class="tower-role-tag">AIR & GROUND</div>
+                        <div class="tower-icon-wrapper">
+                            <span class="tower-icon-badge">🎯</span>
+                        </div>
+                        <div class="tower-card-info">
+                            <span class="tower-label">Dart Spire</span>
+                            <span class="tower-quick-desc">Rapid Piercing</span>
+                        </div>
+                        <div class="tower-cost-tag">
+                            <span class="cost-coin">🪙</span>
+                            <span class="cost-val">100G</span>
+                        </div>
+                    </button>
+
+                    <!-- Bombard -->
+                    <button class="btn-build-tower type-cannon" data-type="cannon">
+                        <div class="tower-card-glow"></div>
+                        <div class="tower-role-tag">AREA SPLASH</div>
+                        <div class="tower-icon-wrapper">
+                            <span class="tower-icon-badge">💣</span>
+                        </div>
+                        <div class="tower-card-info">
+                            <span class="tower-label">Bombard</span>
+                            <span class="tower-quick-desc">Heavy Artillery</span>
+                        </div>
+                        <div class="tower-cost-tag">
+                            <span class="cost-coin">🪙</span>
+                            <span class="cost-val">150G</span>
+                        </div>
+                    </button>
+
+                    <!-- Cryo Obelisk -->
+                    <button class="btn-build-tower type-frost" data-type="frost">
+                        <div class="tower-card-glow"></div>
+                        <div class="tower-role-tag">SLOW & CHILL</div>
+                        <div class="tower-icon-wrapper">
+                            <span class="tower-icon-badge">❄️</span>
+                        </div>
+                        <div class="tower-card-info">
+                            <span class="tower-label">Cryo Obelisk</span>
+                            <span class="tower-quick-desc">-50% Speed</span>
+                        </div>
+                        <div class="tower-cost-tag">
+                            <span class="cost-coin">🪙</span>
+                            <span class="cost-val">125G</span>
+                        </div>
+                    </button>
+
+                    <!-- Tesla Tower -->
+                    <button class="btn-build-tower type-tesla" data-type="tesla">
+                        <div class="tower-card-glow"></div>
+                        <div class="tower-role-tag">CHAIN ⚡</div>
+                        <div class="tower-icon-wrapper">
+                            <span class="tower-icon-badge">⚡</span>
+                        </div>
+                        <div class="tower-card-info">
+                            <span class="tower-label">Tesla Tower</span>
+                            <span class="tower-quick-desc">3 Targets</span>
+                        </div>
+                        <div class="tower-cost-tag">
+                            <span class="cost-coin">🪙</span>
+                            <span class="cost-val">175G</span>
+                        </div>
+                    </button>
+
+                    <!-- Solar Spire -->
+                    <button class="btn-build-tower type-flame" data-type="flame">
+                        <div class="tower-card-glow"></div>
+                        <div class="tower-role-tag">MELT BEAM</div>
+                        <div class="tower-icon-wrapper">
+                            <span class="tower-icon-badge">🔥</span>
+                        </div>
+                        <div class="tower-card-info">
+                            <span class="tower-label">Solar Spire</span>
+                            <span class="tower-quick-desc">Thermal Ray</span>
+                        </div>
+                        <div class="tower-cost-tag">
+                            <span class="cost-coin">🪙</span>
+                            <span class="cost-val">160G</span>
+                        </div>
+                    </button>
+
+                    <!-- Wake Spire -->
+                    <button class="btn-build-tower type-wave" data-type="wave">
+                        <div class="tower-card-glow"></div>
+                        <div class="tower-role-tag">KNOCKBACK</div>
+                        <div class="tower-icon-wrapper">
+                            <span class="tower-icon-badge">🌊</span>
+                        </div>
+                        <div class="tower-card-info">
+                            <span class="tower-label">Wake Spire</span>
+                            <span class="tower-quick-desc">Tidal Surge</span>
+                        </div>
+                        <div class="tower-cost-tag">
+                            <span class="cost-coin">🪙</span>
+                            <span class="cost-val">140G</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
         </div>
 
         <!-- TOWER INSPECT PANEL (Appears when constructed tower is tapped) -->
@@ -444,12 +537,12 @@
     </div>
 
     <!-- SCRIPTS -->
-    <script src="js/audio.js?v=weather_v5"></script>
-    <script src="js/config.js?v=weather_v5"></script>
-    <script src="js/levels.js?v=weather_v5"></script>
-    <script src="js/weather.js?v=weather_v5"></script>
-    <script src="js/engine.js?v=weather_v5"></script>
-    <script src="js/ui.js?v=weather_v5"></script>
+    <script src="js/audio.js?v=build_v6"></script>
+    <script src="js/config.js?v=build_v6"></script>
+    <script src="js/levels.js?v=build_v6"></script>
+    <script src="js/weather.js?v=build_v6"></script>
+    <script src="js/engine.js?v=build_v6"></script>
+    <script src="js/ui.js?v=build_v6"></script>
     <script>
         window.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById('game-canvas');
@@ -473,6 +566,15 @@
                     if (ui.modalInlevelWeather) {
                         ui.modalInlevelWeather.classList.remove('hidden');
                         ui.updateInlevelWeatherModal();
+                    }
+                }, 100);
+            } else if (window.location.hash === '#build') {
+                setTimeout(() => {
+                    ui.startLevel(1);
+                    if (engine.currentLevel && engine.currentLevel.buildSlots && engine.currentLevel.buildSlots.length > 0) {
+                        const slot = engine.currentLevel.buildSlots[0];
+                        engine.selectedSlot = slot;
+                        ui.showBuildDrawer(slot);
                     }
                 }, 100);
             }
