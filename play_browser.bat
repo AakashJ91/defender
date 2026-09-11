@@ -1,5 +1,10 @@
 @echo off
-echo Starting local web server for instant browser playtesting...
-echo Open http://localhost:8080 in your browser (Chrome, Edge, Firefox, Mobile)
-npx --yes serve web -l 8080
+echo ========================================================
+echo Starting Frontier Defense Dev Server (Ports 8080 & 8090)
+echo ========================================================
+start http://localhost:8080
+node server.js
+if %ERRORLEVEL% NEQ 0 (
+    python -m http.server 8080 --directory web
+)
 pause

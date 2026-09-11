@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <radialGradient id="scoutSkin" cx="45%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#bef264"/>
+      <stop offset="60%" stop-color="#84cc16"/>
+      <stop offset="100%" stop-color="#4d7c0f"/>
+    </radialGradient>
+    <linearGradient id="scoutLeather" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#b45309"/>
+      <stop offset="100%" stop-color="#78350f"/>
+    </linearGradient>
+    <radialGradient id="scoutEye" cx="35%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="70%" stop-color="#eab308"/>
+      <stop offset="100%" stop-color="#713f12"/>
+    </radialGradient>
+    <filter id="scoutGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#scoutGlow)">
+    <!-- Quiver on back -->
+    <rect x="24" y="36" width="14" height="28" rx="4" fill="url(#scoutLeather)" transform="rotate(-15 31 50)"/>
+    <polygon points="20,32 26,20 28,34" fill="#f87171"/>
+    <polygon points="26,30 32,18 34,32" fill="#38bdf8"/>
+
+    <!-- Left Arm & Dagger -->
+    <path d="M52,38 Q68,26 84,34" stroke="#65a30d" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <!-- Tribal dagger -->
+    <polygon points="84,32 108,30 88,38" fill="#e2e8f0" stroke="#475569" stroke-width="1.5"/>
+
+    <!-- Main Torso with Leather Vest -->
+    <ellipse cx="54" cy="64" rx="24" ry="20" fill="url(#scoutSkin)"/>
+    <!-- Leather Harness Straps -->
+    <path d="M38,50 L70,78 M38,78 L70,50" stroke="url(#scoutLeather)" stroke-width="4.5" stroke-linecap="round"/>
+    <circle cx="54" cy="64" r="5" fill="#f59e0b" stroke="#78350f" stroke-width="1.5"/>
+
+    <!-- Back Left Leg / Foot -->
+    <ellipse cx="32" cy="48" rx="10" ry="7" fill="#4d7c0f"/>
+    <!-- Back Right Leg / Foot -->
+    <ellipse cx="32" cy="80" rx="10" ry="7" fill="#4d7c0f"/>
+
+    <!-- Big Pointy Goblin Ears -->
+    <path d="M60,42 Q68,22 80,18 Q72,36 66,46 Z" fill="#65a30d" stroke="#365314" stroke-width="1.5"/>
+    <path d="M60,86 Q68,106 80,110 Q72,92 66,82 Z" fill="#65a30d" stroke="#365314" stroke-width="1.5"/>
+    <!-- Ear inner -->
+    <path d="M64,38 Q70,26 75,22 Q70,34 67,42 Z" fill="#fca5a5" opacity="0.7"/>
+    <path d="M64,90 Q70,102 75,106 Q70,94 67,86 Z" fill="#fca5a5" opacity="0.7"/>
+
+    <!-- Goblin Head -->
+    <ellipse cx="68" cy="64" rx="20" ry="18" fill="url(#scoutSkin)" stroke="#365314" stroke-width="1.5"/>
+
+    <!-- Headband -->
+    <path d="M54,50 Q68,54 78,50" stroke="#dc2626" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+    <!-- Exotic feather -->
+    <path d="M48,50 Q36,36 32,20 Q44,30 52,46 Z" fill="#ef4444"/>
+    <path d="M48,50 Q38,40 36,30" stroke="#fef08a" stroke-width="1.5" fill="none"/>
+
+    <!-- Cunning Eyes -->
+    <ellipse cx="76" cy="56" rx="4.5" ry="3.5" fill="url(#scoutEye)"/>
+    <ellipse cx="76" cy="72" rx="4.5" ry="3.5" fill="url(#scoutEye)"/>
+    <!-- Pupils looking forward (Right) -->
+    <circle cx="78" cy="56" r="1.8" fill="#000000"/>
+    <circle cx="78" cy="72" r="1.8" fill="#000000"/>
+    <circle cx="79" cy="55" r="0.6" fill="#ffffff"/>
+    <circle cx="79" cy="71" r="0.6" fill="#ffffff"/>
+
+    <!-- Snout & Grin -->
+    <ellipse cx="84" cy="64" rx="4" ry="5" fill="#4d7c0f"/>
+    <!-- Wooden blowpipe held in front -->
+    <rect x="76" y="61" width="34" height="6" rx="2" fill="#78350f" stroke="#451a03" stroke-width="1"/>
+    <rect x="106" y="60" width="4" height="8" rx="1" fill="#b45309"/>
+    <!-- Right Arm holding blowpipe -->
+    <path d="M56,76 Q70,82 82,70" stroke="#65a30d" stroke-width="7" stroke-linecap="round" fill="none"/>
+  </g>
+</svg>

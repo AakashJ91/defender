@@ -39,6 +39,8 @@ class GameEngine {
         this.particles = [];
         this.floatingTexts = [];
         this.weatherParticles = [];
+        const WClass = (typeof WeatherSystem !== 'undefined') ? WeatherSystem : ((typeof window !== 'undefined' && window.WeatherSystem) ? window.WeatherSystem : null);
+        this.weatherSystem = WClass ? new WClass(this) : null;
 
         // Waves
         this.currentWaveIndex = -1;
@@ -232,7 +234,11 @@ class GameEngine {
             this.spellCooldowns[k] = 0;
         }
 
-        this.initWeather();
+        if (this.weatherSystem) {
+            this.weatherSystem.initForBiome(this.currentLevel.biome, this.currentLevel.id);
+        } else {
+            this.initWeather();
+        }
         this.initRoadParticles();
         this.trampleParticles = [];
         if (window.ui) {
@@ -266,6 +272,9 @@ class GameEngine {
 
         if (window.soundEngine) {
             window.soundEngine.playWaveStart();
+        }
+        if (this.weatherSystem) {
+            this.weatherSystem.onWaveStart(this.currentWaveIndex, this.currentLevel.waves.length);
         }
         if (window.ui) {
             window.ui.updateHUD();
@@ -1154,17 +1163,21 @@ class GameEngine {
             ft.alpha = ft.life / ft.maxLife;
         }
 
-        // Update Weather Particles
-        this.weatherParticles.forEach(wp => {
-            wp.x += wp.vx * effectiveDt * 60;
-            wp.y += wp.vy * effectiveDt * 60;
-            if (wp.y > this.height) {
-                wp.y = -10;
-                wp.x = Math.random() * this.width;
-            }
-            if (wp.x < 0) wp.x = this.width;
-            if (wp.x > this.width) wp.x = 0;
-        });
+        // Update Weather Particles & Environmental Simulation
+        if (this.weatherSystem) {
+            this.weatherSystem.update(dt, effectiveDt);
+        } else {
+            this.weatherParticles.forEach(wp => {
+                wp.x += wp.vx * effectiveDt * 60;
+                wp.y += wp.vy * effectiveDt * 60;
+                if (wp.y > this.height) {
+                    wp.y = -10;
+                    wp.x = Math.random() * this.width;
+                }
+                if (wp.x < 0) wp.x = this.width;
+                if (wp.x > this.width) wp.x = 0;
+            });
+        }
     }
 
     fireTower(tower, target) {
@@ -2098,11 +2111,19 @@ class GameEngine {
             this.ctx.fillRect(0, 0, this.width, this.height);
         }
 
+        // 1.5 Atmospheric Lighting, God Rays & Aurora (Under terrain)
+        if (this.weatherSystem) {
+            this.weatherSystem.renderAtmosphere(this.ctx);
+        }
+
         // 2. Biome Path
         this.renderPath();
 
-        // 2.5 Road Trample Dust & Ambient Life Particles (Drifting Fireflies / Frost Motes)
+        // 2.5 Road Trample Dust, Ground Ripples & Ambient Life Particles
         this.renderTrampleParticles();
+        if (this.weatherSystem) {
+            this.weatherSystem.renderGroundEffects(this.ctx);
+        }
         this.renderRoadParticles();
 
         // 3. Decorations (Trees, Rocks, Icebergs, Ruins)
@@ -2126,8 +2147,17 @@ class GameEngine {
         // 9. Floating Combat Text
         this.renderFloatingTexts();
 
-        // 10. Weather Effects (Rain / Snow)
-        this.renderWeather();
+        // 10. Weather Effects (Precipitation, Wind Debris, Fog Clouds)
+        if (this.weatherSystem) {
+            this.weatherSystem.renderPrecipitation(this.ctx);
+        } else {
+            this.renderWeather();
+        }
+
+        // 10.5 Post-Process Atmosphere (Lightning Bolts, Screen Flash, Frost Border Vignette)
+        if (this.weatherSystem) {
+            this.weatherSystem.renderPostOverlay(this.ctx);
+        }
 
         // 11. Range Overlay for Selected Slot or Tower
         this.renderSelectionOverlay();
@@ -5275,6 +5305,10 @@ class GameEngine {
     }
 
     renderWeather() {
+        if (this.weatherSystem) {
+            this.weatherSystem.renderPrecipitation(this.ctx);
+            return;
+        }
         if (!this.biome) return;
         this.ctx.save();
         this.ctx.fillStyle = this.biome.rainColor;

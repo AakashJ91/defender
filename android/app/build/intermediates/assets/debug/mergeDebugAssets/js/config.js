@@ -221,6 +221,47 @@ const GAME_CONFIG = {
                     desc: "Extreme thermal beam vaporizing armor instantly"
                 }
             ]
+        },
+
+        wave: {
+            name: "Wake Spire",
+            category: "wave",
+            cost: 140,
+            range: 155,
+            damage: 28,
+            fireRate: 0.8,
+            knockback: 20,
+            splashRadius: 65,
+            projectileType: "tidal_wave",
+            projectileSpeed: 380,
+            canTargetAir: false,
+            color: "#0ea5e9",
+            bulletColor: "#38bdf8",
+            description: "Launches hydraulic wave surges that wash over creeps and push them backward.",
+            upgrades: [
+                {
+                    level: 2,
+                    name: "Tidal Maelstrom",
+                    cost: 180,
+                    damage: 60,
+                    fireRate: 0.95,
+                    knockback: 30,
+                    splashRadius: 85,
+                    range: 175,
+                    desc: "Dual hydro-vortex launching pressurized tidal waves"
+                },
+                {
+                    level: 3,
+                    name: "Leviathan's Wake",
+                    cost: 280,
+                    damage: 135,
+                    fireRate: 1.1,
+                    knockback: 45,
+                    splashRadius: 105,
+                    range: 200,
+                    desc: "Catastrophic tsunami waves sweeping creeps back with immense force"
+                }
+            ]
         }
     },
 

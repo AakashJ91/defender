@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <radialGradient id="gorillaFur" cx="45%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#475569"/>
+      <stop offset="60%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </radialGradient>
+    <linearGradient id="ironArmor" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#94a3b8"/>
+      <stop offset="40%" stop-color="#64748b"/>
+      <stop offset="100%" stop-color="#334155"/>
+    </linearGradient>
+    <filter id="gorillaShadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#gorillaShadow)">
+    <!-- Back / Hind Legs -->
+    <ellipse cx="34" cy="48" rx="14" ry="10" fill="#1e293b"/>
+    <ellipse cx="34" cy="80" rx="14" ry="10" fill="#1e293b"/>
+    <ellipse cx="28" cy="64" rx="18" ry="16" fill="#334155"/>
+
+    <!-- Giant Heavy Forearms & Knuckles (Reaching Forward) -->
+    <path d="M58,34 Q82,18 96,28 Q88,40 68,42 Z" fill="#1e293b" stroke="#0f172a" stroke-width="1.5"/>
+    <path d="M58,94 Q82,110 96,100 Q88,88 68,86 Z" fill="#1e293b" stroke="#0f172a" stroke-width="1.5"/>
+    <!-- Iron Knuckle Spikes -->
+    <rect x="92" y="24" width="12" height="10" rx="3" fill="url(#ironArmor)" stroke="#0f172a" stroke-width="1"/>
+    <polygon points="104,27 112,29 104,31" fill="#cbd5e1"/>
+    <rect x="92" y="94" width="12" height="10" rx="3" fill="url(#ironArmor)" stroke="#0f172a" stroke-width="1"/>
+    <polygon points="104,97 112,99 104,101" fill="#cbd5e1"/>
+
+    <!-- Massive Broad Torso -->
+    <ellipse cx="56" cy="64" rx="28" ry="26" fill="url(#gorillaFur)" stroke="#0f172a" stroke-width="2"/>
+
+    <!-- Spiked Heavy Iron Pauldrons (Top Shoulder) -->
+    <path d="M46,24 Q66,16 80,30 Q68,42 48,36 Z" fill="url(#ironArmor)" stroke="#0f172a" stroke-width="1.5"/>
+    <!-- Pauldron Spikes -->
+    <polygon points="56,20 60,8 68,18" fill="#e2e8f0" stroke="#334155" stroke-width="1"/>
+    <polygon points="70,22 78,12 82,24" fill="#e2e8f0" stroke="#334155" stroke-width="1"/>
+    <!-- Rivets -->
+    <circle cx="54" cy="30" r="2" fill="#fbbf24"/>
+    <circle cx="68" cy="34" r="2" fill="#fbbf24"/>
+
+    <!-- Spiked Heavy Iron Pauldrons (Bottom Shoulder) -->
+    <path d="M46,104 Q66,112 80,98 Q68,86 48,92 Z" fill="url(#ironArmor)" stroke="#0f172a" stroke-width="1.5"/>
+    <!-- Pauldron Spikes -->
+    <polygon points="56,108 60,120 68,110" fill="#e2e8f0" stroke="#334155" stroke-width="1"/>
+    <polygon points="70,106 78,116 82,104" fill="#e2e8f0" stroke="#334155" stroke-width="1"/>
+    <!-- Rivets -->
+    <circle cx="54" cy="98" r="2" fill="#fbbf24"/>
+    <circle cx="68" cy="94" r="2" fill="#fbbf24"/>
+
+    <!-- Iron Back Plate / Spine Guard -->
+    <path d="M38,52 L62,50 L66,64 L62,78 L38,76 Z" fill="url(#ironArmor)" stroke="#0f172a" stroke-width="1.5"/>
+    <circle cx="44" cy="58" r="2" fill="#fbbf24"/>
+    <circle cx="44" cy="70" r="2" fill="#fbbf24"/>
+    <circle cx="58" cy="64" r="2.5" fill="#fbbf24"/>
+
+    <!-- Muscular Neck & Head (Facing Right) -->
+    <ellipse cx="78" cy="64" rx="16" ry="15" fill="#1e293b" stroke="#0f172a" stroke-width="1.5"/>
+    <!-- Iron Crest Helmet on head -->
+    <path d="M68,54 Q84,50 90,64 Q84,78 68,74 Z" fill="url(#ironArmor)" stroke="#0f172a" stroke-width="1"/>
+    <!-- Face / Brow -->
+    <ellipse cx="86" cy="64" rx="9" ry="11" fill="#334155"/>
+    <!-- Snarling Eyes -->
+    <circle cx="88" cy="58" r="2.5" fill="#ef4444"/>
+    <circle cx="88" cy="70" r="2.5" fill="#ef4444"/>
+    <circle cx="89" cy="58" r="1" fill="#fef08a"/>
+    <circle cx="89" cy="70" r="1" fill="#fef08a"/>
+
+    <!-- Ape Muzzle / Fangs -->
+    <ellipse cx="94" cy="64" rx="6" ry="7" fill="#0f172a"/>
+    <polygon points="96,60 102,62 96,63" fill="#ffffff"/>
+    <polygon points="96,68 102,66 96,65" fill="#ffffff"/>
+  </g>
+</svg>
