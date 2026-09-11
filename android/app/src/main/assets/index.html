@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Frontier Defense: Jungle & Frost</title>
+    <link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+    <div id="game-wrapper">
+        <!-- LANDING / TITLE SCREEN OVERLAY -->
+        <div id="screen-landing" class="landing-overlay">
+            <div class="landing-content">
+                <div class="landing-badge">TACTICAL TOWER DEFENSE</div>
+                <h1 class="landing-title">FRONTIER DEFENSE</h1>
+                <div class="landing-subtitle">
+                    <span class="sub-jungle">JUNGLE</span>
+                    <span class="sub-and">&</span>
+                    <span class="sub-frost">FROST</span>
+                </div>
+                <p class="landing-desc">Command powerful spires and defend the realm across 10 dangerous jungle and arctic missions.</p>
+
+                <div class="landing-buttons">
+                    <button id="btn-landing-continue" class="landing-btn primary">
+                        <span class="btn-icon">▶️</span>
+                        <div class="btn-text-group">
+                            <span class="btn-main-text">CONTINUE MISSION</span>
+                            <span id="landing-continue-sub" class="btn-sub-text">Level 1: Emerald Trail</span>
+                        </div>
+                    </button>
+                    <button id="btn-landing-start" class="landing-btn">
+                        <span class="btn-icon">⚔️</span>
+                        <div class="btn-text-group">
+                            <span class="btn-main-text">START NEW GAME</span>
+                            <span class="btn-sub-text">Begin from Level 1</span>
+                        </div>
+                    </button>
+                    <button id="btn-landing-levels" class="landing-btn">
+                        <span class="btn-icon">🗺️</span>
+                        <div class="btn-text-group">
+                            <span class="btn-main-text">LEVEL SELECTOR</span>
+                            <span id="landing-stars-sub" class="btn-sub-text">10 Missions • 0/30 ⭐</span>
+                        </div>
+                    </button>
+                    <button id="btn-landing-codex" class="landing-btn">
+                        <span class="btn-icon">📖</span>
+                        <div class="btn-text-group">
+                            <span class="btn-main-text">TOWER CODEX</span>
+                            <span class="btn-sub-text">View Towers & Upgrades</span>
+                        </div>
+                    </button>
+                    <button id="btn-landing-settings" class="landing-btn secondary">
+                        <span class="btn-icon">⚙️</span>
+                        <div class="btn-text-group">
+                            <span class="btn-main-text">SETTINGS</span>
+                            <span class="btn-sub-text">Audio & Controls</span>
+                        </div>
+                    </button>
+                </div>
+
+                <div class="landing-footer">
+                    <span>🌿 Levels 1–5: Deep Jungle</span>
+                    <span>•</span>
+                    <span>❄️ Levels 6–10: Glacial Tundra</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- TOP HUD BAR -->
+        <header id="hud-top-bar" class="hidden">
+            <div class="hud-group">
+                <button id="btn-home-menu" class="hud-btn" title="Main Menu">🏠 Title</button>
+                <div class="hud-stat-pill lives">❤️ <span id="hud-lives">20</span></div>
+                <div class="hud-stat-pill gold">🪙 <span id="hud-gold">450</span></div>
+                <div class="hud-stat-pill wave">🌊 Wave <span id="hud-wave">0/5</span></div>
+                <div class="hud-stat-pill level" id="hud-level-name">L1: Emerald Trail</div>
+            </div>
+
+            <div class="hud-group">
+                <button id="btn-start-wave" class="hud-btn primary">NEXT WAVE ⚔️</button>
+                <button id="btn-speed" class="hud-btn">1x</button>
+                <button id="btn-pause" class="hud-btn">⏸️</button>
+                <button id="btn-levels-menu" class="hud-btn">🗺️ Levels</button>
+                <button id="btn-settings-menu" class="hud-btn">⚙️</button>
+            </div>
+        </header>
+
+        <!-- GAME CANVAS -->
+        <canvas id="game-canvas"></canvas>
+
+        <!-- ACTIVE SPELLS DRAWER (Bottom Left) -->
+        <div id="spells-drawer" class="hidden">
+            <button id="spell-meteor" class="spell-btn" title="Meteor Strike (Area Blast)">
+                <span class="spell-icon">☄️</span>
+                <span class="spell-cost">80G</span>
+                <div class="spell-cooldown-text"></div>
+            </button>
+            <button id="spell-freeze" class="spell-btn" title="Glacial Frost (Map-wide Freeze)">
+                <span class="spell-icon">❄️</span>
+                <span class="spell-cost">65G</span>
+                <div class="spell-cooldown-text"></div>
+            </button>
+            <button id="spell-rush" class="spell-btn" title="Battle Horn (+60% Tower Speed)">
+                <span class="spell-icon">📯</span>
+                <span class="spell-cost">50G</span>
+                <div class="spell-cooldown-text"></div>
+            </button>
+        </div>
+
+        <!-- TOWER BUILD DRAWER (Appears when empty build plot tapped) -->
+        <div id="drawer-build" class="hidden">
+            <button class="btn-build-tower" data-type="archer">
+                <span class="tower-icon-badge">🎯</span>
+                <span class="tower-label">Dart Spire</span>
+                <span class="gold-badge">100G</span>
+            </button>
+            <button class="btn-build-tower" data-type="cannon">
+                <span class="tower-icon-badge">💣</span>
+                <span class="tower-label">Bombard</span>
+                <span class="gold-badge">150G</span>
+            </button>
+            <button class="btn-build-tower" data-type="frost">
+                <span class="tower-icon-badge">❄️</span>
+                <span class="tower-label">Cryo Obelisk</span>
+                <span class="gold-badge">125G</span>
+            </button>
+            <button class="btn-build-tower" data-type="tesla">
+                <span class="tower-icon-badge">⚡</span>
+                <span class="tower-label">Tesla Tower</span>
+                <span class="gold-badge">175G</span>
+            </button>
+            <button class="btn-build-tower" data-type="flame">
+                <span class="tower-icon-badge">🔥</span>
+                <span class="tower-label">Solar Spire</span>
+                <span class="gold-badge">160G</span>
+            </button>
+            <button class="btn-build-tower" data-type="wave">
+                <span class="tower-icon-badge">🌊</span>
+                <span class="tower-label">Wake Spire</span>
+                <span class="gold-badge">140G</span>
+            </button>
+        </div>
+
+        <!-- TOWER INSPECT PANEL (Appears when constructed tower is tapped) -->
+        <div id="panel-tower-inspect" class="hidden">
+            <div class="inspect-header">
+                <div>
+                    <span id="inspect-name" class="inspect-name">Dart Spire</span>
+                    <span id="inspect-level" class="inspect-level">Tier 1</span>
+                </div>
+                <button id="btn-close-inspect" class="hud-btn" style="min-height: 24px; padding: 2px 8px;">✕</button>
+            </div>
+
+            <div class="inspect-stats-grid">
+                <div class="stat-item">Damage: <span id="inspect-damage">24</span></div>
+                <div class="stat-item">Speed: <span id="inspect-firerate">1.2/s</span></div>
+                <div class="stat-item">Range: <span id="inspect-range">160</span></div>
+            </div>
+
+            <div class="priority-row">
+                <span>Targeting:</span>
+                <select id="select-priority">
+                    <option value="first">First</option>
+                    <option value="last">Last</option>
+                    <option value="strong">Strongest</option>
+                    <option value="weak">Weakest</option>
+                    <option value="close">Closest</option>
+                </select>
+            </div>
+
+            <div id="inspect-upgrade-desc" class="inspect-upgrade-desc"></div>
+
+            <div class="inspect-actions">
+                <button id="btn-upgrade-tower" class="btn-inspect-action upgrade">Upgrade</button>
+                <button id="btn-sell-tower" class="btn-inspect-action sell">Sell</button>
+            </div>
+        </div>
+
+        <!-- LEVEL SELECTION MODAL -->
+        <div id="modal-level-select" class="modal-overlay hidden">
+            <div class="modal-card">
+                <h2>Campaign Mission Select</h2>
+
+                <div class="biome-section-title jungle">
+                    <span>🌿</span> JUNGLE REALM (Levels 1 - 5)
+                </div>
+                <div id="grid-jungle-levels" class="levels-grid"></div>
+
+                <div class="biome-section-title snow">
+                    <span>❄️</span> FROZEN TUNDRA (Levels 6 - 10)
+                </div>
+                <div id="grid-snow-levels" class="levels-grid"></div>
+
+                <div class="modal-actions">
+                    <button id="btn-close-levels" class="modal-btn secondary" onclick="document.getElementById('modal-level-select').classList.add('hidden')">Back to Game</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VICTORY MODAL -->
+        <div id="modal-victory" class="modal-overlay hidden">
+            <div class="modal-card" style="max-width: 440px; text-align: center;">
+                <h2>VICTORY!</h2>
+                <div id="victory-stars" class="result-stars">⭐⭐⭐</div>
+                <p class="result-stat" id="victory-score">Score: 2400</p>
+                <p class="result-stat" id="victory-lives">Hearts Left: 20/20</p>
+
+                <div class="modal-actions">
+                    <button id="btn-replay-level" class="modal-btn secondary">Replay</button>
+                    <button id="btn-next-level" class="modal-btn">Next Mission ➡️</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DEFEAT MODAL -->
+        <div id="modal-defeat" class="modal-overlay hidden">
+            <div class="modal-card" style="max-width: 440px; text-align: center;">
+                <h2 style="color: #ef4444;">DEFENSE FAILED</h2>
+                <p class="result-stat" style="margin: 12px 0;">The horde breached your base!</p>
+
+                <div class="modal-actions">
+                    <button id="btn-retry-level" class="modal-btn">Try Again 🔄</button>
+                    <button id="btn-defeat-levels" class="modal-btn secondary">Mission Select</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SETTINGS MODAL -->
+        <div id="modal-settings" class="modal-overlay hidden">
+            <div class="modal-card" style="max-width: 420px; text-align: center;">
+                <h2>Settings</h2>
+                <div style="display: flex; flex-direction: column; gap: 12px; margin: 15px 0;">
+                    <button id="btn-toggle-sound" class="modal-btn secondary">🔊 Sound: ON</button>
+                    <button id="btn-reset-data" class="modal-btn danger">⚠️ Reset Saved Campaign Progress</button>
+                </div>
+                <div class="modal-actions">
+                    <button id="btn-close-settings" class="modal-btn">Done</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TOWER CODEX MODAL -->
+        <div id="modal-codex" class="modal-overlay hidden">
+            <div class="modal-card" style="max-width: 680px;">
+                <h2>Tower & Spires Codex</h2>
+                <div style="text-align: center;">
+                    <img src="assets/images/tower_sprites.jpg" alt="Tower Spires" style="width: 100%; max-width: 440px; border-radius: 16px; border: 2px solid #38bdf8; box-shadow: 0 8px 25px rgba(0,0,0,0.6);">
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-top: 10px; font-size: 11px;">
+                    <div style="background: #1e293b; padding: 10px; border-radius: 10px; border-left: 3px solid #10b981;">
+                        <b style="color: #34d399;">Dart Spire (100G)</b><br>
+                        Rapid physical darts. Hits ground & air units. Upgrades to Jungle Ballista.
+                    </div>
+                    <div style="background: #1e293b; padding: 10px; border-radius: 10px; border-left: 3px solid #f97316;">
+                        <b style="color: #fb923c;">Iron Bombard (150G)</b><br>
+                        Heavy explosive shells. Large AoE splash damage against ground swarms.
+                    </div>
+                    <div style="background: #1e293b; padding: 10px; border-radius: 10px; border-left: 3px solid #06b6d4;">
+                        <b style="color: #38bdf8;">Cryo Obelisk (125G)</b><br>
+                        Frost crystallization slowing enemy speed by up to 75%. Hits air & ground.
+                    </div>
+                    <div style="background: #1e293b; padding: 10px; border-radius: 10px; border-left: 3px solid #a855f7;">
+                        <b style="color: #c084fc;">Tesla Coil (175G)</b><br>
+                        Chain lightning jumping to 6 targets. Bypasses physical armor.
+                    </div>
+                    <div style="background: #1e293b; padding: 10px; border-radius: 10px; border-left: 3px solid #ef4444;">
+                        <b style="color: #f87171;">Solar Spire (160G)</b><br>
+                        Continuous thermal laser melting armored Gorillas, Yetis, and Bosses.
+                    </div>
+                </div>
+                <!-- DART SPIRE EVOLUTION & ATTACK ANIMATION SHOWCASE -->
+                <div style="margin-top: 14px; background: rgba(16, 185, 129, 0.12); border: 1.5px solid #10b981; border-radius: 14px; padding: 12px;">
+                    <h3 style="color: #34d399; font-size: 14px; margin-bottom: 8px;">🎯 Dart Spire: Top-Down Progression & Attack Animation</h3>
+                    <div style="text-align: center;">
+                        <img src="assets/images/dart_spire_topdown.jpg" alt="Dart Spire Top-Down Progression" style="width: 100%; max-width: 520px; border-radius: 12px; border: 1.5px solid rgba(52, 211, 153, 0.6); box-shadow: 0 4px 20px rgba(16, 185, 129, 0.35);">
+                    </div>
+                    <div style="font-size: 11px; color: #cbd5e1; margin-top: 10px; line-height: 1.5;">
+                        <b>⚔️ Anchored Mechanical Attack:</b> The solid stone dais stays anchored firmly to the ground; only the internal weapon slider recoils as bowstrings snap and propel darts with forward shockwaves!<br>
+                        <b>• Tier 1:</b> Circular mossy stone dais with timber crossbow & quiver, vibrating bowstring snap & flying dart streak.<br>
+                        <b>• Tier 2:</b> Carved jade geared turntable with interlocking bronze cogs, alternating dual-barrel mechanical fire & venom dart bursts.<br>
+                        <b>• Tier 3:</b> Star-patterned golden-jade sanctuary with heavy runic ballista, hydraulic piston recoil & explosive emerald muzzle shockwaves!<br>
+                        <b>📐 Enlarged Tactical Scale:</b> Towers, build plots, and touch hitboxes enlarged for crystal-clear mobile view and seamless responsiveness.
+                    </div>
+                </div>
+
+                <!-- BOMBARD CANNON EVOLUTION & ATTACK ANIMATION SHOWCASE -->
+                <div style="margin-top: 14px; background: rgba(249, 115, 22, 0.12); border: 1.5px solid #f97316; border-radius: 14px; padding: 12px;">
+                    <h3 style="color: #fb923c; font-size: 14px; margin-bottom: 8px;">💣 Bombard Cannon: Top-Down Progression & Heavy Artillery</h3>
+                    <div style="text-align: center;">
+                        <img src="assets/images/bombard_topdown.jpg" alt="Bombard Cannon Top-Down Progression" style="width: 100%; max-width: 520px; border-radius: 12px; border: 1.5px solid rgba(249, 115, 22, 0.6); box-shadow: 0 4px 20px rgba(249, 115, 22, 0.35);">
+                    </div>
+                    <div style="font-size: 11px; color: #cbd5e1; margin-top: 10px; line-height: 1.5;">
+                        <b>💥 Heavy Ordnance & Recoil:</b> High-caliber siege artillery anchored to fortified stone & volcanic obsidian bastions with mechanical recoil kick and fiery concussion blasts!<br>
+                        <b>• Tier 1 (Bombard Cannon):</b> Cast-iron siege mortar on chiseled granite dais with bronze gear turntable & cannonball rack.<br>
+                        <b>• Tier 2 (Mortar Battery):</b> Twin heavy siege mortars on riveted steel armor carriage with hydraulic elevation cylinders & explosive shell hoppers.<br>
+                        <b>• Tier 3 (Magma Siege Gun):</b> Colossal volcanic obsidian fortress bastion with 4 molten crucibles, glowing lava channels & massive magma-bore cannon!<br>
+                        <b>🔥 Multi-Tier Ordnance:</b> Fires cast-iron cannonballs with powder trails, heavy rifled mortar shells, and incandescent volcanic magma orbs with explosive cluster shrapnel.
+                    </div>
+                </div>
+
+                <!-- CRYO OBELISK EVOLUTION & SUB-ZERO ARSENAL SHOWCASE -->
+                <div style="margin-top: 14px; background: rgba(6, 182, 212, 0.12); border: 1.5px solid #06b6d4; border-radius: 14px; padding: 12px;">
+                    <h3 style="color: #38bdf8; font-size: 14px; margin-bottom: 8px;">❄️ Cryo Obelisk: Top-Down Frost Arsenal & Sub-Zero Evolution</h3>
+                    <div style="text-align: center;">
+                        <img src="assets/images/cryo_topdown.jpg" alt="Cryo Obelisk Top-Down Progression" style="width: 100%; max-width: 520px; border-radius: 12px; border: 1.5px solid rgba(56, 189, 248, 0.6); box-shadow: 0 4px 20px rgba(6, 182, 212, 0.35);">
+                    </div>
+                    <div style="font-size: 11px; color: #cbd5e1; margin-top: 10px; line-height: 1.5;">
+                        <b>🧊 Crystalline Resonance & Chill Aura:</b> Ancient permafrost daises channeling sub-zero arcane energy with rotating runic sigils and cryogenic discharge shockwaves!<br>
+                        <b>• Tier 1 (Cryo Obelisk):</b> Glacial stone dais with glowing runic mandala, 4 sapphire nodes & translucent carved ice obelisk emitting freezing chill shards.<br>
+                        <b>• Tier 2 (Glacial Pylon):</b> Fortified arctic granite platform with frosted steel braces, cold conduits & faceted sub-zero prism core with lateral resonance bursts.<br>
+                        <b>• Tier 3 (Blizzard Sanctum):</b> Deep obsidian sanctuary with 4 perimeter monolith spires channeling crackling lightning-blue frost arcs into a hovering diamond Permafrost Core!<br>
+                        <b>✨ Multi-Tier Cryo Shards:</b> Launches aerodynamic ice shards, spinning dual crystalline needles, and faceted permafrost comets with orbiting satellite ice splinters and freeze-nova shrapnel.
+                    </div>
+                </div>
+
+                <!-- TESLA TOWER EVOLUTION & FRACTAL CHAIN LIGHTNING SHOWCASE -->
+                <div style="margin-top: 14px; background: rgba(168, 85, 247, 0.12); border: 1.5px solid #a855f7; border-radius: 14px; padding: 12px;">
+                    <h3 style="color: #c084fc; font-size: 14px; margin-bottom: 8px;">⚡ Tesla Tower: High-Voltage Resonance & Fractal Chain Lightning</h3>
+                    <div style="text-align: center;">
+                        <img src="assets/images/tesla_topdown.jpg" alt="Tesla Tower Top-Down Progression" style="width: 100%; max-width: 520px; border-radius: 12px; border: 1.5px solid rgba(192, 132, 252, 0.6); box-shadow: 0 4px 20px rgba(168, 85, 247, 0.35);">
+                    </div>
+                    <div style="font-size: 11px; color: #cbd5e1; margin-top: 10px; line-height: 1.5;">
+                        <b>⚡ High-Voltage Field & Ionization:</b> High-frequency electromagnetic spires generating ionizing shockwaves, plasma discharge starbursts and multi-target fractal chain lightning!<br>
+                        <b>• Tier 1 (Tesla Tower):</b> Industrial cast-iron foundation with glowing copper wire coils, 4 ceramic dielectric insulators & spherical brass discharge electrode.<br>
+                        <b>• Tier 2 (Arc Capacitor):</b> Fortified electro-mechanical platform with stepped vacuum power tubes, high-tension busbars & dual toroidal plasma focus rings.<br>
+                        <b>• Tier 3 (Storm Conductor):</b> Runic obsidian capacitor dais with 4 colossal perimeter transformer spires channeling crackling coronal arcs into a supercharged hyper-voltage emitter!<br>
+                        <b>⚡ Unique Attack Animation:</b> Fires jagged branching fractal lightning with violet ionizing glow, electric cyan channel, bright white core, and ground strike ionization shockwaves.
+                    </div>
+                </div>
+
+                <!-- SOLAR SPIRE EVOLUTION & THERMAL DEATH RAY SHOWCASE -->
+                <div style="margin-top: 14px; background: rgba(239, 68, 68, 0.12); border: 1.5px solid #ef4444; border-radius: 14px; padding: 12px;">
+                    <h3 style="color: #f87171; font-size: 14px; margin-bottom: 8px;">🔥 Solar Spire: Concentrated Optical Core & Sun God Death Ray</h3>
+                    <div style="text-align: center;">
+                        <img src="assets/images/solar_topdown.jpg" alt="Solar Spire Top-Down Progression" style="width: 100%; max-width: 520px; border-radius: 12px; border: 1.5px solid rgba(248, 113, 113, 0.6); box-shadow: 0 4px 20px rgba(239, 68, 68, 0.35);">
+                    </div>
+                    <div style="font-size: 11px; color: #cbd5e1; margin-top: 10px; line-height: 1.5;">
+                        <b>☀️ Solar Fusion & Optical Collimation:</b> Radiant gold & obsidian spires channeling concentrated solar radiation with optical collimator flares and continuous thermal beams!<br>
+                        <b>• Tier 1 (Solar Spire):</b> Chiseled sandstone dais with geometric bronze heat heatsinks & polished sunstone lens focusing radiant solar heat.<br>
+                        <b>• Tier 2 (Inferno Core):</b> Stepped volcanic basalt plinth with molten conduits, gold focus brackets & luminous incandescent fusion orb.<br>
+                        <b>• Tier 3 (Sun God Ray):</b> Ancient celestial solar temple with 4 perimeter prism towers channeling blazing solar energy into an ultra-concentrated divine death laser!<br>
+                        <b>🔥 Unique Attack Animation:</b> Continuous thermal death ray with wide outer heat shimmer corona, blazing mid-laser, incandescent white-hot core, rotating aperture starburst, and molten slag target sparks.
+                    </div>
+                </div>
+
+                <!-- WAKE SPIRE EVOLUTION & HYDRAULIC CRESCENT WAVE SHOWCASE -->
+                <div style="margin-top: 14px; background: rgba(14, 165, 233, 0.12); border: 1.5px solid #0ea5e9; border-radius: 14px; padding: 12px;">
+                    <h3 style="color: #38bdf8; font-size: 14px; margin-bottom: 8px;">🌊 Wake Spire: Hydraulic Pressure & Sweeping Tidal Wave Surges</h3>
+                    <div style="text-align: center;">
+                        <img src="assets/images/wake_topdown.jpg" alt="Wake Spire Top-Down Progression" style="width: 100%; max-width: 520px; border-radius: 12px; border: 1.5px solid rgba(56, 189, 248, 0.6); box-shadow: 0 4px 20px rgba(14, 165, 233, 0.35);">
+                    </div>
+                    <div style="font-size: 11px; color: #cbd5e1; margin-top: 10px; line-height: 1.5;">
+                        <b>🌊 Hydraulic Kinetic Force & Backward Knockback:</b> Water obelisks tapping deep subterranean oceanic aquifers to launch pressurized tidal surges that physically sweep creeps backwards along their route!<br>
+                        <b>• Tier 1 (Wake Spire):</b> Smooth river-stone platform with swirling tidal runic channels & central ocean-glass obelisk channeling pressurized water.<br>
+                        <b>• Tier 2 (Tidal Maelstrom):</b> Deep marine granite bastion with twin swirling vortex pools, brass hydraulic pressure rings & resonant aquamarine prism.<br>
+                        <b>• Tier 3 (Leviathan's Wake):</b> Abyssal trench sanctuary with 4 abyssal hydro-spires channeling deep-ocean power into a colossal Leviathan tidal core!<br>
+                        <b>🌊 Unique Attack Animation:</b> Sweeping hydraulic crescent tidal wave with deep azure body, translucent cyan crest, frothing whitecap curl, and violent path knockback physics.
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button id="btn-close-codex" class="modal-btn">Done</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="js/audio.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/levels.js"></script>
+    <script src="js/engine.js"></script>
+    <script src="js/ui.js"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('game-canvas');
+            const engine = new GameEngine(canvas);
+            const ui = new UIManager(engine);
+
+            window.engine = engine;
+            window.ui = ui;
+
+            // Load Level 1 by default
+            engine.loadLevel(1);
+
+            // Game Loop
+            let lastTimestamp = performance.now();
+            function loop(timestamp) {
+                const dt = Math.min((timestamp - lastTimestamp) / 1000, 0.1);
+                lastTimestamp = timestamp;
+
+                engine.update(dt);
+                engine.render();
+
+                requestAnimationFrame(loop);
+            }
+            requestAnimationFrame(loop);
+        });
+    </script>
+</body>
+</html>

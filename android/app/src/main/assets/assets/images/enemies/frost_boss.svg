@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <radialGradient id="glacierIce" cx="40%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="25%" stop-color="#bae6fd"/>
+      <stop offset="60%" stop-color="#38bdf8"/>
+      <stop offset="85%" stop-color="#0284c7"/>
+      <stop offset="100%" stop-color="#082f49"/>
+    </radialGradient>
+    <radialGradient id="arcticHeart" cx="45%" cy="45%" r="50%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="40%" stop-color="#7dd3fc"/>
+      <stop offset="80%" stop-color="#0284c7"/>
+      <stop offset="100%" stop-color="#0c4a6e"/>
+    </radialGradient>
+    <linearGradient id="iceSpike" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="50%" stop-color="#bae6fd"/>
+      <stop offset="100%" stop-color="#0369a1"/>
+    </linearGradient>
+    <filter id="behemothAura">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#38bdf8" flood-opacity="0.8"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#behemothAura)">
+    <!-- Back Glacial Spines & Floating Ice Fragments -->
+    <polygon points="18,36 6,24 22,46" fill="url(#iceSpike)" stroke="#0369a1" stroke-width="1.5"/>
+    <polygon points="18,92 6,104 22,82" fill="url(#iceSpike)" stroke="#0369a1" stroke-width="1.5"/>
+    <polygon points="12,64 2,64 16,72" fill="url(#iceSpike)" stroke="#0369a1" stroke-width="1.5"/>
+
+    <!-- Colossal Glacier Fists (Extended Forward) -->
+    <!-- Top Glacier Fist -->
+    <polygon points="86,14 114,10 120,28 92,34" fill="url(#glacierIce)" stroke="#082f49" stroke-width="2"/>
+    <polygon points="114,10 126,14 120,28" fill="#ffffff"/>
+    <!-- Frost Runes on Top Fist -->
+    <line x1="94" y1="22" x2="106" y2="22" stroke="#e0f2fe" stroke-width="2.5"/>
+    <line x1="100" y1="16" x2="100" y2="28" stroke="#e0f2fe" stroke-width="2.5"/>
+
+    <!-- Bottom Glacier Fist -->
+    <polygon points="86,114 114,118 120,100 92,94" fill="url(#glacierIce)" stroke="#082f49" stroke-width="2"/>
+    <polygon points="114,118 126,114 120,100" fill="#ffffff"/>
+    <!-- Frost Runes on Bottom Fist -->
+    <line x1="94" y1="106" x2="106" y2="106" stroke="#e0f2fe" stroke-width="2.5"/>
+    <line x1="100" y1="100" x2="100" y2="112" stroke="#e0f2fe" stroke-width="2.5"/>
+
+    <!-- Giant Glacial Shoulder Spikes -->
+    <!-- Top Shoulder Spikes -->
+    <polygon points="46,14 56,2 66,22" fill="url(#iceSpike)" stroke="#082f49" stroke-width="1.5"/>
+    <polygon points="62,18 78,4 74,26" fill="url(#iceSpike)" stroke="#082f49" stroke-width="1.5"/>
+    <ellipse cx="58" cy="28" rx="26" ry="18" fill="url(#glacierIce)" stroke="#082f49" stroke-width="2.5"/>
+
+    <!-- Bottom Shoulder Spikes -->
+    <polygon points="46,114 56,126 66,106" fill="url(#iceSpike)" stroke="#082f49" stroke-width="1.5"/>
+    <polygon points="62,110 78,124 74,102" fill="url(#iceSpike)" stroke="#082f49" stroke-width="1.5"/>
+    <ellipse cx="58" cy="100" rx="26" ry="18" fill="url(#glacierIce)" stroke="#082f49" stroke-width="2.5"/>
+
+    <!-- Colossal Crystalline Torso -->
+    <polygon points="26,38 68,34 86,64 68,94 26,90 18,64" fill="url(#glacierIce)" stroke="#082f49" stroke-width="3"/>
+
+    <!-- Blinding Arctic Heart Core -->
+    <polygon points="44,50 64,48 72,64 64,80 44,78 36,64" fill="#0c4a6e" stroke="#38bdf8" stroke-width="2"/>
+    <circle cx="54" cy="64" r="11" fill="url(#arcticHeart)"/>
+    <circle cx="52" cy="62" r="4" fill="#ffffff"/>
+
+    <!-- Glowing Glacial Rune Veins -->
+    <path d="M26,48 L40,54 M26,80 L40,74" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="26" cy="48" r="3.5" fill="#bae6fd"/>
+    <circle cx="26" cy="80" r="3.5" fill="#bae6fd"/>
+
+    <!-- Glacial Crown & Frozen Brow (Facing Right) -->
+    <path d="M72,46 L98,44 L110,64 L98,84 L72,82 Z" fill="url(#glacierIce)" stroke="#082f49" stroke-width="2.5"/>
+    <!-- Glacial Crown Spikes on Head -->
+    <polygon points="84,46 92,32 96,46" fill="#ffffff" stroke="#0284c7" stroke-width="1"/>
+    <polygon points="84,82 92,96 96,82" fill="#ffffff" stroke="#0284c7" stroke-width="1"/>
+    <polygon points="98,54 116,64 98,74" fill="#e0f2fe"/>
+
+    <!-- Blinding Glacial Eyes -->
+    <polygon points="88,54 100,54 96,60 88,60" fill="#ffffff"/>
+    <polygon points="88,74 100,74 96,68 88,68" fill="#ffffff"/>
+    <circle cx="94" cy="57" r="1.5" fill="#38bdf8"/>
+    <circle cx="94" cy="71" r="1.5" fill="#38bdf8"/>
+  </g>
+</svg>

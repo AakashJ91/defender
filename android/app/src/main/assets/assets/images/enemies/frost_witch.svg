@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <radialGradient id="witchRobe" cx="45%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#818cf8"/>
+      <stop offset="50%" stop-color="#4f46e5"/>
+      <stop offset="100%" stop-color="#1e1b4b"/>
+    </radialGradient>
+    <radialGradient id="witchShield" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#e0f2fe" stop-opacity="0.8"/>
+      <stop offset="60%" stop-color="#38bdf8" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#0284c7" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="crystalStaff" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0f9ff"/>
+      <stop offset="50%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0369a1"/>
+    </linearGradient>
+    <filter id="witchGlow">
+      <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#818cf8" flood-opacity="0.7"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#witchGlow)">
+    <!-- Protective Frost Shield Shimmer -->
+    <circle cx="56" cy="64" r="30" fill="url(#witchShield)"/>
+
+    <!-- Flowing Trailing Robe & Mantle (Left) -->
+    <path d="M48,46 Q24,36 10,48 Q26,58 14,64 Q28,70 10,80 Q24,92 48,82 Z" fill="url(#witchRobe)" stroke="#1e1b4b" stroke-width="1.5"/>
+    <path d="M46,52 Q28,48 18,56 Q30,62 20,68 Q32,74 18,80 Q34,80 46,76 Z" fill="#6366f1" opacity="0.6"/>
+
+    <!-- Orbiting Defensive Ice Shards -->
+    <polygon points="34,26 42,22 46,28 38,32" fill="#bae6fd" stroke="#0284c7" stroke-width="1"/>
+    <polygon points="78,14 86,10 90,16 82,20" fill="#bae6fd" stroke="#0284c7" stroke-width="1"/>
+    <polygon points="34,102 42,106 46,100 38,96" fill="#bae6fd" stroke="#0284c7" stroke-width="1"/>
+    <polygon points="78,114 86,118 90,112 82,108" fill="#bae6fd" stroke="#0284c7" stroke-width="1"/>
+
+    <!-- Crystalline Frost Staff (Held in right hand, extending top-right) -->
+    <line x1="56" y1="84" x2="102" y2="34" stroke="#0369a1" stroke-width="5" stroke-linecap="round"/>
+    <line x1="56" y1="84" x2="102" y2="34" stroke="#e0f2fe" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Snowflake Crystal Headpiece atop staff -->
+    <g transform="translate(104, 30)">
+      <polygon points="0,-12 3,-3 12,0 3,3 0,12 -3,3 -12,0 -3,-3" fill="url(#crystalStaff)" stroke="#0369a1" stroke-width="1"/>
+      <circle cx="0" cy="0" r="4" fill="#ffffff"/>
+      <circle cx="0" cy="0" r="2" fill="#38bdf8"/>
+    </g>
+
+    <!-- Torso / Robe -->
+    <ellipse cx="56" cy="64" rx="20" ry="18" fill="url(#witchRobe)" stroke="#1e1b4b" stroke-width="2"/>
+    <!-- Silver Brocade Clasp -->
+    <circle cx="64" cy="64" r="3.5" fill="#e0e7ff"/>
+    <circle cx="64" cy="64" r="1.5" fill="#38bdf8"/>
+
+    <!-- Pointed Hood / Cowl (Facing Right) -->
+    <path d="M48,50 Q66,42 86,46 L100,64 L86,82 Q66,86 48,78 Z" fill="url(#witchRobe)" stroke="#1e1b4b" stroke-width="2"/>
+    <!-- Hood Shadow Opening -->
+    <polygon points="74,54 92,64 74,74 70,64" fill="#09090b"/>
+
+    <!-- Ethereal Glowing Cyan Eyes in Hood -->
+    <ellipse cx="78" cy="60" rx="3.5" ry="1.8" fill="#38bdf8"/>
+    <ellipse cx="78" cy="68" rx="3.5" ry="1.8" fill="#38bdf8"/>
+    <circle cx="79" cy="60" r="1" fill="#ffffff"/>
+    <circle cx="79" cy="68" r="1" fill="#ffffff"/>
+  </g>
+</svg>

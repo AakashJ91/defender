@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <radialGradient id="crawlerShell" cx="40%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#bef264"/>
+      <stop offset="40%" stop-color="#65a30d"/>
+      <stop offset="85%" stop-color="#365314"/>
+      <stop offset="100%" stop-color="#14532d"/>
+    </radialGradient>
+    <radialGradient id="venomGlow" cx="40%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="50%" stop-color="#a3e635"/>
+      <stop offset="100%" stop-color="#4d7c0f"/>
+    </radialGradient>
+    <filter id="spiderShadow">
+      <feDropShadow dx="0" dy="3" stdDeviation="2.5" flood-color="#000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#spiderShadow)">
+    <!-- 8 Articulated Spider Legs (4 Top, 4 Bottom) -->
+    <!-- Top Legs (Left to Right) -->
+    <path d="M42,50 Q28,26 12,30" stroke="#365314" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+    <path d="M54,48 Q46,16 32,14" stroke="#4d7c0f" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+    <path d="M68,48 Q70,14 62,8" stroke="#4d7c0f" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+    <path d="M78,52 Q96,22 108,18" stroke="#65a30d" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+
+    <!-- Bottom Legs (Left to Right) -->
+    <path d="M42,78 Q28,102 12,98" stroke="#365314" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+    <path d="M54,80 Q46,112 32,114" stroke="#4d7c0f" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+    <path d="M68,80 Q70,114 62,120" stroke="#4d7c0f" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+    <path d="M78,76 Q96,106 108,110" stroke="#65a30d" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+
+    <!-- Large Segmented Abdomen (Back) -->
+    <ellipse cx="38" cy="64" rx="26" ry="22" fill="url(#crawlerShell)" stroke="#1a2e05" stroke-width="2"/>
+    <!-- Abdomen glowing venom spots -->
+    <ellipse cx="28" cy="64" rx="6" ry="4" fill="url(#venomGlow)"/>
+    <ellipse cx="42" cy="54" rx="4" ry="3" fill="url(#venomGlow)"/>
+    <ellipse cx="42" cy="74" rx="4" ry="3" fill="url(#venomGlow)"/>
+    <ellipse cx="48" cy="64" rx="5" ry="3.5" fill="url(#venomGlow)"/>
+
+    <!-- Cephalothorax (Midsection) -->
+    <ellipse cx="68" cy="64" rx="16" ry="14" fill="#365314" stroke="#1a2e05" stroke-width="2"/>
+    <path d="M60,54 Q72,64 60,74" stroke="#84cc16" stroke-width="2" fill="none"/>
+
+    <!-- Spider Head (Front Right) -->
+    <ellipse cx="84" cy="64" rx="12" ry="11" fill="#4d7c0f" stroke="#1a2e05" stroke-width="1.5"/>
+
+    <!-- Cluster of glowing predatory eyes -->
+    <circle cx="86" cy="59" r="2.5" fill="#facc15"/>
+    <circle cx="86" cy="69" r="2.5" fill="#facc15"/>
+    <circle cx="92" cy="58" r="3" fill="#fef08a"/>
+    <circle cx="92" cy="70" r="3" fill="#fef08a"/>
+    <circle cx="93" cy="64" r="2" fill="#ef4444"/>
+
+    <!-- Mandibles / Fangs -->
+    <path d="M92,57 Q104,55 110,61 Q102,62 94,61 Z" fill="#e2e8f0" stroke="#475569" stroke-width="1"/>
+    <path d="M92,71 Q104,73 110,67 Q102,66 94,67 Z" fill="#e2e8f0" stroke="#475569" stroke-width="1"/>
+    <!-- Venom droplet -->
+    <circle cx="112" cy="64" r="2.5" fill="#84cc16"/>
+    <circle cx="113" cy="63" r="0.8" fill="#ffffff"/>
+  </g>
+</svg>

@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <radialGradient id="wyvernBody" cx="45%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#bae6fd"/>
+      <stop offset="40%" stop-color="#38bdf8"/>
+      <stop offset="80%" stop-color="#0284c7"/>
+      <stop offset="100%" stop-color="#0c4a6e"/>
+    </radialGradient>
+    <linearGradient id="wyvernWing" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e0f2fe" stop-opacity="0.9"/>
+      <stop offset="40%" stop-color="#7dd3fc" stop-opacity="0.85"/>
+      <stop offset="85%" stop-color="#0369a1" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#082f49"/>
+    </linearGradient>
+    <filter id="wyvernGlow">
+      <feDropShadow dx="0" dy="5" stdDeviation="3.5" flood-color="#0284c7" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#wyvernGlow)">
+    <!-- Long Serpentine Icy Tail (Left) -->
+    <path d="M42,64 Q26,60 12,50 Q16,66 6,70 Q20,72 36,66" fill="#0284c7" stroke="#082f49" stroke-width="1.5"/>
+    <!-- Tail Diamond Crystal Barb -->
+    <polygon points="4,70 14,64 16,74 6,76" fill="#bae6fd" stroke="#0284c7" stroke-width="1"/>
+
+    <!-- Top Crystal Wing -->
+    <path d="M52,56 Q38,16 66,6 Q78,24 64,40 Q80,30 84,46 Q72,50 64,56 Z" fill="url(#wyvernWing)" stroke="#0c4a6e" stroke-width="1.5"/>
+    <!-- Wing Ice Bones -->
+    <path d="M52,56 Q56,20 66,6" stroke="#0369a1" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+    <path d="M58,32 Q72,20 78,24" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <path d="M60,44 Q76,34 84,46" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <!-- Ice Claws at Wing Tips -->
+    <polygon points="66,6 64,2 69,5" fill="#ffffff"/>
+
+    <!-- Bottom Crystal Wing -->
+    <path d="M52,72 Q38,112 66,122 Q78,104 64,88 Q80,98 84,82 Q72,78 64,72 Z" fill="url(#wyvernWing)" stroke="#0c4a6e" stroke-width="1.5"/>
+    <path d="M52,72 Q56,108 66,122" stroke="#0369a1" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+    <path d="M58,96 Q72,108 78,104" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <path d="M60,84 Q76,94 84,82" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <polygon points="66,122 64,126 69,123" fill="#ffffff"/>
+
+    <!-- Sleek Wyvern Torso -->
+    <ellipse cx="56" cy="64" rx="22" ry="13" fill="url(#wyvernBody)" stroke="#082f49" stroke-width="1.5"/>
+    <!-- Crystal Dorsal Spines -->
+    <polygon points="38,64 42,59 46,64" fill="#e0f2fe"/>
+    <polygon points="48,64 52,58 56,64" fill="#e0f2fe"/>
+    <polygon points="58,64 62,59 66,64" fill="#e0f2fe"/>
+
+    <!-- Dragon Head & Horns (Facing Right) -->
+    <path d="M68,56 L86,52 L100,56 L112,64 L100,72 L86,76 L68,72 Z" fill="url(#wyvernBody)" stroke="#082f49" stroke-width="1.5"/>
+
+    <!-- Back-swept Crystalline Horns -->
+    <polygon points="84,52 68,34 78,48" fill="#e0f2fe" stroke="#0284c7" stroke-width="1"/>
+    <polygon points="84,76 68,94 78,80" fill="#e0f2fe" stroke="#0284c7" stroke-width="1"/>
+
+    <!-- Glowing Cold Eyes -->
+    <ellipse cx="96" cy="58" rx="4" ry="2.2" fill="#ffffff"/>
+    <ellipse cx="96" cy="70" rx="4" ry="2.2" fill="#ffffff"/>
+    <circle cx="97" cy="58" r="1.5" fill="#0284c7"/>
+    <circle cx="97" cy="70" r="1.5" fill="#0284c7"/>
+
+    <!-- Freezing Frost Vapour Breath -->
+    <circle cx="116" cy="64" r="3" fill="#e0f2fe" opacity="0.8"/>
+    <circle cx="122" cy="62" r="2" fill="#bae6fd" opacity="0.6"/>
+  </g>
+</svg>

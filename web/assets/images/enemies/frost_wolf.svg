@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <radialGradient id="wolfFur" cx="45%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="35%" stop-color="#bfdbfe"/>
+      <stop offset="70%" stop-color="#60a5fa"/>
+      <stop offset="100%" stop-color="#1e40af"/>
+    </radialGradient>
+    <radialGradient id="frostEye" cx="35%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="50%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </radialGradient>
+    <filter id="wolfGlow">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#38bdf8" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#wolfGlow)">
+    <!-- Bushy Frosted Wolf Tail (Trailing Left) -->
+    <path d="M36,64 Q18,60 8,50 Q12,68 18,74 Q28,76 38,68 Z" fill="url(#wolfFur)" stroke="#1d4ed8" stroke-width="1.5"/>
+    <!-- Tail Frost Tip -->
+    <polygon points="6,48 14,56 12,46" fill="#f0f9ff"/>
+
+    <!-- Hind Paws -->
+    <ellipse cx="32" cy="42" rx="10" ry="6" fill="#3b82f6" transform="rotate(-15 32 42)"/>
+    <ellipse cx="32" cy="86" rx="10" ry="6" fill="#3b82f6" transform="rotate(15 32 86)"/>
+
+    <!-- Sleek Muscular Direwolf Torso -->
+    <ellipse cx="56" cy="64" rx="26" ry="18" fill="url(#wolfFur)" stroke="#1d4ed8" stroke-width="2"/>
+    <!-- Frosted Fur Spikes along spine -->
+    <polygon points="38,58 44,52 50,58" fill="#f0f9ff"/>
+    <polygon points="50,58 56,50 62,58" fill="#f0f9ff"/>
+    <polygon points="62,58 68,52 74,58" fill="#f0f9ff"/>
+
+    <!-- Front Running Paws (Extended Forward) -->
+    <path d="M68,44 Q86,30 96,36" stroke="#2563eb" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <path d="M68,84 Q86,98 96,92" stroke="#2563eb" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <!-- Claws -->
+    <circle cx="98" cy="35" r="2.5" fill="#e0f2fe"/>
+    <circle cx="98" cy="93" r="2.5" fill="#e0f2fe"/>
+
+    <!-- Wolf Mane & Shoulders -->
+    <ellipse cx="72" cy="64" rx="18" ry="16" fill="url(#wolfFur)"/>
+
+    <!-- Sharp Pointed Ears -->
+    <polygon points="76,46 88,24 94,44" fill="#60a5fa" stroke="#1e40af" stroke-width="1.5"/>
+    <polygon points="78,44 87,28 91,42" fill="#e0f2fe"/>
+    <polygon points="76,82 88,104 94,84" fill="#60a5fa" stroke="#1e40af" stroke-width="1.5"/>
+    <polygon points="78,84 87,100 91,86" fill="#e0f2fe"/>
+
+    <!-- Direwolf Head & Snout (Facing Right) -->
+    <path d="M78,54 L102,56 L114,64 L102,72 L78,74 Z" fill="url(#wolfFur)" stroke="#1e40af" stroke-width="1.5"/>
+
+    <!-- Snarling Muzzle / Nose -->
+    <polygon points="112,62 118,64 112,66" fill="#0f172a"/>
+
+    <!-- Blazing Cyan Predatory Eyes -->
+    <ellipse cx="94" cy="58" rx="4" ry="2.5" fill="url(#frostEye)" transform="rotate(10 94 58)"/>
+    <ellipse cx="94" cy="70" rx="4" ry="2.5" fill="url(#frostEye)" transform="rotate(-10 94 70)"/>
+    <circle cx="95" cy="58" r="1" fill="#ffffff"/>
+    <circle cx="95" cy="70" r="1" fill="#ffffff"/>
+
+    <!-- Icy Fangs -->
+    <polygon points="106,62 110,61 108,64" fill="#ffffff"/>
+    <polygon points="106,66 110,67 108,64" fill="#ffffff"/>
+  </g>
+</svg>

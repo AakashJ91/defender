@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <radialGradient id="drakeScale" cx="45%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="50%" stop-color="#059669"/>
+      <stop offset="100%" stop-color="#064e3b"/>
+    </radialGradient>
+    <linearGradient id="drakeWing" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6ee7b7" stop-opacity="0.85"/>
+      <stop offset="50%" stop-color="#10b981" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#047857" stop-opacity="0.95"/>
+    </linearGradient>
+    <radialGradient id="drakeEye" cx="35%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="40%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </radialGradient>
+    <filter id="drakeShadow">
+      <feDropShadow dx="2" dy="5" stdDeviation="3" flood-color="#000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#drakeShadow)">
+    <!-- Long Reptilian Tail (Left) -->
+    <path d="M42,64 Q28,68 14,56 Q20,66 8,72 Q22,70 36,66" fill="#047857" stroke="#064e3b" stroke-width="1.5"/>
+    <polygon points="6,72 16,68 12,78" fill="#10b981"/>
+
+    <!-- Left Wing (Top in top-down view) -->
+    <!-- Wing Membrane -->
+    <path d="M52,56 Q42,18 64,8 Q76,26 62,42 Q76,32 82,48 Q70,52 64,56 Z" fill="url(#drakeWing)" stroke="#064e3b" stroke-width="1.5"/>
+    <!-- Wing Bone Spars -->
+    <path d="M52,56 Q56,22 64,8" stroke="#064e3b" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <path d="M58,34 Q70,24 76,26" stroke="#047857" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <path d="M60,46 Q74,38 82,48" stroke="#047857" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <circle cx="64" cy="8" r="2.5" fill="#facc15"/>
+
+    <!-- Right Wing (Bottom in top-down view) -->
+    <!-- Wing Membrane -->
+    <path d="M52,72 Q42,110 64,120 Q76,102 62,86 Q76,96 82,80 Q70,76 64,72 Z" fill="url(#drakeWing)" stroke="#064e3b" stroke-width="1.5"/>
+    <!-- Wing Bone Spars -->
+    <path d="M52,72 Q56,106 64,120" stroke="#064e3b" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <path d="M58,94 Q70,104 76,102" stroke="#047857" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <path d="M60,82 Q74,90 82,80" stroke="#047857" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <circle cx="64" cy="120" r="2.5" fill="#facc15"/>
+
+    <!-- Sleek Muscular Dragon Body -->
+    <ellipse cx="56" cy="64" rx="22" ry="12" fill="url(#drakeScale)" stroke="#064e3b" stroke-width="1.5"/>
+    <!-- Spine Scutes / Ridges -->
+    <polygon points="40,64 44,60 48,64" fill="#a7f3d0"/>
+    <polygon points="50,64 54,59 58,64" fill="#a7f3d0"/>
+    <polygon points="60,64 64,60 68,64" fill="#a7f3d0"/>
+
+    <!-- Neck & Head (Facing Right) -->
+    <path d="M68,58 L84,54 L96,58 L108,64 L96,70 L84,74 L68,70 Z" fill="url(#drakeScale)" stroke="#064e3b" stroke-width="1.5"/>
+
+    <!-- Horns -->
+    <path d="M82,54 Q78,42 70,38 Q80,48 84,52 Z" fill="#facc15" stroke="#78350f" stroke-width="1"/>
+    <path d="M82,74 Q78,86 70,90 Q80,80 84,76 Z" fill="#facc15" stroke="#78350f" stroke-width="1"/>
+
+    <!-- Piercing Eyes -->
+    <ellipse cx="94" cy="59" rx="3.5" ry="2" fill="url(#drakeEye)"/>
+    <ellipse cx="94" cy="69" rx="3.5" ry="2" fill="url(#drakeEye)"/>
+    <line x1="94" y1="57" x2="94" y2="61" stroke="#000" stroke-width="1.2"/>
+    <line x1="94" y1="67" x2="94" y2="71" stroke="#000" stroke-width="1.2"/>
+
+    <!-- Snout & Nostrils -->
+    <circle cx="104" cy="62" r="1.2" fill="#064e3b"/>
+    <circle cx="104" cy="66" r="1.2" fill="#064e3b"/>
+  </g>
+</svg>

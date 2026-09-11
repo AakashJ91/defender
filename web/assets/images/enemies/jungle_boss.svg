@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <radialGradient id="ancientStone" cx="40%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#64748b"/>
+      <stop offset="50%" stop-color="#334155"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </radialGradient>
+    <radialGradient id="emeraldCore" cx="40%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="35%" stop-color="#6ee7b7"/>
+      <stop offset="70%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#064e3b"/>
+    </radialGradient>
+    <filter id="titanAura">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#10b981" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#titanAura)">
+    <!-- Hanging Moss & Tendril Vines (Back) -->
+    <path d="M26,44 Q14,32 10,48 Q18,60 22,76 Q12,88 16,100" stroke="#15803d" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <path d="M38,28 Q24,18 20,32" stroke="#22c55e" stroke-width="3" stroke-linecap="round" fill="none"/>
+
+    <!-- Colossal Stone Fists (Extended Forward) -->
+    <!-- Top Fist -->
+    <rect x="86" y="16" width="28" height="24" rx="6" fill="url(#ancientStone)" stroke="#1e293b" stroke-width="2"/>
+    <!-- Glowing Runes on Top Fist -->
+    <path d="M92,28 L104,28 M98,22 L98,34" stroke="#34d399" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Bottom Fist -->
+    <rect x="86" y="88" width="28" height="24" rx="6" fill="url(#ancientStone)" stroke="#1e293b" stroke-width="2"/>
+    <path d="M92,100 L104,100 M98,94 L98,106" stroke="#34d399" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- Massive Stone Shoulders -->
+    <!-- Top Shoulder Boulder -->
+    <ellipse cx="58" cy="28" rx="26" ry="18" fill="url(#ancientStone)" stroke="#0f172a" stroke-width="2.5"/>
+    <path d="M46,20 Q62,14 74,24" stroke="#15803d" stroke-width="5" stroke-linecap="round" fill="none"/>
+    <!-- Moss Patch -->
+    <ellipse cx="62" cy="22" rx="12" ry="6" fill="#16a34a"/>
+
+    <!-- Bottom Shoulder Boulder -->
+    <ellipse cx="58" cy="100" rx="26" ry="18" fill="url(#ancientStone)" stroke="#0f172a" stroke-width="2.5"/>
+    <path d="M46,108 Q62,114 74,104" stroke="#15803d" stroke-width="5" stroke-linecap="round" fill="none"/>
+    <!-- Moss Patch -->
+    <ellipse cx="62" cy="106" rx="12" ry="6" fill="#16a34a"/>
+
+    <!-- Massive Monolithic Torso -->
+    <polygon points="28,40 68,36 84,64 68,92 28,88 20,64" fill="url(#ancientStone)" stroke="#0f172a" stroke-width="3"/>
+
+    <!-- Carved Ancient Stone Core & Glowing Emerald Inscriptions -->
+    <polygon points="46,50 64,48 72,64 64,80 46,78 38,64" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+    <!-- Blazing Emerald Heart Core -->
+    <circle cx="55" cy="64" r="10" fill="url(#emeraldCore)"/>
+    <circle cx="53" cy="62" r="3" fill="#ffffff"/>
+
+    <!-- Glowing Runic Circuits on Back -->
+    <path d="M28,48 L42,54 M28,80 L42,74" stroke="#34d399" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="28" cy="48" r="3" fill="#34d399"/>
+    <circle cx="28" cy="80" r="3" fill="#34d399"/>
+
+    <!-- Head / Ancient Carved Totemic Stone Face (Facing Right) -->
+    <path d="M72,48 L98,46 L108,64 L98,82 L72,80 Z" fill="url(#ancientStone)" stroke="#0f172a" stroke-width="2.5"/>
+    <!-- Stone Brow Ridge -->
+    <rect x="80" y="50" width="22" height="6" rx="2" fill="#1e293b"/>
+    <rect x="80" y="72" width="22" height="6" rx="2" fill="#1e293b"/>
+
+    <!-- Blazing Emerald Eyes -->
+    <polygon points="86,54 98,54 94,60 86,60" fill="#34d399"/>
+    <polygon points="86,74 98,74 94,68 86,68" fill="#34d399"/>
+    <circle cx="92" cy="57" r="1.5" fill="#ffffff"/>
+    <circle cx="92" cy="71" r="1.5" fill="#ffffff"/>
+
+    <!-- Ancient Carved Mouth -->
+    <rect x="94" y="62" width="10" height="4" rx="1" fill="#022c22" stroke="#10b981" stroke-width="1"/>
+  </g>
+</svg>

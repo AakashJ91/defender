@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <radialGradient id="yetiFur" cx="45%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="45%" stop-color="#f0f9ff"/>
+      <stop offset="80%" stop-color="#bae6fd"/>
+      <stop offset="100%" stop-color="#64748b"/>
+    </radialGradient>
+    <radialGradient id="yetiFace" cx="45%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="70%" stop-color="#0284c7"/>
+      <stop offset="100%" stop-color="#0c4a6e"/>
+    </radialGradient>
+    <linearGradient id="iceHorn" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e0f2fe"/>
+      <stop offset="50%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0369a1"/>
+    </linearGradient>
+    <filter id="yetiShadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#0f172a" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#yetiShadow)">
+    <!-- Back Hind Quarters -->
+    <ellipse cx="32" cy="48" rx="15" ry="11" fill="#e0f2fe"/>
+    <ellipse cx="32" cy="80" rx="15" ry="11" fill="#e0f2fe"/>
+    <ellipse cx="26" cy="64" rx="18" ry="16" fill="#cbd5e1"/>
+
+    <!-- Massive Forearms with Glacial Ice Claws (Reaching Forward) -->
+    <path d="M58,34 Q84,18 98,28 Q88,42 66,44 Z" fill="url(#yetiFur)" stroke="#94a3b8" stroke-width="1.5"/>
+    <path d="M58,94 Q84,110 98,100 Q88,86 66,84 Z" fill="url(#yetiFur)" stroke="#94a3b8" stroke-width="1.5"/>
+    <!-- Ice Claws -->
+    <polygon points="98,24 112,22 104,30" fill="#38bdf8"/>
+    <polygon points="100,32 114,32 102,38" fill="#bae6fd"/>
+    <polygon points="98,104 112,106 104,98" fill="#38bdf8"/>
+    <polygon points="100,96 114,96 102,90" fill="#bae6fd"/>
+
+    <!-- Massive Furry Body -->
+    <ellipse cx="56" cy="64" rx="28" ry="26" fill="url(#yetiFur)" stroke="#94a3b8" stroke-width="2"/>
+    <!-- Shaggy Fur Tufts -->
+    <polygon points="34,44 26,40 36,52" fill="#ffffff"/>
+    <polygon points="34,84 26,88 36,76" fill="#ffffff"/>
+
+    <!-- Huge Curved Glacial Horns -->
+    <path d="M68,48 Q76,14 50,8 Q58,26 66,42 Z" fill="url(#iceHorn)" stroke="#0284c7" stroke-width="1.5"/>
+    <path d="M68,80 Q76,114 50,120 Q58,102 66,86 Z" fill="url(#iceHorn)" stroke="#0284c7" stroke-width="1.5"/>
+
+    <!-- Thick Furry Neck & Head (Facing Right) -->
+    <ellipse cx="76" cy="64" rx="18" ry="16" fill="url(#yetiFur)" stroke="#94a3b8" stroke-width="1.5"/>
+
+    <!-- Frostbitten Blue Face Plate -->
+    <polygon points="74,52 92,50 98,64 92,78 74,76" fill="url(#yetiFace)" stroke="#0c4a6e" stroke-width="1.5"/>
+
+    <!-- Deep Glowing Eyes -->
+    <circle cx="86" cy="57" r="3" fill="#ffffff"/>
+    <circle cx="86" cy="71" r="3" fill="#ffffff"/>
+    <circle cx="87" cy="57" r="1.5" fill="#0284c7"/>
+    <circle cx="87" cy="71" r="1.5" fill="#0284c7"/>
+
+    <!-- Ferocious Roaring Snout & Icy Tusks -->
+    <rect x="88" y="60" width="12" height="8" rx="2" fill="#082f49"/>
+    <polygon points="90,58 94,64 92,58" fill="#ffffff"/>
+    <polygon points="90,70 94,64 92,70" fill="#ffffff"/>
+    <polygon points="96,60 100,64 98,60" fill="#ffffff"/>
+    <polygon points="96,68 100,64 98,68" fill="#ffffff"/>
+  </g>
+</svg>

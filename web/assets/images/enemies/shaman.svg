@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <radialGradient id="healOrb" cx="40%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="40%" stop-color="#a3e635"/>
+      <stop offset="80%" stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#15803d"/>
+    </radialGradient>
+    <linearGradient id="tikiWood" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#b45309"/>
+      <stop offset="50%" stop-color="#78350f"/>
+      <stop offset="100%" stop-color="#451a03"/>
+    </linearGradient>
+    <filter id="shamanGlow">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#22c55e" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#shamanGlow)">
+    <!-- Tribal Headdress Feathers (Spreading Back & Out) -->
+    <polygon points="34,64 12,50 32,58" fill="#ef4444"/>
+    <polygon points="36,64 8,64 34,68" fill="#eab308"/>
+    <polygon points="34,64 12,78 32,70" fill="#06b6d4"/>
+    <polygon points="38,56 18,36 36,48" fill="#84cc16"/>
+    <polygon points="38,72 18,92 36,80" fill="#a855f7"/>
+
+    <!-- Shaman Body / Robe -->
+    <ellipse cx="52" cy="64" rx="20" ry="18" fill="#713f12" stroke="#451a03" stroke-width="2"/>
+    <!-- Bone Necklace -->
+    <circle cx="58" cy="50" r="3" fill="#f8fafc"/>
+    <circle cx="62" cy="54" r="3.5" fill="#f8fafc"/>
+    <circle cx="64" cy="64" r="4" fill="#fef08a"/>
+    <circle cx="62" cy="74" r="3.5" fill="#f8fafc"/>
+    <circle cx="58" cy="78" r="3" fill="#f8fafc"/>
+
+    <!-- Ritual Skull Staff (Held in right hand, extending top-right) -->
+    <line x1="56" y1="84" x2="100" y2="34" stroke="#451a03" stroke-width="5" stroke-linecap="round"/>
+    <line x1="56" y1="84" x2="100" y2="34" stroke="#b45309" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Small Totem Skull atop staff -->
+    <ellipse cx="102" cy="32" rx="9" ry="8" fill="#f1f5f9" stroke="#475569" stroke-width="1.5"/>
+    <circle cx="100" cy="29" r="2.2" fill="#0f172a"/>
+    <circle cx="105" cy="31" r="2.2" fill="#0f172a"/>
+    <circle cx="100" cy="29" r="1" fill="#4ade80"/>
+    <circle cx="105" cy="31" r="1" fill="#4ade80"/>
+    <!-- Glowing Healing Orb atop skull -->
+    <circle cx="104" cy="20" r="8" fill="url(#healOrb)"/>
+    <circle cx="102" cy="18" r="2.5" fill="#ffffff"/>
+    <!-- Floating healing motes -->
+    <circle cx="114" cy="16" r="2" fill="#a3e635"/>
+    <circle cx="96" cy="12" r="1.5" fill="#a3e635"/>
+
+    <!-- Ceremonial Tiki Mask (Front Right) -->
+    <polygon points="62,42 88,44 94,64 88,84 62,86 68,64" fill="url(#tikiWood)" stroke="#270d03" stroke-width="2"/>
+    <!-- Mask Carvings & War Paint -->
+    <path d="M68,52 L84,52" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
+    <path d="M68,76 L84,76" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
+    <!-- Glowing Mystical Eyes -->
+    <ellipse cx="78" cy="56" rx="5" ry="2.5" fill="#facc15" transform="rotate(-10 78 56)"/>
+    <ellipse cx="78" cy="72" rx="5" ry="2.5" fill="#facc15" transform="rotate(10 78 72)"/>
+    <circle cx="80" cy="56" r="1.5" fill="#ffffff"/>
+    <circle cx="80" cy="72" r="1.5" fill="#ffffff"/>
+    <!-- Carved Grinning Teeth -->
+    <rect x="80" y="61" width="10" height="6" rx="2" fill="#180c04"/>
+    <line x1="83" y1="61" x2="83" y2="67" stroke="#ffffff" stroke-width="1.2"/>
+    <line x1="87" y1="61" x2="87" y2="67" stroke="#ffffff" stroke-width="1.2"/>
+
+    <!-- Left Arm & Mystical Gesture -->
+    <path d="M52,44 Q70,36 82,42" stroke="#65a30d" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <circle cx="84" cy="42" r="3" fill="#84cc16"/>
+  </g>
+</svg>

@@ -1,0 +1,4 @@
+com.frontiertd.game:mipmap/ic_launcher = 0x7f030000
+com.frontiertd.game:string/app_name = 0x7f040000
+com.frontiertd.game:drawable/ic_launcher_foreground = 0x7f020000
+com.frontiertd.game:color/ic_launcher_background = 0x7f010000
