@@ -32,6 +32,9 @@ class UIManager {
         this.btnStartWave = document.getElementById('btn-start-wave');
         this.btnSpeed = document.getElementById('btn-speed');
         this.btnPause = document.getElementById('btn-pause');
+        this.btnFullscreen = document.getElementById('btn-fullscreen');
+        this.btnLandingFullscreen = document.getElementById('btn-landing-fullscreen');
+        this.btnToggleFullscreen = document.getElementById('btn-toggle-fullscreen');
 
         // Menus & Modals
         this.modalLevelSelect = document.getElementById('modal-level-select');
@@ -140,6 +143,23 @@ class UIManager {
             this.engine.isPaused = !this.engine.isPaused;
             this.btnPause.textContent = this.engine.isPaused ? '▶️' : '⏸️';
         });
+
+        // Fullscreen toggle
+        if (this.btnFullscreen) {
+            this.btnFullscreen.addEventListener('click', () => this.toggleFullscreen());
+        }
+        if (this.btnLandingFullscreen) {
+            this.btnLandingFullscreen.addEventListener('click', () => this.toggleFullscreen());
+        }
+        if (this.btnToggleFullscreen) {
+            this.btnToggleFullscreen.addEventListener('click', () => this.toggleFullscreen());
+        }
+
+        const onFsChange = () => this.updateFullscreenUI();
+        ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'].forEach(evt => {
+            document.addEventListener(evt, onFsChange);
+        });
+        this.updateFullscreenUI();
 
         // Level Select button on HUD
         document.getElementById('btn-levels-menu').addEventListener('click', () => {
@@ -314,6 +334,55 @@ class UIManager {
             this.modalDefeat.classList.add('hidden');
             this.showLevelSelect();
         });
+    }
+
+    toggleFullscreen() {
+        try {
+            const doc = document;
+            const isFullscreen = !!(doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement);
+
+            if (!isFullscreen) {
+                const el = document.documentElement;
+                if (el.requestFullscreen) {
+                    el.requestFullscreen().catch(() => {});
+                } else if (el.webkitRequestFullscreen) {
+                    el.webkitRequestFullscreen();
+                } else if (el.mozRequestFullScreen) {
+                    el.mozRequestFullScreen();
+                } else if (el.msRequestFullscreen) {
+                    el.msRequestFullscreen();
+                }
+            } else {
+                if (doc.exitFullscreen) {
+                    doc.exitFullscreen().catch(() => {});
+                } else if (doc.webkitExitFullscreen) {
+                    doc.webkitExitFullscreen();
+                } else if (doc.mozCancelFullScreen) {
+                    doc.mozCancelFullScreen();
+                } else if (doc.msExitFullscreen) {
+                    doc.msExitFullscreen();
+                }
+            }
+        } catch (e) {
+            console.warn('Fullscreen toggle failed:', e);
+        }
+    }
+
+    updateFullscreenUI() {
+        const doc = document;
+        const isFullscreen = !!(doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement);
+
+        if (this.btnFullscreen) {
+            this.btnFullscreen.textContent = isFullscreen ? '🗗' : '⛶';
+            this.btnFullscreen.title = isFullscreen ? 'Exit Fullscreen' : 'Toggle Fullscreen';
+        }
+        if (this.btnLandingFullscreen) {
+            this.btnLandingFullscreen.textContent = isFullscreen ? '🗗' : '⛶';
+            this.btnLandingFullscreen.title = isFullscreen ? 'Exit Fullscreen' : 'Toggle Fullscreen';
+        }
+        if (this.btnToggleFullscreen) {
+            this.btnToggleFullscreen.textContent = isFullscreen ? '🗗 Fullscreen: ON' : '⛶ Fullscreen: OFF';
+        }
     }
 
     getCanvasCoordinates(e) {

@@ -21,19 +21,25 @@ body, html {
     position: relative;
     width: 100vw;
     height: 100vh;
+    width: 100dvw;
+    height: 100dvh;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: radial-gradient(circle at center, #111827 0%, #030712 100%);
+    background-color: #030712;
+    overflow: hidden;
 }
 
 #game-canvas {
-    max-width: 100%;
-    max-height: 100%;
-    aspect-ratio: 16 / 9;
-    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    width: 100vw;
+    height: 100vh;
+    width: 100dvw;
+    height: 100dvh;
+    display: block;
     background-color: #0f172a;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    box-shadow: none;
     touch-action: none;
 }
 
@@ -42,9 +48,9 @@ body, html {
 ------------------------------------------------------------- */
 #hud-top-bar {
     position: absolute;
-    top: 10px;
-    left: 12px;
-    right: 12px;
+    top: max(10px, env(safe-area-inset-top));
+    left: max(12px, env(safe-area-inset-left));
+    right: max(12px, env(safe-area-inset-right));
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -253,8 +259,8 @@ body, html {
 ------------------------------------------------------------- */
 #spells-drawer {
     position: absolute;
-    bottom: 14px;
-    left: 14px;
+    bottom: max(14px, env(safe-area-inset-bottom));
+    left: max(14px, env(safe-area-inset-left));
     display: flex;
     gap: 10px;
     z-index: 10;
@@ -328,7 +334,7 @@ body, html {
 ------------------------------------------------------------- */
 #drawer-build {
     position: absolute;
-    bottom: 12px;
+    bottom: max(12px, env(safe-area-inset-bottom));
     left: 50%;
     transform: translateX(-50%);
     z-index: 100;
@@ -351,25 +357,26 @@ body, html {
 
 .build-drawer-glass {
     position: relative;
-    background: radial-gradient(120% 120% at 50% -10%, #172c47 0%, #0d1a2c 45%, #060d17 100%);
-    border: 1.5px solid rgba(125, 211, 252, 0.55);
-    border-radius: 14px;
+    background: rgba(10, 18, 30, 0.70);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(125, 211, 252, 0.35);
+    border-radius: 11px;
     box-shadow: 
-        0 20px 50px rgba(0, 0, 0, 0.9), 
-        0 0 28px rgba(56, 189, 248, 0.35), 
-        inset 0 1.5px 1px rgba(255, 255, 255, 0.75),
-        inset 0 -1.5px 2px rgba(0, 0, 0, 0.6),
-        inset 0 0 22px rgba(56, 189, 248, 0.15);
-    padding: 7px 9px 8px 9px;
+        0 12px 32px rgba(0, 0, 0, 0.55), 
+        0 0 16px rgba(56, 189, 248, 0.15), 
+        inset 0 1px 1px rgba(255, 255, 255, 0.3),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.4);
+    padding: 4px 6px 6px 6px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 3px;
     user-select: none;
     box-sizing: border-box;
     width: 100%;
     max-width: 100%;
     min-width: 0;
-    overflow: hidden;
+    overflow: visible;
 }
 
 /* Liquid Glass Top Curved Specular Lens Highlight */
@@ -379,9 +386,9 @@ body, html {
     top: 0;
     left: 0;
     right: 0;
-    height: 52%;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(56, 189, 248, 0.08) 45%, transparent 100%);
-    border-radius: 13px 13px 40% 40% / 13px 13px 18% 18%;
+    height: 40%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(56, 189, 248, 0.03) 45%, transparent 100%);
+    border-radius: 10px 10px 0 0;
     pointer-events: none;
     z-index: 1;
 }
@@ -390,20 +397,18 @@ body, html {
 .build-drawer-glass::after {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(ellipse at 35% 30%, rgba(56, 189, 248, 0.20) 0%, rgba(14, 165, 233, 0.06) 35%, transparent 65%);
+    inset: 0;
+    border-radius: 10px;
+    background: radial-gradient(ellipse at 35% 30%, rgba(56, 189, 248, 0.08) 0%, rgba(14, 165, 233, 0.02) 35%, transparent 65%);
     pointer-events: none;
     animation: liquid-caustic 7s ease-in-out infinite alternate;
     z-index: 1;
 }
 
 @keyframes liquid-caustic {
-    0% { transform: scale(0.95) translate(-8%, -4%); opacity: 0.6; }
-    50% { transform: scale(1.08) translate(4%, 4%); opacity: 0.95; }
-    100% { transform: scale(1.0) translate(-4%, 6%); opacity: 0.7; }
+    0% { transform: scale(0.95) translate(-8%, -4%); opacity: 0.5; }
+    50% { transform: scale(1.08) translate(4%, 4%); opacity: 0.8; }
+    100% { transform: scale(1.0) translate(-4%, 6%); opacity: 0.6; }
 }
 
 /* Header */
@@ -413,10 +418,9 @@ body, html {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 2px 5px 2px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
-    gap: 8px;
+    padding: 0 1px 3px 1px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+    gap: 6px;
     width: 100%;
     box-sizing: border-box;
 }
@@ -424,104 +428,101 @@ body, html {
 .bd-header-left {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 5px;
     flex-shrink: 0;
 }
 
 .bd-title-badge {
     display: flex;
     align-items: center;
-    gap: 5px;
-    font-size: 9.5px;
+    gap: 4px;
+    font-size: 8.5px;
     font-weight: 900;
-    letter-spacing: 0.9px;
+    letter-spacing: 0.6px;
     color: #38bdf8;
     text-transform: uppercase;
     white-space: nowrap;
-    text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+    text-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
 }
 
 .bd-pulse-dot {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
     background: #38bdf8;
-    box-shadow: 0 0 8px #38bdf8;
+    box-shadow: 0 0 6px #38bdf8;
     animation: bd-pulse 1.6s infinite alternate;
     flex-shrink: 0;
 }
 
 @keyframes bd-pulse {
-    0% { transform: scale(0.8); opacity: 0.6; box-shadow: 0 0 5px #0284c7; }
-    100% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 9px #38bdf8; }
+    0% { transform: scale(0.8); opacity: 0.6; box-shadow: 0 0 4px #0284c7; }
+    100% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 8px #38bdf8; }
 }
 
 .bd-slot-badge {
-    font-size: 9.5px;
+    font-size: 8px;
     font-weight: 800;
     color: #7dd3fc;
-    background: rgba(30, 41, 59, 0.65);
-    border: 1px solid rgba(56, 189, 248, 0.4);
-    padding: 1.5px 7px;
+    background: rgba(30, 41, 59, 0.55);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    padding: 1px 5px;
     border-radius: 9999px;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.2px;
     white-space: nowrap;
-    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
 }
 
 .bd-header-right {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 5px;
     flex-shrink: 0;
 }
 
 .bd-gold-pill {
     display: flex;
     align-items: center;
-    gap: 4px;
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.22) 0%, rgba(146, 64, 14, 0.38) 100%);
-    border: 1.5px solid rgba(245, 158, 11, 0.75);
+    gap: 3px;
+    background: rgba(245, 158, 11, 0.18);
+    border: 1px solid rgba(245, 158, 11, 0.65);
     border-radius: 9999px;
-    padding: 2px 8px;
-    font-size: 10px;
-    box-shadow: 0 2px 6px rgba(245, 158, 11, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+    padding: 1px 6px;
+    font-size: 9px;
+    box-shadow: 0 1px 4px rgba(245, 158, 11, 0.2);
     white-space: nowrap;
 }
 
 .bd-gold-icon {
-    font-size: 10.5px;
+    font-size: 9px;
 }
 
 .bd-gold-amount {
     font-weight: 900;
-    font-size: 11.5px;
+    font-size: 10px;
     color: #fbbf24;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 .bd-gold-label {
-    font-size: 8px;
+    font-size: 7px;
     font-weight: 900;
     color: #fde68a;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
 }
 
 .bd-close-btn {
-    background: rgba(30, 41, 59, 0.65);
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(30, 41, 59, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     color: #cbd5e1;
-    width: 20px;
-    height: 20px;
+    width: 17px;
+    height: 17px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 10.5px;
+    font-size: 9px;
     font-weight: 900;
     transition: all 0.15s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.25);
     flex-shrink: 0;
 }
 
@@ -530,7 +531,7 @@ body, html {
     border-color: #f87171;
     color: #ffffff;
     transform: scale(1.1);
-    box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
 }
 
 /* Cards Container */
@@ -538,11 +539,11 @@ body, html {
     position: relative;
     z-index: 2;
     display: flex;
-    gap: 6px;
-    align-items: stretch;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 2px 1px 3px 1px;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+    padding: 5px 3px 6px 3px;
     scrollbar-width: none;
     min-width: 0;
     width: 100%;
@@ -553,24 +554,27 @@ body, html {
     display: none;
 }
 
-/* Base Tower Card - Frosted Liquid Glass Slice */
+/* Base Tower Card - Ultra Compact Translucent Glass */
 .btn-build-tower {
     position: relative;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(26, 44, 72, 0.85) 35%, rgba(10, 18, 32, 0.95) 100%);
-    border: 1.2px solid rgba(255, 255, 255, 0.25);
-    border-radius: 10px;
-    padding: 6px 6px 7px 6px;
+    z-index: 1;
+    background: rgba(15, 23, 42, 0.58);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 7px;
+    padding: 3px 3px 4px 3px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    gap: 4px;
+    gap: 2px;
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    min-width: 80px;
-    max-width: 92px;
+    transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), background 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    min-width: 50px;
+    max-width: 56px;
     flex: 1 0 auto;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6), inset 0 1.2px 1px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3);
     overflow: hidden;
     font-family: inherit;
 }
@@ -580,280 +584,238 @@ body, html {
     top: 0;
     left: 0;
     right: 0;
-    height: 28px;
-    opacity: 0.35;
+    height: 14px;
+    opacity: 0.3;
     pointer-events: none;
     transition: opacity 0.2s ease;
 }
 
 .btn-build-tower:hover {
-    transform: translateY(-3px) scale(1.02);
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(40, 68, 105, 0.9) 35%, rgba(14, 25, 44, 0.97) 100%);
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.7), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.65);
+    z-index: 10;
+    transform: translateY(-3px) scale(1.04);
+    background: rgba(30, 58, 95, 0.70);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55), inset 0 1px 1px rgba(255, 255, 255, 0.45);
 }
 
 .btn-build-tower:hover .tower-card-glow {
-    opacity: 0.75;
+    opacity: 0.65;
 }
 
 .btn-build-tower:active {
     transform: translateY(0) scale(0.97);
 }
 
-/* Card Elements */
-.tower-role-tag {
-    font-size: 7px;
-    font-weight: 900;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    padding: 1px 5px;
-    border-radius: 9999px;
-    background: rgba(10, 16, 30, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    white-space: nowrap;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.15);
-    z-index: 2;
-}
-
 .tower-icon-wrapper {
-    width: 36px;
-    height: 36px;
-    border-radius: 9px;
+    width: 24px;
+    height: 24px;
+    border-radius: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.15) 0%, rgba(15, 23, 42, 0.85) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
-    box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.3), 0 2px 6px rgba(0, 0, 0, 0.4);
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2), 0 1px 3px rgba(0, 0, 0, 0.3);
     z-index: 2;
 }
 
 .btn-build-tower:hover .tower-icon-wrapper {
-    transform: scale(1.1);
+    transform: scale(1.08);
 }
 
 .tower-icon-badge {
-    font-size: 19px;
+    font-size: 13px;
     line-height: 1;
-    filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.7));
-}
-
-.tower-card-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1px;
-    text-align: center;
-    z-index: 2;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.7));
 }
 
 .tower-label {
-    font-size: 10.5px;
+    font-size: 8px;
     font-weight: 800;
     color: #ffffff;
-    letter-spacing: 0.1px;
+    letter-spacing: -0.1px;
     white-space: nowrap;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
-}
-
-.tower-quick-desc {
-    font-size: 7.8px;
-    font-weight: 600;
-    color: #cbd5e1;
-    white-space: nowrap;
+    z-index: 2;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    line-height: 1.1;
 }
 
 .tower-cost-tag {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 3px;
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.22) 0%, rgba(180, 83, 9, 0.35) 100%);
-    border: 1px solid rgba(245, 158, 11, 0.7);
+    gap: 2px;
+    background: rgba(245, 158, 11, 0.18);
+    border: 1px solid rgba(245, 158, 11, 0.65);
     border-radius: 9999px;
-    padding: 2px 7px;
+    padding: 1px 3px;
     width: 100%;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2);
     transition: all 0.15s ease;
     z-index: 2;
 }
 
 .cost-coin {
-    font-size: 9.5px;
+    font-size: 7px;
 }
 
 .cost-val {
-    font-size: 10.5px;
+    font-size: 8px;
     font-weight: 900;
     color: #fbbf24;
-    letter-spacing: 0.2px;
+    letter-spacing: 0.1px;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 /* Elemental Themes */
 /* 1. Archer (Dart Spire - Emerald) */
 .btn-build-tower.type-archer {
-    border-color: rgba(16, 185, 129, 0.45);
+    border-color: rgba(16, 185, 129, 0.35);
 }
 .btn-build-tower.type-archer .tower-card-glow {
-    background: radial-gradient(circle at 50% 0%, #10b981 0%, transparent 75%);
-}
-.btn-build-tower.type-archer .tower-role-tag {
-    color: #6ee7b7;
-    border-color: rgba(16, 185, 129, 0.4);
+    background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.6) 0%, transparent 75%);
 }
 .btn-build-tower.type-archer .tower-icon-wrapper {
-    border-color: rgba(16, 185, 129, 0.5);
-    background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, #071212 100%);
+    border-color: rgba(16, 185, 129, 0.45);
+    background: rgba(16, 185, 129, 0.2);
 }
 .btn-build-tower.type-archer:hover {
     border-color: #10b981;
-    box-shadow: 0 10px 28px rgba(16, 185, 129, 0.45), 0 0 16px rgba(16, 185, 129, 0.35);
+    background: rgba(16, 185, 129, 0.25);
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
 }
 .btn-build-tower.type-archer:hover .tower-icon-wrapper {
     border-color: #34d399;
-    box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
 }
 
 /* 2. Cannon (Bombard - Amber / Magma) */
 .btn-build-tower.type-cannon {
-    border-color: rgba(249, 115, 22, 0.45);
+    border-color: rgba(249, 115, 22, 0.35);
 }
 .btn-build-tower.type-cannon .tower-card-glow {
-    background: radial-gradient(circle at 50% 0%, #f97316 0%, transparent 75%);
-}
-.btn-build-tower.type-cannon .tower-role-tag {
-    color: #fdba74;
-    border-color: rgba(249, 115, 22, 0.4);
+    background: radial-gradient(circle at 50% 0%, rgba(249, 115, 22, 0.6) 0%, transparent 75%);
 }
 .btn-build-tower.type-cannon .tower-icon-wrapper {
-    border-color: rgba(249, 115, 22, 0.5);
-    background: radial-gradient(circle, rgba(249, 115, 22, 0.2) 0%, #170d06 100%);
+    border-color: rgba(249, 115, 22, 0.45);
+    background: rgba(249, 115, 22, 0.2);
 }
 .btn-build-tower.type-cannon:hover {
     border-color: #f97316;
-    box-shadow: 0 10px 28px rgba(249, 115, 22, 0.45), 0 0 16px rgba(249, 115, 22, 0.35);
+    background: rgba(249, 115, 22, 0.25);
+    box-shadow: 0 4px 14px rgba(249, 115, 22, 0.35);
 }
 .btn-build-tower.type-cannon:hover .tower-icon-wrapper {
     border-color: #fb923c;
-    box-shadow: 0 0 12px rgba(249, 115, 22, 0.5);
+    box-shadow: 0 0 8px rgba(249, 115, 22, 0.4);
 }
 
 /* 3. Frost (Cryo Obelisk - Cyan) */
 .btn-build-tower.type-frost {
-    border-color: rgba(6, 182, 212, 0.45);
+    border-color: rgba(6, 182, 212, 0.35);
 }
 .btn-build-tower.type-frost .tower-card-glow {
-    background: radial-gradient(circle at 50% 0%, #06b6d4 0%, transparent 75%);
-}
-.btn-build-tower.type-frost .tower-role-tag {
-    color: #67e8f9;
-    border-color: rgba(6, 182, 212, 0.4);
+    background: radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.6) 0%, transparent 75%);
 }
 .btn-build-tower.type-frost .tower-icon-wrapper {
-    border-color: rgba(6, 182, 212, 0.5);
-    background: radial-gradient(circle, rgba(6, 182, 212, 0.2) 0%, #061523 100%);
+    border-color: rgba(6, 182, 212, 0.45);
+    background: rgba(6, 182, 212, 0.2);
 }
 .btn-build-tower.type-frost:hover {
     border-color: #38bdf8;
-    box-shadow: 0 10px 28px rgba(56, 189, 248, 0.45), 0 0 16px rgba(6, 182, 212, 0.35);
+    background: rgba(6, 182, 212, 0.25);
+    box-shadow: 0 4px 14px rgba(56, 189, 248, 0.35);
 }
 .btn-build-tower.type-frost:hover .tower-icon-wrapper {
     border-color: #38bdf8;
-    box-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
 }
 
 /* 4. Tesla (Tesla Tower - Violet) */
 .btn-build-tower.type-tesla {
-    border-color: rgba(168, 85, 247, 0.45);
+    border-color: rgba(168, 85, 247, 0.35);
 }
 .btn-build-tower.type-tesla .tower-card-glow {
-    background: radial-gradient(circle at 50% 0%, #a855f7 0%, transparent 75%);
-}
-.btn-build-tower.type-tesla .tower-role-tag {
-    color: #d8b4fe;
-    border-color: rgba(168, 85, 247, 0.4);
+    background: radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.6) 0%, transparent 75%);
 }
 .btn-build-tower.type-tesla .tower-icon-wrapper {
-    border-color: rgba(168, 85, 247, 0.5);
-    background: radial-gradient(circle, rgba(168, 85, 247, 0.2) 0%, #150a24 100%);
+    border-color: rgba(168, 85, 247, 0.45);
+    background: rgba(168, 85, 247, 0.2);
 }
 .btn-build-tower.type-tesla:hover {
     border-color: #c084fc;
-    box-shadow: 0 10px 28px rgba(168, 85, 247, 0.45), 0 0 16px rgba(168, 85, 247, 0.35);
+    background: rgba(168, 85, 247, 0.25);
+    box-shadow: 0 4px 14px rgba(168, 85, 247, 0.35);
 }
 .btn-build-tower.type-tesla:hover .tower-icon-wrapper {
     border-color: #d8b4fe;
-    box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
+    box-shadow: 0 0 8px rgba(168, 85, 247, 0.4);
 }
 
 /* 5. Flame (Solar Spire - Crimson) */
 .btn-build-tower.type-flame {
-    border-color: rgba(239, 68, 68, 0.45);
+    border-color: rgba(239, 68, 68, 0.35);
 }
 .btn-build-tower.type-flame .tower-card-glow {
-    background: radial-gradient(circle at 50% 0%, #ef4444 0%, transparent 75%);
-}
-.btn-build-tower.type-flame .tower-role-tag {
-    color: #fca5a5;
-    border-color: rgba(239, 68, 68, 0.4);
+    background: radial-gradient(circle at 50% 0%, rgba(239, 68, 68, 0.6) 0%, transparent 75%);
 }
 .btn-build-tower.type-flame .tower-icon-wrapper {
-    border-color: rgba(239, 68, 68, 0.5);
-    background: radial-gradient(circle, rgba(239, 68, 68, 0.2) 0%, #1a0808 100%);
+    border-color: rgba(239, 68, 68, 0.45);
+    background: rgba(239, 68, 68, 0.2);
 }
 .btn-build-tower.type-flame:hover {
     border-color: #f87171;
-    box-shadow: 0 10px 28px rgba(239, 68, 68, 0.45), 0 0 16px rgba(239, 68, 68, 0.35);
+    background: rgba(239, 68, 68, 0.25);
+    box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
 }
 .btn-build-tower.type-flame:hover .tower-icon-wrapper {
     border-color: #fca5a5;
-    box-shadow: 0 0 12px rgba(239, 68, 68, 0.5);
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
 }
 
 /* 6. Wave (Wake Spire - Ocean Blue) */
 .btn-build-tower.type-wave {
-    border-color: rgba(14, 165, 233, 0.45);
+    border-color: rgba(14, 165, 233, 0.35);
 }
 .btn-build-tower.type-wave .tower-card-glow {
-    background: radial-gradient(circle at 50% 0%, #0ea5e9 0%, transparent 75%);
-}
-.btn-build-tower.type-wave .tower-role-tag {
-    color: #7dd3fc;
-    border-color: rgba(14, 165, 233, 0.4);
+    background: radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.6) 0%, transparent 75%);
 }
 .btn-build-tower.type-wave .tower-icon-wrapper {
-    border-color: rgba(14, 165, 233, 0.5);
-    background: radial-gradient(circle, rgba(14, 165, 233, 0.2) 0%, #061626 100%);
+    border-color: rgba(14, 165, 233, 0.45);
+    background: rgba(14, 165, 233, 0.2);
 }
 .btn-build-tower.type-wave:hover {
     border-color: #38bdf8;
-    box-shadow: 0 10px 28px rgba(14, 165, 233, 0.45), 0 0 16px rgba(14, 165, 233, 0.35);
+    background: rgba(14, 165, 233, 0.25);
+    box-shadow: 0 4px 14px rgba(14, 165, 233, 0.35);
 }
 .btn-build-tower.type-wave:hover .tower-icon-wrapper {
     border-color: #7dd3fc;
-    box-shadow: 0 0 12px rgba(14, 165, 233, 0.5);
+    box-shadow: 0 0 8px rgba(14, 165, 233, 0.4);
 }
 
 /* Disabled (Cannot Afford) State */
 .btn-build-tower.disabled {
-    opacity: 0.45;
+    opacity: 0.38;
     filter: grayscale(0.85);
     cursor: not-allowed;
     border-color: rgba(255, 255, 255, 0.08) !important;
-    background: #0b101b !important;
+    background: rgba(10, 15, 26, 0.5) !important;
 }
 .btn-build-tower.disabled:hover {
     transform: none !important;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
 }
 .btn-build-tower.disabled .tower-card-glow {
     display: none;
 }
 .btn-build-tower.disabled .tower-cost-tag {
     border-color: rgba(239, 68, 68, 0.5) !important;
-    background: rgba(239, 68, 68, 0.18) !important;
+    background: rgba(239, 68, 68, 0.2) !important;
 }
 .btn-build-tower.disabled .cost-val {
     color: #f87171 !important;
@@ -861,93 +823,86 @@ body, html {
 
 @media (max-width: 768px) {
     #drawer-build {
-        bottom: 8px;
-        left: 6px;
-        right: 6px;
-        transform: none;
-        width: auto;
-        max-width: none;
-        animation: drawer-slide-up-mobile 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+        bottom: max(6px, env(safe-area-inset-bottom));
+        left: 50%;
+        transform: translateX(-50%);
+        width: max-content;
+        max-width: calc(100vw - 12px);
     }
     .build-drawer-glass {
-        padding: 5px 6px 6px 6px;
-        border-radius: 11px;
-        gap: 4px;
+        padding: 3px 5px 5px 5px;
+        border-radius: 9px;
+        gap: 2px;
+        overflow: visible;
     }
     .build-cards-container {
-        gap: 5px;
+        gap: 3px;
+        overflow: visible;
+        padding: 4px 2px 5px 2px;
+        justify-content: center;
     }
     .btn-build-tower {
-        min-width: 70px;
-        max-width: 80px;
-        padding: 4px 4px 6px 4px;
-        border-radius: 8px;
-        gap: 3px;
+        min-width: 46px;
+        max-width: 52px;
+        padding: 2px 2px 3px 2px;
+        border-radius: 6px;
+        gap: 1.5px;
     }
     .tower-icon-wrapper {
-        width: 30px;
-        height: 30px;
-        border-radius: 7px;
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
     }
     .tower-icon-badge {
-        font-size: 16px;
+        font-size: 11px;
     }
     .tower-label {
-        font-size: 9.5px;
-    }
-    .tower-quick-desc {
-        font-size: 7px;
-    }
-    .tower-role-tag {
-        font-size: 6px;
-        padding: 1px 4px;
+        font-size: 7.5px;
     }
     .tower-cost-tag {
-        padding: 1.5px 5px;
+        padding: 1px 2.5px;
+    }
+    .cost-coin {
+        font-size: 6.5px;
     }
     .cost-val {
-        font-size: 9.5px;
-    }
-}
-
-@keyframes drawer-slide-up-mobile {
-    0% {
-        transform: translateY(16px) scale(0.97);
-    }
-    100% {
-        transform: translateY(0) scale(1);
+        font-size: 7.5px;
     }
 }
 
 @media (max-width: 480px) {
     .bd-header-left {
-        gap: 4px;
+        gap: 3px;
     }
     .bd-header-right {
-        gap: 4px;
+        gap: 3px;
     }
     .bd-title-badge {
-        font-size: 8.5px;
-        letter-spacing: 0.5px;
+        font-size: 7.5px;
+        letter-spacing: 0.3px;
     }
     .bd-slot-badge {
-        font-size: 8.5px;
-        padding: 1px 5px;
+        font-size: 7.5px;
+        padding: 0.5px 4px;
     }
     .bd-gold-pill {
-        padding: 1.5px 6px;
+        padding: 1px 5px;
         gap: 2px;
     }
     .bd-gold-amount {
-        font-size: 10px;
+        font-size: 9px;
     }
     .bd-gold-label {
         display: none;
     }
     .bd-close-btn {
-        width: 18px;
-        height: 18px;
-        font-size: 9px;
+        width: 15px;
+        height: 15px;
+        font-size: 8px;
+    }
+    .btn-build-tower {
+        min-width: 42px;
+        max-width: 48px;
     }
 }
 
@@ -1421,6 +1376,37 @@ body, html {
     color: #64748b;
     font-weight: 600;
     margin-top: 4px;
+}
+
+.landing-corner-btn {
+    position: absolute;
+    top: max(14px, env(safe-area-inset-top));
+    right: max(16px, env(safe-area-inset-right));
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #f8fafc;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: all 0.15s ease;
+    z-index: 45;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.landing-corner-btn:hover {
+    background: rgba(51, 65, 85, 0.95);
+    border-color: #38bdf8;
+    transform: scale(1.05);
+}
+
+.landing-corner-btn:active {
+    transform: scale(0.95);
 }
 
 /* -------------------------------------------------------------

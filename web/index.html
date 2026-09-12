@@ -5,13 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#030712">
     <title>Frontier Defense: Jungle & Frost</title>
-    <link rel="stylesheet" href="css/game.css?v=liquid_v3">
+    <link rel="stylesheet" href="css/game.css?v=deploy_compact_v3">
 </head>
 <body>
     <div id="game-wrapper">
         <!-- LANDING / TITLE SCREEN OVERLAY -->
         <div id="screen-landing" class="landing-overlay">
+            <button id="btn-landing-fullscreen" class="landing-corner-btn" title="Toggle Fullscreen">⛶</button>
             <div class="landing-content">
                 <div class="landing-badge">TACTICAL TOWER DEFENSE</div>
                 <h1 class="landing-title">FRONTIER DEFENSE</h1>
@@ -85,6 +87,7 @@
                 <button id="btn-start-wave" class="hud-btn primary">NEXT WAVE ⚔️</button>
                 <button id="btn-speed" class="hud-btn">1x</button>
                 <button id="btn-pause" class="hud-btn">⏸️</button>
+                <button id="btn-fullscreen" class="hud-btn" title="Toggle Fullscreen">⛶</button>
                 <button id="btn-levels-menu" class="hud-btn">🗺️ Levels</button>
                 <button id="btn-settings-menu" class="hud-btn">⚙️</button>
             </div>
@@ -151,14 +154,10 @@
                     <!-- Dart Spire -->
                     <button class="btn-build-tower type-archer" data-type="archer">
                         <div class="tower-card-glow"></div>
-                        <div class="tower-role-tag">AIR & GROUND</div>
                         <div class="tower-icon-wrapper">
                             <span class="tower-icon-badge">🎯</span>
                         </div>
-                        <div class="tower-card-info">
-                            <span class="tower-label">Dart Spire</span>
-                            <span class="tower-quick-desc">Rapid Piercing</span>
-                        </div>
+                        <span class="tower-label">Dart Spire</span>
                         <div class="tower-cost-tag">
                             <span class="cost-coin">🪙</span>
                             <span class="cost-val">100G</span>
@@ -168,14 +167,10 @@
                     <!-- Bombard -->
                     <button class="btn-build-tower type-cannon" data-type="cannon">
                         <div class="tower-card-glow"></div>
-                        <div class="tower-role-tag">AREA SPLASH</div>
                         <div class="tower-icon-wrapper">
                             <span class="tower-icon-badge">💣</span>
                         </div>
-                        <div class="tower-card-info">
-                            <span class="tower-label">Bombard</span>
-                            <span class="tower-quick-desc">Heavy Artillery</span>
-                        </div>
+                        <span class="tower-label">Bombard</span>
                         <div class="tower-cost-tag">
                             <span class="cost-coin">🪙</span>
                             <span class="cost-val">150G</span>
@@ -185,14 +180,10 @@
                     <!-- Cryo Obelisk -->
                     <button class="btn-build-tower type-frost" data-type="frost">
                         <div class="tower-card-glow"></div>
-                        <div class="tower-role-tag">SLOW & CHILL</div>
                         <div class="tower-icon-wrapper">
                             <span class="tower-icon-badge">❄️</span>
                         </div>
-                        <div class="tower-card-info">
-                            <span class="tower-label">Cryo Obelisk</span>
-                            <span class="tower-quick-desc">-50% Speed</span>
-                        </div>
+                        <span class="tower-label">Cryo Obelisk</span>
                         <div class="tower-cost-tag">
                             <span class="cost-coin">🪙</span>
                             <span class="cost-val">125G</span>
@@ -202,14 +193,10 @@
                     <!-- Tesla Tower -->
                     <button class="btn-build-tower type-tesla" data-type="tesla">
                         <div class="tower-card-glow"></div>
-                        <div class="tower-role-tag">CHAIN ⚡</div>
                         <div class="tower-icon-wrapper">
                             <span class="tower-icon-badge">⚡</span>
                         </div>
-                        <div class="tower-card-info">
-                            <span class="tower-label">Tesla Tower</span>
-                            <span class="tower-quick-desc">3 Targets</span>
-                        </div>
+                        <span class="tower-label">Tesla Tower</span>
                         <div class="tower-cost-tag">
                             <span class="cost-coin">🪙</span>
                             <span class="cost-val">175G</span>
@@ -219,14 +206,10 @@
                     <!-- Solar Spire -->
                     <button class="btn-build-tower type-flame" data-type="flame">
                         <div class="tower-card-glow"></div>
-                        <div class="tower-role-tag">MELT BEAM</div>
                         <div class="tower-icon-wrapper">
                             <span class="tower-icon-badge">🔥</span>
                         </div>
-                        <div class="tower-card-info">
-                            <span class="tower-label">Solar Spire</span>
-                            <span class="tower-quick-desc">Thermal Ray</span>
-                        </div>
+                        <span class="tower-label">Solar Spire</span>
                         <div class="tower-cost-tag">
                             <span class="cost-coin">🪙</span>
                             <span class="cost-val">160G</span>
@@ -236,14 +219,10 @@
                     <!-- Wake Spire -->
                     <button class="btn-build-tower type-wave" data-type="wave">
                         <div class="tower-card-glow"></div>
-                        <div class="tower-role-tag">KNOCKBACK</div>
                         <div class="tower-icon-wrapper">
                             <span class="tower-icon-badge">🌊</span>
                         </div>
-                        <div class="tower-card-info">
-                            <span class="tower-label">Wake Spire</span>
-                            <span class="tower-quick-desc">Tidal Surge</span>
-                        </div>
+                        <span class="tower-label">Wake Spire</span>
                         <div class="tower-cost-tag">
                             <span class="cost-coin">🪙</span>
                             <span class="cost-val">140G</span>
@@ -402,6 +381,7 @@
                 <h2>Settings</h2>
                 <div style="display: flex; flex-direction: column; gap: 12px; margin: 15px 0;">
                     <button id="btn-toggle-sound" class="modal-btn secondary">🔊 Sound: ON</button>
+                    <button id="btn-toggle-fullscreen" class="modal-btn secondary">⛶ Fullscreen: OFF</button>
                     <button id="btn-toggle-weather" class="modal-btn secondary">🌦️ Weather: Dynamic (Full)</button>
                     <button id="btn-reset-data" class="modal-btn danger">⚠️ Reset Saved Campaign Progress</button>
                 </div>
@@ -537,12 +517,12 @@
     </div>
 
     <!-- SCRIPTS -->
-    <script src="js/audio.js?v=build_v6"></script>
-    <script src="js/config.js?v=build_v6"></script>
-    <script src="js/levels.js?v=build_v6"></script>
-    <script src="js/weather.js?v=build_v6"></script>
-    <script src="js/engine.js?v=build_v6"></script>
-    <script src="js/ui.js?v=build_v6"></script>
+    <script src="js/audio.js?v=fullscreen_v1"></script>
+    <script src="js/config.js?v=fullscreen_v1"></script>
+    <script src="js/levels.js?v=fullscreen_v1"></script>
+    <script src="js/weather.js?v=fullscreen_v1"></script>
+    <script src="js/engine.js?v=fullscreen_v1"></script>
+    <script src="js/ui.js?v=fullscreen_v1"></script>
     <script>
         window.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById('game-canvas');
