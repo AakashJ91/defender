@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#030712">
     <title>Frontier Defense: Jungle & Frost</title>
-    <link rel="stylesheet" href="css/game.css?v=deploy_compact_v5">
+    <link rel="stylesheet" href="css/game.css?v=deploy_compact_v7">
 </head>
 <body>
     <div id="game-wrapper">
@@ -140,26 +140,30 @@
         <!-- GAME CANVAS -->
         <canvas id="game-canvas"></canvas>
 
-        <!-- ACTIVE SPELLS DRAWER (Bottom Left) -->
+        <!-- ACTIVE SPELLS (Bottom Left Floating Circular Action Orbs) -->
         <div id="spells-drawer" class="hidden">
-            <button id="spell-meteor" class="spell-btn" title="Meteor Strike (Area Blast)">
+            <button id="spell-meteor" class="spell-btn spell-meteor" title="Meteor Strike (Area Blast)">
+                <div class="spell-orb-glow"></div>
                 <span class="spell-icon">☄️</span>
                 <span class="spell-cost">80G</span>
                 <div class="spell-cooldown-text"></div>
             </button>
-            <button id="spell-freeze" class="spell-btn" title="Glacial Frost (Map-wide Freeze)">
+            <button id="spell-freeze" class="spell-btn spell-freeze" title="Glacial Frost (Map-wide Freeze)">
+                <div class="spell-orb-glow"></div>
                 <span class="spell-icon">❄️</span>
                 <span class="spell-cost">65G</span>
                 <div class="spell-cooldown-text"></div>
             </button>
-            <button id="spell-rush" class="spell-btn" title="Battle Horn (+60% Tower Speed)">
+            <button id="spell-rush" class="spell-btn spell-rush" title="Battle Horn (+60% Tower Speed)">
+                <div class="spell-orb-glow"></div>
                 <span class="spell-icon">📯</span>
                 <span class="spell-cost">50G</span>
                 <div class="spell-cooldown-text"></div>
             </button>
-            <button id="btn-spell-weather" class="spell-btn weather-spell-btn" title="Weather Selector (Change Level Atmosphere)">
+            <button id="btn-spell-weather" class="spell-btn weather-spell-btn spell-weather" title="Weather Selector (Change Level Atmosphere)">
+                <div class="spell-orb-glow"></div>
                 <span class="spell-icon" id="spell-weather-icon">🌦️</span>
-                <span class="spell-cost" style="font-size: 8px; font-weight: 800; color: #38bdf8;">WEATHER</span>
+                <span class="spell-cost">WEATHER</span>
                 <div class="spell-cooldown-text"></div>
             </button>
         </div>
