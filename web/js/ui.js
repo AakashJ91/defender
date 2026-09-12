@@ -541,32 +541,31 @@ class UIManager {
         snowContainer.innerHTML = '';
 
         const progress = JSON.parse(localStorage.getItem('frontier_td_progress') || '{}');
-        // Level 1 is always unlocked by default
-        if (!progress[1]) progress[1] = { stars: 0, highscore: 0, unlocked: true };
 
         LEVELS.forEach(level => {
-            const data = progress[level.id] || { stars: 0, highscore: 0, unlocked: false };
+            const data = progress[level.id] || { stars: 0, highscore: 0, unlocked: true };
+            // All stages are immediately available to test
+            data.unlocked = true;
+
             const card = document.createElement('div');
-            card.className = `level-card ${data.unlocked ? '' : 'locked'} ${level.difficulty === 'Boss' || level.difficulty === 'Final Boss' ? 'boss-card' : ''}`;
+            card.className = `level-card ${level.difficulty === 'Boss' || level.difficulty === 'Final Boss' ? 'boss-card' : ''}`;
 
             let starsDisplay = '';
             for (let i = 1; i <= 3; i++) {
-                starsDisplay += i <= data.stars ? '⭐' : '☆';
+                starsDisplay += i <= (data.stars || 0) ? '⭐' : '☆';
             }
 
             card.innerHTML = `
                 <div class="level-num">Level ${level.id}</div>
                 <div class="level-title">${level.name}</div>
-                <div class="level-stars">${data.unlocked ? starsDisplay : '🔒 LOCKED'}</div>
+                <div class="level-stars">${starsDisplay}</div>
                 <div class="level-tag">${level.difficulty}</div>
             `;
 
-            if (data.unlocked) {
-                card.addEventListener('click', () => {
-                    this.modalLevelSelect.classList.add('hidden');
-                    this.startLevel(level.id);
-                });
-            }
+            card.addEventListener('click', () => {
+                this.modalLevelSelect.classList.add('hidden');
+                this.startLevel(level.id);
+            });
 
             if (level.biome === 'jungle') {
                 jungleContainer.appendChild(card);
@@ -586,13 +585,14 @@ class UIManager {
 
     getHighestUnlockedLevel() {
         const progress = JSON.parse(localStorage.getItem('frontier_td_progress') || '{}');
-        let highest = 1;
+        // Resume campaign at the next uncompleted mission based on earned stars (capped at 10)
+        let resumeLevel = 1;
         for (let i = 1; i <= 10; i++) {
-            if (progress[i] && progress[i].unlocked) {
-                highest = i;
+            if (progress[i] && progress[i].stars > 0) {
+                resumeLevel = Math.min(10, i + 1);
             }
         }
-        return highest;
+        return resumeLevel;
     }
 
     getTotalStarsEarned() {
@@ -797,10 +797,14 @@ class UIManager {
 
     loadProgress() {
         const progress = JSON.parse(localStorage.getItem('frontier_td_progress') || '{}');
-        if (!progress[1]) {
-            progress[1] = { stars: 0, highscore: 0, unlocked: true };
-            localStorage.setItem('frontier_td_progress', JSON.stringify(progress));
+        for (let i = 1; i <= 10; i++) {
+            if (!progress[i]) {
+                progress[i] = { stars: 0, highscore: 0, unlocked: true };
+            } else {
+                progress[i].unlocked = true;
+            }
         }
+        localStorage.setItem('frontier_td_progress', JSON.stringify(progress));
     }
 }
 

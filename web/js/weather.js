@@ -14,7 +14,7 @@ class WeatherSystem {
 
         // Settings mode: 'dynamic' (full), 'mild' (reduced), 'off' (disabled)
         this.mode = localStorage.getItem('frontier_weather_mode') || 'dynamic';
-        this.autoCycle = true;
+        this.autoCycle = false; // Weather applies once at stage start; no random mid-stage auto cycling
 
         // Comprehensive Weather Profiles (Accessible across any map)
         this.allWeathers = {
@@ -203,25 +203,74 @@ class WeatherSystem {
         this.height = this.engine.height || 720;
         this.biomeKey = (biomeKey === 'snow' || levelId >= 6) ? 'snow' : 'jungle';
 
-        // Select starting weather for the level
+        // Stage index within current biome (1 to 5)
+        // Forest (Jungle): Levels 1-5 (Stage 1 to 5)
+        // Glacier (Snow): Levels 6-10 (Stage 1 to 5)
+        const stageInBiome = (levelId <= 5) ? levelId : (levelId - 5);
+
         let startKey = 'clear';
+        let isHazardStage = false;
+
         if (this.biomeKey === 'jungle') {
-            startKey = (levelId % 2 === 0) ? 'rain_light' : 'clear';
+            if (stageInBiome < 3) {
+                // Forest stages 1 & 2: Calm default canopy, no weather hazard
+                startKey = 'clear';
+                isHazardStage = false;
+            } else {
+                // Forest stages 3, 4, 5: Weather applies once at stage start
+                isHazardStage = true;
+                if (stageInBiome === 3) {
+                    startKey = 'rain_light'; // Stage 3: Tropical Drizzle
+                } else if (stageInBiome === 4) {
+                    startKey = 'fog'; // Stage 4: River Mist
+                } else {
+                    startKey = 'thunderstorm'; // Stage 5: Monsoon Tempest (Titan Boss)
+                }
+            }
         } else {
-            startKey = (levelId % 2 === 0) ? 'blizzard' : 'snow_light';
+            // Glacier (Snow) biome
+            if (stageInBiome < 3) {
+                // Glacier stages 1 & 2: Calm default snow flurries, no weather hazard
+                startKey = 'snow_light';
+                isHazardStage = false;
+            } else {
+                // Glacier stages 3, 4, 5: Weather applies once at stage start
+                isHazardStage = true;
+                if (stageInBiome === 3) {
+                    startKey = 'aurora'; // Stage 3: Celestial Aurora
+                } else if (stageInBiome === 4) {
+                    startKey = 'windy'; // Stage 4: Sub-Zero Gale
+                } else {
+                    startKey = 'blizzard'; // Stage 5: Howling Blizzard (Frost King Boss)
+                }
+            }
         }
 
         this.currentWeather = this.allWeathers[startKey] || this.allWeathers.clear;
         this.targetWeather = this.currentWeather;
         this.transitionProgress = 1.0;
         this.weatherTimer = 0;
-        this.weatherDuration = 45.0 + Math.random() * 20.0;
+        this.weatherDuration = 999999.0; // Weather remains steady throughout stage
         this.gameTime = 0;
 
         this.clearParticles();
         this.initFogClouds();
         this.syncParticlesWithWeather();
         this.notifyWeatherChanged(false);
+
+        // Weather applies only once at stage starting from 3rd stage with atmospheric alert banner
+        if (isHazardStage && this.mode !== 'off') {
+            setTimeout(() => {
+                this.notifyWeatherChanged(true);
+                if (window.soundEngine) {
+                    if (startKey === 'thunderstorm') {
+                        setTimeout(() => this.triggerLightningStrike(), 500);
+                    } else if (startKey === 'blizzard' || startKey === 'windy') {
+                        window.soundEngine.playWindGust(2.5);
+                    }
+                }
+            }, 400);
+        }
     }
 
     clearParticles() {
@@ -252,17 +301,16 @@ class WeatherSystem {
     }
 
     onWaveStart(waveIndex, totalWaves) {
+        // Weather applies strictly once when the stage starts and does not cycle during waves
         if (this.mode === 'off' || !this.autoCycle) return;
         const isFinalWave = (waveIndex >= totalWaves - 1);
         if (isFinalWave) {
-            // Climax weather for final boss wave!
+            // Climax weather only if autoCycle was explicitly enabled by player
             if (this.biomeKey === 'jungle') {
                 this.setWeather('thunderstorm', 2.0);
             } else {
                 this.setWeather('blizzard', 2.0);
             }
-        } else if (Math.random() < 0.5 && this.transitionProgress >= 1.0) {
-            this.advanceToNextWeather(4.0);
         }
     }
 

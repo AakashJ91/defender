@@ -328,7 +328,14 @@ class GameEngine {
             y: path[0].y,
             progressDistance: 0,
             angle: (path && path.length > 1) ? Math.atan2(path[1].y - path[0].y, path[1].x - path[0].x) : 0,
-            walkTime: Math.random() * 5
+            walkTime: Math.random() * 5,
+            ghostHp: config.hp,
+            hitFlash: 0,
+            tiltAngle: 0,
+            staggerX: 0,
+            staggerY: 0,
+            breathTimer: Math.random() * Math.PI * 2,
+            lastStepPhase: 0
         };
 
         this.creeps.push(creep);
@@ -531,6 +538,12 @@ class GameEngine {
         }
 
         creep.hp -= effectiveDamage;
+        creep.hitFlash = 0.18; // Instant high-contrast damage flash
+        // Subtle tactile stagger kickback opposite to current travel direction
+        const backAng = (creep.angle || 0) + Math.PI;
+        creep.staggerX = Math.cos(backAng) * (creep.isBoss ? 2.5 : 4.5);
+        creep.staggerY = Math.sin(backAng) * (creep.isBoss ? 2.5 : 4.5);
+
         this.addFloatingText(`-${Math.round(effectiveDamage)}`, creep.x, creep.y - 10, type === 'explosion' ? '#ef4444' : '#ffffff');
 
         // Particle blood/spark
@@ -663,9 +676,37 @@ class GameEngine {
         for (let i = this.creeps.length - 1; i >= 0; i--) {
             const creep = this.creeps[i];
 
+            // Update hit-flash, stagger impulse, and breathing cycle
+            if (creep.hitFlash > 0) creep.hitFlash = Math.max(0, creep.hitFlash - effectiveDt);
+            if (creep.staggerX) creep.staggerX *= Math.pow(0.02, effectiveDt);
+            if (creep.staggerY) creep.staggerY *= Math.pow(0.02, effectiveDt);
+            creep.breathTimer = (creep.breathTimer || 0) + effectiveDt * 3.0;
+
+            // Lagging ghost health bar decay for smooth damage chunks
+            if (creep.ghostHp == null) creep.ghostHp = creep.hp;
+            if (creep.ghostHp > creep.hp) {
+                creep.ghostHp = Math.max(creep.hp, creep.ghostHp - creep.maxHp * 0.95 * effectiveDt);
+            } else if (creep.ghostHp < creep.hp) {
+                creep.ghostHp = creep.hp;
+            }
+
             // Status: Frozen
             if (creep.frozenTime > 0) {
                 creep.frozenTime -= effectiveDt;
+                // Emit frosty sub-zero vapor
+                if (Math.random() < 0.12) {
+                    this.particles.push({
+                        type: 'spark',
+                        x: creep.x + (Math.random() - 0.5) * creep.size,
+                        y: creep.y + (Math.random() - 0.5) * creep.size,
+                        vx: (Math.random() - 0.5) * 12,
+                        vy: -15 - Math.random() * 15,
+                        radius: 1.8,
+                        color: Math.random() > 0.5 ? '#bae6fd' : '#ffffff',
+                        life: 0.28,
+                        maxLife: 0.28
+                    });
+                }
                 continue; // Frozen completely, cannot move or heal
             }
 
@@ -688,6 +729,20 @@ class GameEngine {
                     this.damageCreep(creep, creep.burnDps * 0.25, 'burn');
                     if (creep.hp <= 0) continue;
                 }
+                // Emitting burning sparks & dark ember smoke
+                if (Math.random() < 0.35) {
+                    this.particles.push({
+                        type: 'spark',
+                        x: creep.x + (Math.random() - 0.5) * creep.size * 0.8,
+                        y: creep.y + (Math.random() - 0.5) * creep.size * 0.8,
+                        vx: (Math.random() - 0.5) * 20,
+                        vy: -25 - Math.random() * 30,
+                        radius: 2.0,
+                        color: Math.random() > 0.4 ? '#f97316' : '#fbbf24',
+                        life: 0.24,
+                        maxLife: 0.24
+                    });
+                }
             }
 
             // Shaman Healing Aura
@@ -702,6 +757,20 @@ class GameEngine {
                         }
                     });
                 }
+                // Channeling emerald spore motes
+                if (Math.random() < 0.18) {
+                    this.particles.push({
+                        type: 'spark',
+                        x: creep.x + (Math.random() - 0.5) * creep.size * 1.2,
+                        y: creep.y + (Math.random() - 0.5) * creep.size * 1.2,
+                        vx: (Math.random() - 0.5) * 15,
+                        vy: -20 - Math.random() * 15,
+                        radius: 2.2,
+                        color: Math.random() > 0.5 ? '#34d399' : '#a3e635',
+                        life: 0.35,
+                        maxLife: 0.35
+                    });
+                }
             }
 
             // Witch Shield Aura
@@ -714,6 +783,20 @@ class GameEngine {
                             other.shield = Math.min(250, other.shield + creep.shieldAmount);
                             this.addFloatingText(`+SHIELD`, other.x, other.y - 15, '#60a5fa');
                         }
+                    });
+                }
+                // Channeling arcane crystal sparks
+                if (Math.random() < 0.18) {
+                    this.particles.push({
+                        type: 'spark',
+                        x: creep.x + (Math.random() - 0.5) * creep.size * 1.2,
+                        y: creep.y + (Math.random() - 0.5) * creep.size * 1.2,
+                        vx: (Math.random() - 0.5) * 15,
+                        vy: -20 - Math.random() * 15,
+                        radius: 2.2,
+                        color: '#818cf8',
+                        life: 0.35,
+                        maxLife: 0.35
                     });
                 }
             }
@@ -751,9 +834,17 @@ class GameEngine {
 
             if (dist > 0.01) {
                 const targetAngle = Math.atan2(dy, dx);
-                creep.angle = lerpAngle(creep.angle != null ? creep.angle : targetAngle, targetAngle, Math.min(1, effectiveDt * 10));
+                const prevAngle = creep.angle != null ? creep.angle : targetAngle;
+                creep.angle = lerpAngle(prevAngle, targetAngle, Math.min(1, effectiveDt * 10));
+
+                // Fluid angular turn-tilt banking (leans organically into curves)
+                let angleDiff = (targetAngle - prevAngle) % (Math.PI * 2);
+                if (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+                if (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+                const targetTilt = Math.max(-0.35, Math.min(0.35, angleDiff * 3.2));
+                creep.tiltAngle = (creep.tiltAngle || 0) + (targetTilt - (creep.tiltAngle || 0)) * Math.min(1, effectiveDt * 8);
             }
-            creep.walkTime = (creep.walkTime || 0) + effectiveDt * (creep.speed / 75) * (creep.slowFactor || 1);
+            creep.walkTime = (creep.walkTime || 0) + effectiveDt * (creep.speed / 68) * (creep.slowFactor || 1);
 
             if (dist <= step) {
                 creep.x = targetPoint.x;
@@ -766,9 +857,61 @@ class GameEngine {
                 creep.progressDistance += step;
             }
 
-            // Kick up subtle trample dust/snow on the roadbed
-            if (!creep.isAir && Math.random() < 0.22) {
-                this.addTrampleParticle(creep.x, creep.y);
+            // Environmental footsteps, aerodynamic vortices & colossal boss tremors
+            if (creep.isAir) {
+                // High-speed aerial wingtip vortex wisps
+                if (Math.random() < 0.16) {
+                    const wingOffset = Math.sin(creep.walkTime * 14) > 0 ? 12 : -12;
+                    this.particles.push({
+                        type: 'smoke_puff',
+                        x: creep.x - Math.cos(creep.angle) * 10 - Math.sin(creep.angle) * wingOffset,
+                        y: creep.y - Math.sin(creep.angle) * 10 + Math.cos(creep.angle) * wingOffset + 12,
+                        vx: -Math.cos(creep.angle) * 25,
+                        vy: -Math.sin(creep.angle) * 25 + 5,
+                        radius: 2.8,
+                        color: 'rgba(255, 255, 255, 0.22)',
+                        life: 0.25,
+                        maxLife: 0.25
+                    });
+                }
+            } else if (creep.isBoss) {
+                // Boss Colossal Footstep Tremors: Trigger dust rings on step cadence impact
+                const stepPhase = Math.sin(creep.walkTime * 4.2);
+                if (stepPhase > 0.95 && (creep.lastStepPhase || 0) <= 0.95) {
+                    this.particles.push({
+                        type: 'sonic_cone',
+                        x: creep.x,
+                        y: creep.y + 12,
+                        angle: 0,
+                        radius: creep.size * 1.4,
+                        color: 'rgba(245, 158, 11, 0.45)',
+                        life: 0.28,
+                        maxLife: 0.28
+                    });
+                    for (let s = 0; s < 4; s++) {
+                        this.addTrampleParticle(creep.x + (Math.random() - 0.5) * 16, creep.y + (Math.random() - 0.5) * 16);
+                    }
+                }
+                creep.lastStepPhase = stepPhase;
+            } else {
+                // Normal ground unit trample dust or snow flurries
+                if (Math.random() < 0.20) {
+                    this.addTrampleParticle(creep.x, creep.y);
+                }
+                // Frost creeps leave icy crystals on path
+                if ((creep.type.includes('frost') || creep.type === 'ice_revenant' || creep.type === 'yeti') && Math.random() < 0.15) {
+                    this.particles.push({
+                        type: 'spark',
+                        x: creep.x + (Math.random() - 0.5) * 8,
+                        y: creep.y + (Math.random() - 0.5) * 8,
+                        vx: (Math.random() - 0.5) * 10,
+                        vy: -10,
+                        radius: 1.6,
+                        color: '#67e8f9',
+                        life: 0.25,
+                        maxLife: 0.25
+                    });
+                }
             }
         }
 
@@ -4524,88 +4667,308 @@ class GameEngine {
         });
     }
 
+    drawRoundedRect(x, y, w, h, r) {
+        if (w <= 0 || h <= 0) return;
+        r = Math.min(r, w / 2, h / 2);
+        this.ctx.beginPath();
+        if (typeof this.ctx.roundRect === 'function') {
+            this.ctx.roundRect(x, y, w, h, r);
+        } else {
+            this.ctx.moveTo(x + r, y);
+            this.ctx.lineTo(x + w - r, y);
+            this.ctx.arcTo(x + w, y, x + w, y + r, r);
+            this.ctx.lineTo(x + w, y + h - r);
+            this.ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+            this.ctx.lineTo(x + r, y + h);
+            this.ctx.arcTo(x, y + h, x, y + h - r, r);
+            this.ctx.lineTo(x, y + r);
+            this.ctx.arcTo(x, y, x + r, y, r);
+            this.ctx.closePath();
+        }
+    }
+
     renderCreeps() {
+        const now = performance.now();
+        const time = (this.gameTime || 0);
+
         this.creeps.forEach(creep => {
             this.ctx.save();
 
-            // Status Aura: Frozen
-            if (creep.frozenTime > 0) {
-                this.ctx.fillStyle = 'rgba(147, 197, 253, 0.45)';
-                this.ctx.beginPath();
-                this.ctx.arc(creep.x, creep.y, creep.size + 8, 0, Math.PI * 2);
-                this.ctx.fill();
-            } else if (creep.slowTime > 0) {
-                // Chilled / Slow Aura
-                this.ctx.strokeStyle = '#38bdf8';
-                this.ctx.lineWidth = 2.5;
-                this.ctx.beginPath();
-                this.ctx.arc(creep.x, creep.y, creep.size + 6, 0, Math.PI * 2);
-                this.ctx.stroke();
-            }
-
-            // Status: Burning
-            if (creep.burnTime > 0) {
-                this.ctx.fillStyle = 'rgba(239, 68, 68, 0.35)';
-                this.ctx.beginPath();
-                this.ctx.arc(creep.x, creep.y, creep.size + 7, 0, Math.PI * 2);
-                this.ctx.fill();
-            }
-
-            // Shield Aura
-            if (creep.shield > 0) {
-                this.ctx.strokeStyle = '#60a5fa';
-                this.ctx.lineWidth = 3;
-                this.ctx.setLineDash([4, 4]);
-                this.ctx.beginPath();
-                this.ctx.arc(creep.x, creep.y, creep.size + 9, 0, Math.PI * 2);
-                this.ctx.stroke();
-                this.ctx.setLineDash([]);
-            }
-
-            // Ground Shadow
-            const shadowOffsetY = creep.isAir ? 26 : 8;
-            const shadowScale = creep.isAir ? 0.9 : 1.0;
-            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.38)';
-            this.ctx.beginPath();
-            this.ctx.ellipse(creep.x, creep.y + shadowOffsetY, creep.size * 1.15 * shadowScale, creep.size * 0.45 * shadowScale, 0, 0, Math.PI * 2);
-            this.ctx.fill();
-
-            // Creep Unit Sprite (Oriented along creep.angle + Walking/Flying Animation)
-            this.ctx.save();
-            this.ctx.translate(creep.x, creep.y);
-
-            const angle = creep.angle || 0;
-            this.ctx.rotate(angle);
-
-            // Dynamic movement animation
             const walk = creep.walkTime || 0;
-            if (creep.isAir) {
-                // Wing flap & aerial hovering bob
-                const flap = 1.0 + Math.sin(walk * 14) * 0.14;
-                const hoverY = Math.sin(walk * 5) * 3;
+            const isAir = creep.isAir;
+            const isBoss = creep.isBoss;
+            const hpPercent = Math.max(0, creep.hp / creep.maxHp);
+            const ghostHpPercent = Math.max(0, Math.min(1, (creep.ghostHp || creep.hp) / creep.maxHp));
+
+            // =========================================================================
+            // 1. GROUND FX LAYER: CONTACT SHADOWS & AURA SEALS
+            // =========================================================================
+            if (isAir) {
+                // High-Altitude Dynamic Aerial Shadow with flight altitude bobbing
+                const altBob = Math.sin(walk * 5) * 4;
+                const shadowX = creep.x + 8;
+                const shadowY = creep.y + 26 + altBob * 0.5;
+                const shadowScale = 0.88 - (altBob * 0.02);
+
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.28)';
+                this.ctx.beginPath();
+                this.ctx.ellipse(shadowX, shadowY, creep.size * 1.3 * shadowScale, creep.size * 0.5 * shadowScale, 0, 0, Math.PI * 2);
+                this.ctx.fill();
+            } else if (isBoss) {
+                // Colossal Boss Threat Sigil: Rotating archaic arcane danger disc
+                const bossRingAng = time * 0.8;
+                this.ctx.save();
+                this.ctx.translate(creep.x, creep.y + 10);
+                this.ctx.scale(1.0, 0.45);
+
+                // Heavy ambient contact shadow core
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+                this.ctx.beginPath();
+                this.ctx.arc(0, 0, creep.size * 1.5, 0, Math.PI * 2);
+                this.ctx.fill();
+
+                // Outer rotating golden rune boundary
+                this.ctx.strokeStyle = 'rgba(245, 158, 11, 0.45)';
+                this.ctx.lineWidth = 2.5;
+                this.ctx.setLineDash([12, 8, 4, 8]);
+                this.ctx.beginPath();
+                this.ctx.arc(0, 0, creep.size * 1.85, bossRingAng, bossRingAng + Math.PI * 2);
+                this.ctx.stroke();
+
+                // Inner pulsing threat ring
+                const bPulse = 0.85 + Math.sin(time * 3) * 0.15;
+                this.ctx.strokeStyle = `rgba(239, 68, 68, ${0.35 * bPulse})`;
+                this.ctx.lineWidth = 1.5;
+                this.ctx.setLineDash([6, 6]);
+                this.ctx.beginPath();
+                this.ctx.arc(0, 0, creep.size * 1.35 * bPulse, -bossRingAng, -bossRingAng + Math.PI * 2);
+                this.ctx.stroke();
+
+                this.ctx.restore();
+            } else {
+                // Ground Unit Contact Shadow with step cadence compression
+                const stepBob = Math.abs(Math.sin(walk * 8));
+                const shadowScale = 1.0 - stepBob * 0.12;
+
+                // Soft outer ambient shadow
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.20)';
+                this.ctx.beginPath();
+                this.ctx.ellipse(creep.x, creep.y + 8, creep.size * 1.3 * shadowScale, creep.size * 0.55 * shadowScale, 0, 0, Math.PI * 2);
+                this.ctx.fill();
+
+                // Core contact shadow under feet
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.38)';
+                this.ctx.beginPath();
+                this.ctx.ellipse(creep.x, creep.y + 7, creep.size * 0.95 * shadowScale, creep.size * 0.38 * shadowScale, 0, 0, Math.PI * 2);
+                this.ctx.fill();
+            }
+
+            // Occult Caster Halos (Shaman & Frost Witch)
+            if (creep.type === 'shaman') {
+                // Revolving druidic healing seal
+                const sAng = time * 1.2;
+                this.ctx.save();
+                this.ctx.translate(creep.x, creep.y + 6);
+                this.ctx.scale(1.0, 0.45);
+                this.ctx.strokeStyle = 'rgba(52, 211, 153, 0.4)';
+                this.ctx.lineWidth = 1.8;
+                this.ctx.setLineDash([8, 6]);
+                this.ctx.beginPath();
+                this.ctx.arc(0, 0, creep.size * 1.5, sAng, sAng + Math.PI * 2);
+                this.ctx.stroke();
+                this.ctx.restore();
+            } else if (creep.type === 'frost_witch') {
+                // Revolving rime frost seal
+                const wAng = -time * 1.2;
+                this.ctx.save();
+                this.ctx.translate(creep.x, creep.y + 6);
+                this.ctx.scale(1.0, 0.45);
+                this.ctx.strokeStyle = 'rgba(129, 140, 248, 0.4)';
+                this.ctx.lineWidth = 1.8;
+                this.ctx.setLineDash([10, 5, 2, 5]);
+                this.ctx.beginPath();
+                this.ctx.arc(0, 0, creep.size * 1.5, wAng, wAng + Math.PI * 2);
+                this.ctx.stroke();
+                this.ctx.restore();
+            }
+
+            // =========================================================================
+            // 2. STATUS EFFECT AURAS: FROST PRISM, FLAMES, SHIELDS & ICE ORBS
+            // =========================================================================
+
+            // A. Chilled / Slow Status: 4 revolving glacial diamond crystals
+            if (creep.slowTime > 0 && creep.frozenTime <= 0) {
+                this.ctx.save();
+                const orbTime = now * 0.0035;
+                const orbDist = creep.size + 9;
+
+                this.ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
+                this.ctx.lineWidth = 1.2;
+                this.ctx.beginPath();
+                this.ctx.arc(creep.x, creep.y, orbDist, 0, Math.PI * 2);
+                this.ctx.stroke();
+
+                for (let o = 0; o < 4; o++) {
+                    const oAng = orbTime + (o * Math.PI / 2);
+                    const ox = creep.x + Math.cos(oAng) * orbDist;
+                    const oy = creep.y + Math.sin(oAng) * orbDist;
+
+                    // Diamond ice crystal
+                    this.ctx.fillStyle = (o % 2 === 0) ? '#67e8f9' : '#bae6fd';
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(ox, oy - 4);
+                    this.ctx.lineTo(ox + 3, oy);
+                    this.ctx.lineTo(ox, oy + 4);
+                    this.ctx.lineTo(ox - 3, oy);
+                    this.ctx.closePath();
+                    this.ctx.fill();
+                }
+                this.ctx.restore();
+            }
+
+            // B. Burning Status (DoT): Dynamic animated flame tongues & fiery glow
+            if (creep.burnTime > 0) {
+                this.ctx.save();
+                const fTime = now * 0.012;
+                // Fiery ground reflection
+                const fireGrad = this.ctx.createRadialGradient(creep.x, creep.y, 2, creep.x, creep.y, creep.size + 10);
+                fireGrad.addColorStop(0, 'rgba(249, 115, 22, 0.45)');
+                fireGrad.addColorStop(0.7, 'rgba(239, 68, 68, 0.20)');
+                fireGrad.addColorStop(1, 'transparent');
+                this.ctx.fillStyle = fireGrad;
+                this.ctx.beginPath();
+                this.ctx.arc(creep.x, creep.y, creep.size + 10, 0, Math.PI * 2);
+                this.ctx.fill();
+
+                // 5 Procedural flickering flame tongues licking upwards
+                const flameCount = 5;
+                for (let f = 0; f < flameCount; f++) {
+                    const fOffset = (f - (flameCount - 1) / 2) * (creep.size * 0.45);
+                    const fHeight = 8 + Math.sin(fTime + f * 1.7) * 5;
+                    const fx = creep.x + fOffset;
+                    const fy = creep.y + creep.size * 0.3;
+
+                    this.ctx.fillStyle = (f % 2 === 0) ? '#ea580c' : '#f59e0b';
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(fx - 3.5, fy);
+                    this.ctx.quadraticCurveTo(fx - 1, fy - fHeight * 0.6, fx, fy - fHeight);
+                    this.ctx.quadraticCurveTo(fx + 1, fy - fHeight * 0.6, fx + 3.5, fy);
+                    this.ctx.closePath();
+                    this.ctx.fill();
+
+                    // Incandescent flame tip spark
+                    this.ctx.fillStyle = '#fef08a';
+                    this.ctx.beginPath();
+                    this.ctx.arc(fx, fy - fHeight * 0.75, 1.4, 0, Math.PI * 2);
+                    this.ctx.fill();
+                }
+                this.ctx.restore();
+            }
+
+            // C. Energy Shield Dome: Shimmering hexagonal forcefield
+            if (creep.shield > 0) {
+                this.ctx.save();
+                const sRadius = creep.size + 10;
+
+                // Forcefield translucent volume
+                const sGrad = this.ctx.createRadialGradient(creep.x, creep.y, sRadius * 0.3, creep.x, creep.y, sRadius);
+                sGrad.addColorStop(0, 'rgba(96, 165, 250, 0.08)');
+                sGrad.addColorStop(0.75, 'rgba(56, 189, 248, 0.22)');
+                sGrad.addColorStop(1, 'rgba(147, 197, 253, 0.45)');
+                this.ctx.fillStyle = sGrad;
+                this.ctx.beginPath();
+                this.ctx.arc(creep.x, creep.y, sRadius, 0, Math.PI * 2);
+                this.ctx.fill();
+
+                // Electric shield rim with rotating breaks
+                const sRot = now * 0.003;
+                this.ctx.strokeStyle = '#60a5fa';
+                this.ctx.lineWidth = 2.4;
+                this.ctx.setLineDash([16, 8]);
+                this.ctx.beginPath();
+                this.ctx.arc(creep.x, creep.y, sRadius, sRot, sRot + Math.PI * 2);
+                this.ctx.stroke();
+
+                // Specular glint arc
+                this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+                this.ctx.lineWidth = 1.6;
+                this.ctx.setLineDash([]);
+                this.ctx.beginPath();
+                this.ctx.arc(creep.x, creep.y, sRadius - 1.5, -Math.PI * 0.75, -Math.PI * 0.35);
+                this.ctx.stroke();
+                this.ctx.restore();
+            }
+
+            // =========================================================================
+            // 3. ANIMATED UNIT SPRITE (DIRECTIONAL BANKING, LOCOMOTION & HIT FLASH)
+            // =========================================================================
+            this.ctx.save();
+            // Apply coordinates with tactile stagger kickback
+            const renderX = creep.x + (creep.staggerX || 0);
+            const renderY = creep.y + (creep.staggerY || 0);
+            this.ctx.translate(renderX, renderY);
+
+            // Dynamic rotation with organic corner banking
+            const totalAngle = (creep.angle || 0) + (creep.tiltAngle || 0);
+            this.ctx.rotate(totalAngle);
+
+            // Tailored movement dynamics per enemy class
+            if (isAir) {
+                // Canopy Drake & Blizzard Wyvern: High-speed wing-flapping & altitude sinewave
+                const flap = 1.0 + Math.sin(walk * 15) * 0.20;
+                const hoverY = Math.sin(walk * 5) * 3.5;
                 this.ctx.translate(0, hoverY);
                 this.ctx.scale(1.0, flap);
-            } else if (creep.isBoss) {
-                // Colossal stomping cadence
-                const sway = Math.sin(walk * 4.5) * 0.08;
-                const bob = 1.0 + Math.abs(Math.sin(walk * 4.5)) * 0.06;
+            } else if (isBoss) {
+                // Ancient Jungle Titan & Glacial Behemoth: Colossal impact cadence
+                const sway = Math.sin(walk * 4.2) * 0.08;
+                const bob = 1.0 + Math.abs(Math.sin(walk * 4.2)) * 0.08;
                 this.ctx.rotate(sway);
                 this.ctx.scale(bob, 2 - bob);
+            } else if (creep.type === 'crawler' || creep.type === 'scout') {
+                // Venom Crawler & Jungle Scout: Aggressive low-slung sprint & rapid leg scuttle
+                const scuttle = Math.sin(walk * 15) * 0.12;
+                const stretch = 1.0 + Math.sin(walk * 15) * 0.09;
+                this.ctx.rotate(scuttle);
+                this.ctx.scale(stretch, 2 - stretch);
+            } else if (creep.type === 'shaman' || creep.type === 'frost_witch') {
+                // Mystical hover levitation with subtle breathing pulse
+                const hover = Math.sin(walk * 3.6) * 3.2;
+                this.ctx.translate(0, hover);
+                const breathe = 1.0 + Math.sin(creep.breathTimer || 0) * 0.035;
+                this.ctx.scale(breathe, breathe);
             } else {
-                // Ground creep gait / scuttle / stride
-                const sway = Math.sin(walk * 9) * 0.10;
-                const bob = 1.0 + Math.abs(Math.sin(walk * 9)) * 0.07;
-                this.ctx.rotate(sway);
-                this.ctx.scale(bob, 2 - bob);
+                // Heavy Beasts (Wolf, Gorilla, Revenant, Yeti): Bounding quadrupedal stride
+                const lope = Math.sin(walk * 7.5) * 0.13;
+                const squash = 1.0 + Math.abs(Math.sin(walk * 7.5)) * 0.11;
+                this.ctx.rotate(lope);
+                this.ctx.scale(squash, 2 - squash);
             }
 
             const sprite = this.enemySprites ? this.enemySprites[creep.type] : null;
-            const spriteSize = creep.size * (creep.isBoss ? 2.4 : (creep.isAir ? 2.2 : 2.0));
+            const spriteScaleMultiplier = isBoss ? 2.5 : (isAir ? 2.25 : 2.05);
+            const spriteSize = creep.size * spriteScaleMultiplier;
 
             if (sprite && sprite.complete && sprite.naturalWidth > 0) {
+                // Crisp directional ambient drop-shadow behind sprite
+                this.ctx.save();
+                this.ctx.shadowColor = 'rgba(0, 0, 0, 0.45)';
+                this.ctx.shadowBlur = 6;
+                this.ctx.shadowOffsetY = 2;
                 this.ctx.drawImage(sprite, -spriteSize, -spriteSize, spriteSize * 2, spriteSize * 2);
+                this.ctx.restore();
+
+                // HIT-FLASH REACTION: Luminous white flash silhouette on damage
+                if (creep.hitFlash > 0) {
+                    const flashOpacity = Math.min(1, creep.hitFlash / 0.18);
+                    this.ctx.save();
+                    this.ctx.globalAlpha = flashOpacity * 0.85;
+                    this.ctx.filter = 'brightness(3.0) contrast(1.5)';
+                    this.ctx.drawImage(sprite, -spriteSize, -spriteSize, spriteSize * 2, spriteSize * 2);
+                    this.ctx.restore();
+                }
             } else {
-                // Crisp procedural avatar fallback while image loads
+                // High-fidelity procedural avatar fallback
                 this.ctx.fillStyle = creep.color;
                 this.ctx.beginPath();
                 this.ctx.arc(0, 0, creep.size, 0, Math.PI * 2);
@@ -4617,37 +4980,188 @@ class GameEngine {
                 // Eyes facing forward (+X)
                 this.ctx.fillStyle = '#fef08a';
                 this.ctx.beginPath();
-                this.ctx.arc(creep.size * 0.45, -creep.size * 0.25, 3, 0, Math.PI * 2);
-                this.ctx.arc(creep.size * 0.45, creep.size * 0.25, 3, 0, Math.PI * 2);
+                this.ctx.arc(creep.size * 0.45, -creep.size * 0.25, 3.2, 0, Math.PI * 2);
+                this.ctx.arc(creep.size * 0.45, creep.size * 0.25, 3.2, 0, Math.PI * 2);
                 this.ctx.fill();
             }
 
             this.ctx.restore();
 
-            // Health Bar & Unit Plate
-            const barW = Math.max(30, creep.size * 2.4);
-            const barH = creep.isBoss ? 7 : 5;
-            const barX = creep.x - barW / 2;
-            const barY = creep.y - creep.size - (creep.isBoss ? 18 : 13);
+            // D. Frozen Ice Crystal Tomb (Rendered on top of the frozen unit)
+            if (creep.frozenTime > 0) {
+                this.ctx.save();
+                this.ctx.translate(creep.x, creep.y);
+                const fPulse = 0.95 + Math.sin(now * 0.006) * 0.05;
+                const fSize = (creep.size + 10) * fPulse;
 
-            this.ctx.fillStyle = '#0f172a';
-            this.ctx.fillRect(barX - 1, barY - 1, barW + 2, barH + 2);
-            this.ctx.strokeStyle = creep.isBoss ? '#f59e0b' : '#334155';
-            this.ctx.lineWidth = 1;
-            this.ctx.strokeRect(barX - 1, barY - 1, barW + 2, barH + 2);
+                // 1. Frosted cryogenic ice block volume
+                const iceGrad = this.ctx.createRadialGradient(0, 0, fSize * 0.2, 0, 0, fSize);
+                iceGrad.addColorStop(0, 'rgba(224, 242, 254, 0.7)');
+                iceGrad.addColorStop(0.65, 'rgba(147, 197, 253, 0.55)');
+                iceGrad.addColorStop(1, 'rgba(56, 189, 248, 0.85)');
+                this.ctx.fillStyle = iceGrad;
 
-            const hpPercent = Math.max(0, creep.hp / creep.maxHp);
-            this.ctx.fillStyle = creep.isBoss ? '#f59e0b' : (hpPercent > 0.5 ? '#22c55e' : (hpPercent > 0.25 ? '#eab308' : '#ef4444'));
-            this.ctx.fillRect(barX, barY, barW * hpPercent, barH);
+                // 2. Faceted Ice Diamond Polygon
+                this.ctx.beginPath();
+                this.ctx.moveTo(0, -fSize * 1.15);
+                this.ctx.lineTo(fSize * 0.95, -fSize * 0.45);
+                this.ctx.lineTo(fSize * 0.8, fSize * 0.75);
+                this.ctx.lineTo(0, fSize * 1.15);
+                this.ctx.lineTo(-fSize * 0.8, fSize * 0.75);
+                this.ctx.lineTo(-fSize * 0.95, -fSize * 0.45);
+                this.ctx.closePath();
+                this.ctx.fill();
 
-            // Boss Crown & Name Label
-            if (creep.isBoss) {
-                this.ctx.font = 'bold 10px sans-serif';
-                this.ctx.fillStyle = '#fbbf24';
-                this.ctx.textAlign = 'center';
-                this.ctx.fillText(`👑 ${creep.name}`, creep.x, barY - 4);
+                this.ctx.strokeStyle = '#bae6fd';
+                this.ctx.lineWidth = 2.2;
+                this.ctx.stroke();
+
+                // 3. Crisp interior crystalline facet reflections
+                this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+                this.ctx.lineWidth = 1.4;
+                this.ctx.beginPath();
+                this.ctx.moveTo(0, -fSize * 1.15);
+                this.ctx.lineTo(0, fSize * 1.15);
+                this.ctx.moveTo(-fSize * 0.95, -fSize * 0.45);
+                this.ctx.lineTo(fSize * 0.95, -fSize * 0.45);
+                this.ctx.stroke();
+
+                this.ctx.restore();
             }
 
+            // =========================================================================
+            // 4. TACTICAL HEALTH PLATE & STATUS BADGES (ULTRA-SLEEK MODERN HUD)
+            // =========================================================================
+            this.ctx.save();
+
+            const barW = Math.max(34, creep.size * 2.5);
+            const barH = isBoss ? 8 : 5.5;
+            const barX = creep.x - barW / 2;
+            const barY = creep.y - creep.size - (isBoss ? 22 : 14);
+
+            // Subtle adaptive opacity: full opacity when damaged or boss, subtle when full HP
+            if (hpPercent < 0.99 || isBoss || creep.hitFlash > 0 || creep.frozenTime > 0 || creep.slowTime > 0 || creep.burnTime > 0 || creep.shield > 0) {
+                this.ctx.globalAlpha = 1.0;
+            } else {
+                this.ctx.globalAlpha = 0.65;
+            }
+
+            // A. Pill Backdrop Glass Capsule
+            this.ctx.fillStyle = 'rgba(8, 12, 20, 0.88)';
+            this.ctx.strokeStyle = isBoss ? 'rgba(245, 158, 11, 0.8)' : 'rgba(255, 255, 255, 0.20)';
+            this.ctx.lineWidth = isBoss ? 1.5 : 1.0;
+
+            const pillRadius = barH / 2 + 1;
+            this.drawRoundedRect(barX - 1.5, barY - 1.5, barW + 3, barH + 3, pillRadius);
+            this.ctx.fill();
+            this.ctx.stroke();
+
+            // B. Lagging Ghost Damage Bar (Smoothly catches up to show recent damage chunk)
+            if (ghostHpPercent > hpPercent) {
+                this.ctx.fillStyle = '#fef08a';
+                this.drawRoundedRect(barX, barY, barW * ghostHpPercent, barH, barH / 2);
+                this.ctx.fill();
+            }
+
+            // C. Current Health Bar with Dynamic Gradient
+            if (hpPercent > 0) {
+                const hpGrad = this.ctx.createLinearGradient(barX, barY, barX + barW * hpPercent, barY);
+                if (isBoss) {
+                    hpGrad.addColorStop(0, '#f59e0b');
+                    hpGrad.addColorStop(1, '#fbbf24');
+                } else if (hpPercent > 0.5) {
+                    hpGrad.addColorStop(0, '#10b981');
+                    hpGrad.addColorStop(1, '#34d399');
+                } else if (hpPercent > 0.25) {
+                    hpGrad.addColorStop(0, '#f59e0b');
+                    hpGrad.addColorStop(1, '#fde047');
+                } else {
+                    hpGrad.addColorStop(0, '#dc2626');
+                    hpGrad.addColorStop(1, '#f87171');
+                }
+
+                this.ctx.fillStyle = hpGrad;
+                this.drawRoundedRect(barX, barY, barW * hpPercent, barH, barH / 2);
+                this.ctx.fill();
+
+                // Specular upper gloss line
+                this.ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+                this.ctx.fillRect(barX + 2, barY + 1, Math.max(0, barW * hpPercent - 4), 1.2);
+            }
+
+            // D. Overlaid Electric Shield Bar
+            if (creep.shield > 0) {
+                const shieldPercent = Math.min(1.0, creep.shield / 250);
+                const shieldGrad = this.ctx.createLinearGradient(barX, barY, barX + barW * shieldPercent, barY);
+                shieldGrad.addColorStop(0, 'rgba(56, 189, 248, 0.85)');
+                shieldGrad.addColorStop(1, '#60a5fa');
+                this.ctx.fillStyle = shieldGrad;
+                this.drawRoundedRect(barX, barY, barW * shieldPercent, barH, barH / 2);
+                this.ctx.fill();
+            }
+
+            // E. Segmented Phase Notches for Bosses
+            if (isBoss) {
+                this.ctx.strokeStyle = 'rgba(15, 23, 42, 0.8)';
+                this.ctx.lineWidth = 1.5;
+                for (let n = 1; n < 4; n++) {
+                    const nx = barX + (barW * (n / 4));
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(nx, barY);
+                    this.ctx.lineTo(nx, barY + barH);
+                    this.ctx.stroke();
+                }
+            }
+
+            // F. Tactical Armor Badge (Displays armor percentage on armored units)
+            if (creep.armor > 0) {
+                this.ctx.font = '900 7.5px sans-serif';
+                this.ctx.fillStyle = '#cbd5e1';
+                this.ctx.textAlign = 'right';
+                this.ctx.fillText(`🛡️${Math.round(creep.armor * 100)}%`, barX - 3, barY + barH - 1);
+            }
+
+            // G. Status Effect Micro-Chips (Burn, Freeze, Slow, Shield)
+            let chipX = barX + barW + 4;
+            this.ctx.font = '900 8px sans-serif';
+            this.ctx.textAlign = 'left';
+
+            if (creep.burnTime > 0) {
+                this.ctx.fillText('🔥', chipX, barY + barH);
+                chipX += 11;
+            }
+            if (creep.frozenTime > 0) {
+                this.ctx.fillText('❄️', chipX, barY + barH);
+                chipX += 11;
+            } else if (creep.slowTime > 0) {
+                this.ctx.fillText('🧊', chipX, barY + barH);
+                chipX += 11;
+            }
+            if (creep.shield > 0) {
+                this.ctx.fillText('🛡️', chipX, barY + barH);
+                chipX += 11;
+            }
+
+            // H. Boss Epic Plate: Royal Crest, Name & Numerical HP
+            if (isBoss) {
+                // Glowing text shadow
+                this.ctx.save();
+                this.ctx.font = 'bold 10px sans-serif';
+                this.ctx.fillStyle = '#fbbf24';
+                this.ctx.shadowColor = 'rgba(245, 158, 11, 0.8)';
+                this.ctx.shadowBlur = 6;
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText(`👑 ${creep.name.toUpperCase()}`, creep.x, barY - 5);
+                this.ctx.restore();
+
+                // Numerical HP below the bar
+                this.ctx.font = '800 7.5px monospace';
+                this.ctx.fillStyle = '#fde68a';
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText(`${Math.round(creep.hp)} / ${creep.maxHp}`, creep.x, barY + barH + 9);
+            }
+
+            this.ctx.restore();
             this.ctx.restore();
         });
     }
