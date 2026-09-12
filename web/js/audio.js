@@ -4,6 +4,7 @@ class SoundEngine {
         this.ctx = null;
         this.muted = false;
         this.sfxVolume = 0.5;
+        this.cutsceneNodes = [];
         this.initAudioContext();
     }
 
@@ -428,6 +429,249 @@ class SoundEngine {
         gain.connect(this.ctx.destination);
         osc.start(now);
         osc.stop(now + 0.09);
+    }
+
+    stopCutsceneAudio() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        if (this.cutsceneNodes && this.cutsceneNodes.length > 0) {
+            this.cutsceneNodes.forEach(item => {
+                try {
+                    if (item.gain) {
+                        item.gain.gain.cancelScheduledValues(now);
+                        item.gain.gain.setValueAtTime(item.gain.gain.value, now);
+                        item.gain.gain.linearRampToValueAtTime(0.0001, now + 0.3);
+                    }
+                    if (item.osc) {
+                        item.osc.stop(now + 0.35);
+                    }
+                } catch (e) {}
+            });
+            this.cutsceneNodes = [];
+        }
+    }
+
+    playDialogueBlip() {
+        if (this.muted || !this.ctx) return;
+        this.resume();
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(980 + Math.random() * 240, now);
+        osc.frequency.exponentialRampToValueAtTime(640, now + 0.035);
+
+        gain.gain.setValueAtTime(0.045 * this.sfxVolume, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.035);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.035);
+    }
+
+    playIntroTheme() {
+        if (this.muted || !this.ctx) return;
+        this.resume();
+        this.stopCutsceneAudio();
+
+        const now = this.ctx.currentTime;
+        const masterGain = this.ctx.createGain();
+        masterGain.gain.setValueAtTime(0.001, now);
+        masterGain.gain.linearRampToValueAtTime(0.42 * this.sfxVolume, now + 1.2);
+        masterGain.connect(this.ctx.destination);
+        this.cutsceneNodes.push({ gain: masterGain });
+
+        // Deep mysterious atmospheric drone
+        const droneFrequencies = [55, 82.4, 110]; // A1, E2, A2
+        droneFrequencies.forEach((freq, idx) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = idx === 0 ? 'sine' : 'triangle';
+            osc.frequency.setValueAtTime(freq, now);
+
+            // Gentle slow detune pulse
+            osc.frequency.linearRampToValueAtTime(freq + (idx === 1 ? 1.5 : -1.0), now + 8);
+
+            gain.gain.setValueAtTime(0.25 / droneFrequencies.length, now);
+            osc.connect(gain);
+            gain.connect(masterGain);
+            osc.start(now);
+            this.cutsceneNodes.push({ osc: osc, gain: gain });
+        });
+
+        // Eerie ancient pentatonic chime arpeggios
+        const melodyNotes = [
+            { note: 440, time: 0.8 },    // A4
+            { note: 523.25, time: 1.6 }, // C5
+            { note: 659.25, time: 2.4 }, // E5
+            { note: 587.33, time: 3.2 }, // D5
+            { note: 440, time: 4.2 },    // A4
+            { note: 392.00, time: 5.2 }, // G4
+            { note: 440, time: 6.2 }     // A4
+        ];
+
+        melodyNotes.forEach(m => {
+            const mTime = now + m.time;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(m.note, mTime);
+
+            gain.gain.setValueAtTime(0.0001, mTime);
+            gain.gain.linearRampToValueAtTime(0.18, mTime + 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.0001, mTime + 0.85);
+
+            osc.connect(gain);
+            gain.connect(masterGain);
+            osc.start(mTime);
+            osc.stop(mTime + 0.9);
+            this.cutsceneNodes.push({ osc: osc, gain: gain });
+        });
+
+        // Tribal war drum pulse
+        const drumTimes = [0.4, 1.2, 2.0, 2.8, 3.6, 4.4, 5.2, 6.0, 6.8, 7.6];
+        drumTimes.forEach((dOffset, dIdx) => {
+            const dTime = now + dOffset;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(dIdx % 2 === 0 ? 90 : 70, dTime);
+            osc.frequency.exponentialRampToValueAtTime(32, dTime + 0.22);
+
+            gain.gain.setValueAtTime(0.24, dTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, dTime + 0.22);
+
+            osc.connect(gain);
+            gain.connect(masterGain);
+            osc.start(dTime);
+            osc.stop(dTime + 0.23);
+            this.cutsceneNodes.push({ osc: osc, gain: gain });
+        });
+    }
+
+    playGrandFinaleTheme() {
+        if (this.muted || !this.ctx) return;
+        this.resume();
+        this.stopCutsceneAudio();
+
+        const now = this.ctx.currentTime;
+        const masterGain = this.ctx.createGain();
+        masterGain.gain.setValueAtTime(0.001, now);
+        masterGain.gain.linearRampToValueAtTime(0.48 * this.sfxVolume, now + 0.6);
+        masterGain.connect(this.ctx.destination);
+        this.cutsceneNodes.push({ gain: masterGain });
+
+        // Triumphant orchestral brass fanfare (D major -> G major -> A major -> high D)
+        const chords = [
+            { time: 0.1, duration: 0.8, freqs: [293.66, 369.99, 440.00] }, // D4, F#4, A4
+            { time: 0.9, duration: 0.8, freqs: [392.00, 493.88, 587.33] }, // G4, B4, D5
+            { time: 1.7, duration: 1.0, freqs: [440.00, 554.37, 659.25] }, // A4, C#5, E5
+            { time: 2.8, duration: 2.8, freqs: [293.66, 440.00, 587.33, 880.00] } // Majestic D5 chord
+        ];
+
+        chords.forEach(c => {
+            const chordStart = now + c.time;
+            c.freqs.forEach(f => {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                const filter = this.ctx.createBiquadFilter();
+
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(f, chordStart);
+
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(1400, chordStart);
+                filter.frequency.exponentialRampToValueAtTime(900, chordStart + c.duration);
+
+                gain.gain.setValueAtTime(0.001, chordStart);
+                gain.gain.linearRampToValueAtTime(0.16 / c.freqs.length, chordStart + 0.08);
+                gain.gain.setValueAtTime(0.14 / c.freqs.length, chordStart + c.duration * 0.7);
+                gain.gain.exponentialRampToValueAtTime(0.0001, chordStart + c.duration);
+
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(masterGain);
+
+                osc.start(chordStart);
+                osc.stop(chordStart + c.duration + 0.05);
+                this.cutsceneNodes.push({ osc: osc, gain: gain });
+            });
+        });
+
+        // Shimmering victory harp arpeggio run
+        const harpNotes = [
+            { note: 293.66, time: 2.2 }, // D4
+            { note: 369.99, time: 2.32 }, // F#4
+            { note: 440.00, time: 2.44 }, // A4
+            { note: 587.33, time: 2.56 }, // D5
+            { note: 739.99, time: 2.68 }, // F#5
+            { note: 880.00, time: 2.80 }, // A5
+            { note: 1174.66, time: 2.92 } // D6
+        ];
+
+        harpNotes.forEach(h => {
+            const hTime = now + h.time;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(h.note, hTime);
+
+            gain.gain.setValueAtTime(0.0001, hTime);
+            gain.gain.linearRampToValueAtTime(0.12, hTime + 0.04);
+            gain.gain.exponentialRampToValueAtTime(0.0001, hTime + 0.75);
+
+            osc.connect(gain);
+            gain.connect(masterGain);
+            osc.start(hTime);
+            osc.stop(hTime + 0.8);
+            this.cutsceneNodes.push({ osc: osc, gain: gain });
+        });
+    }
+
+    playFireworkSound() {
+        if (this.muted || !this.ctx) return;
+        this.resume();
+        const now = this.ctx.currentTime;
+
+        // Ascending rocket whistle
+        const whistleOsc = this.ctx.createOscillator();
+        const whistleGain = this.ctx.createGain();
+        whistleOsc.type = 'sine';
+        whistleOsc.frequency.setValueAtTime(320 + Math.random() * 80, now);
+        whistleOsc.frequency.exponentialRampToValueAtTime(1400 + Math.random() * 300, now + 0.28);
+
+        whistleGain.gain.setValueAtTime(0.09 * this.sfxVolume, now);
+        whistleGain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+
+        whistleOsc.connect(whistleGain);
+        whistleGain.connect(this.ctx.destination);
+        whistleOsc.start(now);
+        whistleOsc.stop(now + 0.29);
+
+        // Burst explosion & crackle
+        const burstTime = now + 0.26;
+        const burstNoise = this.getNoiseBuffer(0.8);
+        if (burstNoise) {
+            const noiseSource = this.ctx.createBufferSource();
+            noiseSource.buffer = burstNoise;
+
+            const filter = this.ctx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(450, burstTime);
+            filter.Q.value = 1.2;
+
+            const gain = this.ctx.createGain();
+            gain.gain.setValueAtTime(0.35 * this.sfxVolume, burstTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, burstTime + 0.7);
+
+            noiseSource.connect(filter);
+            filter.connect(gain);
+            gain.connect(this.ctx.destination);
+
+            noiseSource.start(burstTime);
+            noiseSource.stop(burstTime + 0.75);
+        }
     }
 }
 

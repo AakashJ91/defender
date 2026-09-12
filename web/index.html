@@ -60,6 +60,10 @@
                             <span class="btn-sub-text">Audio & Controls</span>
                         </div>
                     </button>
+                    <div class="landing-cinematic-row">
+                        <button id="btn-landing-intro" class="landing-cutscene-btn" title="Watch Level 1 Prologue">🎬 Prologue Intro</button>
+                        <button id="btn-landing-finish" class="landing-cutscene-btn finale" title="Watch Level 10 Grand Finale">🏆 Grand Finale</button>
+                    </div>
                 </div>
 
                 <div class="landing-footer">
@@ -322,7 +326,9 @@
                 <div id="grid-snow-levels" class="levels-grid"></div>
 
                 <div class="modal-actions">
-                    <button id="btn-close-levels" class="modal-btn secondary" onclick="document.getElementById('modal-level-select').classList.add('hidden')">Back to Game</button>
+                    <button id="btn-levels-watch-intro" class="modal-btn secondary">🎬 Watch Intro</button>
+                    <button id="btn-levels-watch-finish" class="modal-btn secondary">🏆 Grand Finale</button>
+                    <button id="btn-close-levels" class="modal-btn" onclick="document.getElementById('modal-level-select').classList.add('hidden')">Back to Game</button>
                 </div>
             </div>
         </div>
@@ -552,6 +558,143 @@
                     <button id="btn-close-codex" class="modal-btn">Done</button>
                 </div>
             </div>
+        <!-- LEVEL 1 INTRO CUTSCENE OVERLAY -->
+        <div id="cutscene-intro" class="cutscene-overlay hidden">
+            <div class="cutscene-letterbox top"></div>
+            <div class="cutscene-viewport">
+                <div id="intro-cutscene-bg" class="cutscene-bg intro-bg"></div>
+                <div class="cutscene-vignette"></div>
+                <div class="cutscene-ambient-particles" id="intro-particles"></div>
+
+                <!-- Top Header Bar -->
+                <div class="cutscene-header">
+                    <div class="cutscene-badge-group">
+                        <span class="cutscene-badge">📜 PROLOGUE</span>
+                        <span class="cutscene-title">THE BREACH AT EMERALD TRAIL</span>
+                    </div>
+                    <button id="btn-intro-skip" class="cutscene-btn-skip" title="Skip to Battle">SKIP ⏩</button>
+                </div>
+
+                <!-- Bottom Dialogue Box -->
+                <div class="cutscene-dialogue-dock">
+                    <div class="cutscene-dialogue-card">
+                        <div class="dialogue-speaker-row">
+                            <div class="speaker-avatar-frame">
+                                <div id="intro-speaker-avatar" class="speaker-avatar">🛡️</div>
+                            </div>
+                            <div class="speaker-meta">
+                                <span id="intro-speaker-role" class="speaker-role">TACTICAL COMMAND</span>
+                                <h3 id="intro-speaker-name" class="speaker-name">High Commander Valerius</h3>
+                            </div>
+                            <div class="dialogue-step-dots" id="intro-step-dots">
+                                <span class="step-dot active"></span>
+                                <span class="step-dot"></span>
+                                <span class="step-dot"></span>
+                            </div>
+                        </div>
+
+                        <div class="dialogue-text-body">
+                            <p id="intro-dialogue-text" class="dialogue-text">...</p>
+                        </div>
+
+                        <div class="dialogue-action-row">
+                            <button id="btn-intro-prev" class="dialogue-btn secondary">❮ Back</button>
+                            <div class="dialogue-hint-key">Press <kbd>Space</kbd> / <kbd>Enter</kbd></div>
+                            <button id="btn-intro-next" class="dialogue-btn primary">Next ❯</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="cutscene-letterbox bottom"></div>
+        </div>
+
+        <!-- LEVEL 10 GAME FINISH SCENE OVERLAY -->
+        <div id="cutscene-finish" class="cutscene-overlay hidden">
+            <div class="cutscene-letterbox top golden"></div>
+            <div class="cutscene-viewport">
+                <div id="finish-cutscene-bg" class="cutscene-bg finish-bg"></div>
+                <canvas id="finish-fireworks-canvas" class="cutscene-fireworks-canvas"></canvas>
+                <div class="cutscene-vignette golden"></div>
+
+                <!-- Top Header Bar -->
+                <div class="cutscene-header golden">
+                    <div class="cutscene-badge-group">
+                        <span class="cutscene-badge golden">👑 GRAND FINALE</span>
+                        <span class="cutscene-title">EPILOGUE: RESTORATION OF THE REALM</span>
+                    </div>
+                    <button id="btn-finish-skip" class="cutscene-btn-skip golden" title="Skip to Campaign Laurels">SKIP ⏩</button>
+                </div>
+
+                <!-- Bottom Dialogue Box (Acts 1 & 2) -->
+                <div id="finish-dialogue-dock" class="cutscene-dialogue-dock">
+                    <div class="cutscene-dialogue-card golden">
+                        <div class="dialogue-speaker-row">
+                            <div class="speaker-avatar-frame golden">
+                                <div id="finish-speaker-avatar" class="speaker-avatar">❄️</div>
+                            </div>
+                            <div class="speaker-meta">
+                                <span id="finish-speaker-role" class="speaker-role">FALLEN RULER OF THE FROST</span>
+                                <h3 id="finish-speaker-name" class="speaker-name">Glacial Behemoth</h3>
+                            </div>
+                            <div class="dialogue-step-dots" id="finish-step-dots">
+                                <span class="step-dot active"></span>
+                                <span class="step-dot"></span>
+                                <span class="step-dot"></span>
+                            </div>
+                        </div>
+
+                        <div class="dialogue-text-body">
+                            <p id="finish-dialogue-text" class="dialogue-text">...</p>
+                        </div>
+
+                        <div class="dialogue-action-row">
+                            <button id="btn-finish-prev" class="dialogue-btn secondary">❮ Back</button>
+                            <div class="dialogue-hint-key">Press <kbd>Space</kbd> / <kbd>Enter</kbd></div>
+                            <button id="btn-finish-next" class="dialogue-btn primary golden">Next ❯</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grand Laurels Dashboard (Act 3) -->
+                <div id="finish-laurel-dock" class="cutscene-laurel-dock hidden">
+                    <div class="cutscene-laurel-card">
+                        <div class="laurel-trophy-badge">🏆</div>
+                        <div class="laurel-pretitle">VICTORY OVER THE GLACIAL BEHEMOTH</div>
+                        <h2 class="laurel-main-title">CAMPAIGN CONQUERED</h2>
+                        <div class="laurel-subtitle">The Ancient Frontier is Reunited & Free</div>
+
+                        <div class="laurel-stats-grid">
+                            <div class="laurel-stat-item">
+                                <span class="laurel-stat-label">TOTAL STARS EARNED</span>
+                                <span class="laurel-stat-val gold" id="laurel-total-stars">30 / 30 ⭐</span>
+                            </div>
+                            <div class="laurel-stat-item">
+                                <span class="laurel-stat-label">CAMPAIGN SCORE</span>
+                                <span class="laurel-stat-val cyan" id="laurel-total-score">32,500</span>
+                            </div>
+                            <div class="laurel-stat-item">
+                                <span class="laurel-stat-label">MISSIONS CLEARED</span>
+                                <span class="laurel-stat-val green">10 / 10 Complete</span>
+                            </div>
+                            <div class="laurel-stat-item">
+                                <span class="laurel-stat-label">DEFENSE RANK</span>
+                                <span class="laurel-stat-val purple" id="laurel-rank">SUPREME SOVEREIGN</span>
+                            </div>
+                        </div>
+
+                        <div class="laurel-tribute">
+                            "From the tangled canopies of the Emerald Trail to the frozen spires of the Glacial Throne, songs of your strategic mastery will echo for eternity."
+                        </div>
+
+                        <div class="laurel-actions">
+                            <button id="btn-finish-replay" class="dialogue-btn secondary">🔄 Replay Finale</button>
+                            <button id="btn-finish-levels" class="dialogue-btn secondary">🗺️ Mission Select</button>
+                            <button id="btn-finish-menu" class="dialogue-btn primary golden">🏠 Main Menu</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="cutscene-letterbox bottom golden"></div>
         </div>
     </div>
 
@@ -595,6 +738,14 @@
                         engine.selectedSlot = slot;
                         ui.showBuildDrawer(slot);
                     }
+                }, 100);
+            } else if (window.location.hash === '#intro') {
+                setTimeout(() => {
+                    ui.showIntroCutscene();
+                }, 100);
+            } else if (window.location.hash === '#finish') {
+                setTimeout(() => {
+                    ui.showFinishScene(3, 34200);
                 }, 100);
             }
 

@@ -2183,11 +2183,21 @@ class GameEngine {
         // Save progress to LocalStorage
         this.saveLevelProgress(this.currentLevel.id, stars, this.score);
 
-        if (window.soundEngine) {
-            window.soundEngine.playVictory();
-        }
-        if (window.ui) {
-            window.ui.showVictoryModal(stars, this.score);
+        if (this.currentLevel.id === 10) {
+            // Climax: Final level completed! Trigger Grand Finale finish scene
+            if (window.soundEngine) {
+                window.soundEngine.playGrandFinaleTheme();
+            }
+            if (window.ui) {
+                window.ui.showFinishScene(stars, this.score);
+            }
+        } else {
+            if (window.soundEngine) {
+                window.soundEngine.playVictory();
+            }
+            if (window.ui) {
+                window.ui.showVictoryModal(stars, this.score);
+            }
         }
     }
 
@@ -2210,6 +2220,9 @@ class GameEngine {
                 highscore: Math.max(prev.highscore, score),
                 unlocked: true
             };
+            if (levelId === 10) {
+                saved.campaign_completed = true;
+            }
             // Unlock next level
             if (levelId < 10) {
                 if (!saved[levelId + 1]) saved[levelId + 1] = { stars: 0, highscore: 0, unlocked: true };

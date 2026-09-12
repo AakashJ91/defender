@@ -71,6 +71,88 @@ class UIManager {
         this.btnSpellRush = document.getElementById('spell-rush');
         this.btnSpellWeather = document.getElementById('btn-spell-weather');
         this.spellWeatherIcon = document.getElementById('spell-weather-icon');
+
+        // Level 1 Intro Cutscene
+        this.cutsceneIntro = document.getElementById('cutscene-intro');
+        this.btnIntroSkip = document.getElementById('btn-intro-skip');
+        this.btnIntroNext = document.getElementById('btn-intro-next');
+        this.btnIntroPrev = document.getElementById('btn-intro-prev');
+        this.introAvatar = document.getElementById('intro-speaker-avatar');
+        this.introRole = document.getElementById('intro-speaker-role');
+        this.introSpeakerName = document.getElementById('intro-speaker-name');
+        this.introDialogueText = document.getElementById('intro-dialogue-text');
+        this.introStepDots = document.getElementById('intro-step-dots');
+
+        // Level 10 Grand Finale Scene
+        this.cutsceneFinish = document.getElementById('cutscene-finish');
+        this.btnFinishSkip = document.getElementById('btn-finish-skip');
+        this.btnFinishNext = document.getElementById('btn-finish-next');
+        this.btnFinishPrev = document.getElementById('btn-finish-prev');
+        this.finishAvatar = document.getElementById('finish-speaker-avatar');
+        this.finishRole = document.getElementById('finish-speaker-role');
+        this.finishSpeakerName = document.getElementById('finish-speaker-name');
+        this.finishDialogueText = document.getElementById('finish-dialogue-text');
+        this.finishStepDots = document.getElementById('finish-step-dots');
+        this.finishDialogueDock = document.getElementById('finish-dialogue-dock');
+        this.finishLaurelDock = document.getElementById('finish-laurel-dock');
+        this.finishFireworksCanvas = document.getElementById('finish-fireworks-canvas');
+        this.laurelTotalStars = document.getElementById('laurel-total-stars');
+        this.laurelTotalScore = document.getElementById('laurel-total-score');
+        this.laurelRank = document.getElementById('laurel-rank');
+        this.btnFinishReplay = document.getElementById('btn-finish-replay');
+        this.btnFinishLevels = document.getElementById('btn-finish-levels');
+        this.btnFinishMenu = document.getElementById('btn-finish-menu');
+
+        // Watch Buttons on Menus
+        this.btnLandingIntro = document.getElementById('btn-landing-intro');
+        this.btnLandingFinish = document.getElementById('btn-landing-finish');
+        this.btnLevelsWatchIntro = document.getElementById('btn-levels-watch-intro');
+        this.btnLevelsWatchFinish = document.getElementById('btn-levels-watch-finish');
+
+        // Cutscene States
+        this.introSlideIndex = 0;
+        this.finishSlideIndex = 0;
+        this.typewriterTimer = null;
+        this.fireworksInterval = null;
+        this.fireworksAnimationId = null;
+        this.activeCutscene = null;
+
+        // Cutscene Dialogue Scripts
+        this.introScript = [
+            {
+                role: "REALM CHRONICLER",
+                name: "Elder Archivist Oakhaven",
+                avatar: "📜",
+                text: "For centuries, the Frontier Spire network maintained unbroken harmony across the biomes — from the deep canopies of the Emerald Jungle to the frozen crown of the Glacial Spire..."
+            },
+            {
+                role: "WARBAND SCOUT INVASION",
+                name: "Warchief Grimjaw & Crawlers",
+                avatar: "👺",
+                text: "The ancient wards have shattered! Scout warbands, venom crawlers, and silverback brutes — advance down the Emerald Trail! Seize the heartstone before their defenses awaken!"
+            },
+            {
+                role: "TACTICAL COMMAND",
+                name: "High Commander Valerius",
+                avatar: "🛡️",
+                text: "Commander on deck! The tactical defense grid is online. Tap the dormant Spire Dais plots along the path to deploy Dart Spires and siege artillery. Hold the line — defend the frontier!"
+            }
+        ];
+
+        this.finishScript = [
+            {
+                role: "FALLEN RULER OF THE FROST",
+                name: "Glacial Behemoth",
+                avatar: "❄️",
+                text: "The biting frost... dissolves. After an eternity of blizzard... the warmth of dawn returns to the peak. The throne... and the realm... are yours once more..."
+            },
+            {
+                role: "UNITED EMERALD & FROST REALM",
+                name: "High Commander & Citizens",
+                avatar: "👑",
+                text: "Victory is complete! The Frost King's curse is broken, the sun shines over thawing peaks and blooming jungle trails, and all ten strategic passes are forever secure!"
+            }
+        ];
     }
 
     bindEvents() {
@@ -315,24 +397,125 @@ class UIManager {
             if (nextId <= 10) {
                 this.startLevel(nextId);
             } else {
-                this.showLevelSelect();
+                this.showFinishScene(3, this.getCampaignTotalScore());
             }
         });
 
         document.getElementById('btn-replay-level').addEventListener('click', () => {
             this.modalVictory.classList.add('hidden');
-            this.startLevel(this.engine.currentLevel.id);
+            this.startLevel(this.engine.currentLevel.id, true);
         });
 
         // Defeat Modal Buttons
         document.getElementById('btn-retry-level').addEventListener('click', () => {
             this.modalDefeat.classList.add('hidden');
-            this.startLevel(this.engine.currentLevel.id);
+            this.startLevel(this.engine.currentLevel.id, true);
         });
 
         document.getElementById('btn-defeat-levels').addEventListener('click', () => {
             this.modalDefeat.classList.add('hidden');
             this.showLevelSelect();
+        });
+
+        // Cutscene Button Events
+        if (this.btnIntroSkip) {
+            this.btnIntroSkip.addEventListener('click', () => this.finishIntroCutscene());
+        }
+        if (this.btnIntroNext) {
+            this.btnIntroNext.addEventListener('click', () => this.nextIntroSlide());
+        }
+        if (this.btnIntroPrev) {
+            this.btnIntroPrev.addEventListener('click', () => this.prevIntroSlide());
+        }
+        if (this.introDialogueText) {
+            this.introDialogueText.parentElement.addEventListener('click', () => this.skipTypewriter());
+        }
+
+        if (this.btnFinishSkip) {
+            this.btnFinishSkip.addEventListener('click', () => {
+                this.skipTypewriter();
+                this.finishSlideIndex = this.finishScript.length;
+                this.renderFinishSlide();
+            });
+        }
+        if (this.btnFinishNext) {
+            this.btnFinishNext.addEventListener('click', () => this.nextFinishSlide());
+        }
+        if (this.btnFinishPrev) {
+            this.btnFinishPrev.addEventListener('click', () => this.prevFinishSlide());
+        }
+        if (this.finishDialogueText) {
+            this.finishDialogueText.parentElement.addEventListener('click', () => this.skipTypewriter());
+        }
+
+        if (this.btnFinishReplay) {
+            this.btnFinishReplay.addEventListener('click', () => {
+                this.showFinishScene(this.finishLevelStars || 3, this.finishLevelScore || 0);
+            });
+        }
+        if (this.btnFinishLevels) {
+            this.btnFinishLevels.addEventListener('click', () => {
+                this.hideFinishScene();
+                this.showLevelSelect();
+            });
+        }
+        if (this.btnFinishMenu) {
+            this.btnFinishMenu.addEventListener('click', () => {
+                this.hideFinishScene();
+                this.showLandingScreen();
+            });
+        }
+
+        // Title Screen and Level Select Cutscene Watch Buttons
+        if (this.btnLandingIntro) {
+            this.btnLandingIntro.addEventListener('click', () => {
+                this.showIntroCutscene(() => this.startLevel(1, true));
+            });
+        }
+        if (this.btnLandingFinish) {
+            this.btnLandingFinish.addEventListener('click', () => {
+                this.showFinishScene(3, this.getCampaignTotalScore());
+            });
+        }
+        if (this.btnLevelsWatchIntro) {
+            this.btnLevelsWatchIntro.addEventListener('click', () => {
+                this.modalLevelSelect.classList.add('hidden');
+                this.showIntroCutscene(() => this.startLevel(1, true));
+            });
+        }
+        if (this.btnLevelsWatchFinish) {
+            this.btnLevelsWatchFinish.addEventListener('click', () => {
+                this.modalLevelSelect.classList.add('hidden');
+                this.showFinishScene(3, this.getCampaignTotalScore());
+            });
+        }
+
+        // Keyboard navigation for cutscenes
+        window.addEventListener('keydown', (e) => {
+            if (this.activeCutscene === 'intro') {
+                if (e.code === 'Space' || e.code === 'Enter' || e.code === 'ArrowRight') {
+                    e.preventDefault();
+                    this.nextIntroSlide();
+                } else if (e.code === 'ArrowLeft') {
+                    e.preventDefault();
+                    this.prevIntroSlide();
+                } else if (e.code === 'Escape') {
+                    e.preventDefault();
+                    this.finishIntroCutscene();
+                }
+            } else if (this.activeCutscene === 'finish') {
+                if (e.code === 'Space' || e.code === 'Enter' || e.code === 'ArrowRight') {
+                    e.preventDefault();
+                    this.nextFinishSlide();
+                } else if (e.code === 'ArrowLeft') {
+                    e.preventDefault();
+                    this.prevFinishSlide();
+                } else if (e.code === 'Escape') {
+                    e.preventDefault();
+                    this.hideFinishScene();
+                    this.showLandingScreen();
+                }
+            }
         });
     }
 
@@ -575,8 +758,16 @@ class UIManager {
         });
     }
 
-    startLevel(levelId) {
+    startLevel(levelId, forceSkipCutscene = false) {
+        if (levelId === 1 && !forceSkipCutscene) {
+            this.showIntroCutscene(() => {
+                this.startLevel(1, true);
+            });
+            return;
+        }
         this.hideLandingScreen();
+        this.hideIntroCutscene();
+        this.hideFinishScene();
         this.engine.loadLevel(levelId);
         this.hideBuildDrawer();
         this.hideTowerInfo();
@@ -606,6 +797,21 @@ class UIManager {
         return total;
     }
 
+    getCampaignTotalScore() {
+        try {
+            const progress = JSON.parse(localStorage.getItem('frontier_td_progress') || '{}');
+            let total = 0;
+            for (let i = 1; i <= 10; i++) {
+                if (progress[i] && progress[i].highscore) {
+                    total += progress[i].highscore;
+                }
+            }
+            return total > 0 ? total : 28500;
+        } catch (e) {
+            return 28500;
+        }
+    }
+
     updateLandingScreenInfo() {
         const highestLevelId = this.getHighestUnlockedLevel();
         const level = LEVELS.find(l => l.id === highestLevelId) || LEVELS[0];
@@ -625,6 +831,8 @@ class UIManager {
         if (this.spellsDrawer) this.spellsDrawer.classList.add('hidden');
         if (this.weatherBanner) this.weatherBanner.classList.add('hidden');
         if (this.modalInlevelWeather) this.modalInlevelWeather.classList.add('hidden');
+        this.hideIntroCutscene();
+        this.hideFinishScene();
         this.hideBuildDrawer();
         this.hideTowerInfo();
         this.updateLandingScreenInfo();
@@ -657,8 +865,333 @@ class UIManager {
         this.modalSettings.classList.add('hidden');
         if (this.modalCodex) this.modalCodex.classList.add('hidden');
         if (this.modalInlevelWeather) this.modalInlevelWeather.classList.add('hidden');
+        this.hideIntroCutscene();
+        this.hideFinishScene();
         this.hideBuildDrawer();
         this.hideTowerInfo();
+    }
+
+    // -------------------------------------------------------------
+    // CUTSCENE & TYPEWRITER SYSTEMS
+    // -------------------------------------------------------------
+    typewriterText(element, fullText, onDone) {
+        if (this.typewriterTimer) {
+            clearInterval(this.typewriterTimer);
+            this.typewriterTimer = null;
+        }
+        element.textContent = '';
+        let index = 0;
+        const total = fullText.length;
+        this._currentFullText = fullText;
+        this._currentTypewriterElement = element;
+        this._onTypewriterDone = onDone;
+
+        this.typewriterTimer = setInterval(() => {
+            if (index < total) {
+                element.textContent += fullText[index];
+                if (index % 3 === 0 && window.soundEngine) {
+                    window.soundEngine.playDialogueBlip();
+                }
+                index++;
+            } else {
+                clearInterval(this.typewriterTimer);
+                this.typewriterTimer = null;
+                if (onDone) onDone();
+            }
+        }, 16);
+    }
+
+    skipTypewriter() {
+        if (this.typewriterTimer && this._currentTypewriterElement && this._currentFullText) {
+            clearInterval(this.typewriterTimer);
+            this.typewriterTimer = null;
+            this._currentTypewriterElement.textContent = this._currentFullText;
+            if (this._onTypewriterDone) {
+                const cb = this._onTypewriterDone;
+                this._onTypewriterDone = null;
+                cb();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    // Level 1 Intro Cutscene
+    showIntroCutscene(onComplete) {
+        this.closeModals();
+        this.hideLandingScreen();
+        this.activeCutscene = 'intro';
+        this.introOnComplete = onComplete;
+        this.introSlideIndex = 0;
+        if (this.cutsceneIntro) this.cutsceneIntro.classList.remove('hidden');
+
+        if (window.soundEngine) {
+            window.soundEngine.playIntroTheme();
+        }
+        this.renderIntroSlide();
+    }
+
+    renderIntroSlide() {
+        const slide = this.introScript[this.introSlideIndex];
+        if (!slide) return;
+
+        if (this.introRole) this.introRole.textContent = slide.role;
+        if (this.introSpeakerName) this.introSpeakerName.textContent = slide.name;
+        if (this.introAvatar) this.introAvatar.textContent = slide.avatar;
+
+        if (this.introStepDots) {
+            const dots = this.introStepDots.querySelectorAll('.step-dot');
+            dots.forEach((dot, idx) => {
+                dot.classList.toggle('active', idx === this.introSlideIndex);
+            });
+        }
+
+        if (this.btnIntroPrev) {
+            this.btnIntroPrev.style.visibility = this.introSlideIndex === 0 ? 'hidden' : 'visible';
+        }
+
+        if (this.btnIntroNext) {
+            if (this.introSlideIndex === this.introScript.length - 1) {
+                this.btnIntroNext.textContent = 'DEPLOY DEFENSES ⚔️';
+            } else {
+                this.btnIntroNext.textContent = 'Next ❯';
+            }
+        }
+
+        if (this.introDialogueText) {
+            this.typewriterText(this.introDialogueText, slide.text);
+        }
+    }
+
+    nextIntroSlide() {
+        if (this.skipTypewriter()) return;
+        if (this.introSlideIndex < this.introScript.length - 1) {
+            this.introSlideIndex++;
+            this.renderIntroSlide();
+        } else {
+            this.finishIntroCutscene();
+        }
+    }
+
+    prevIntroSlide() {
+        if (this.skipTypewriter()) return;
+        if (this.introSlideIndex > 0) {
+            this.introSlideIndex--;
+            this.renderIntroSlide();
+        }
+    }
+
+    finishIntroCutscene() {
+        this.hideIntroCutscene();
+        if (window.soundEngine) {
+            window.soundEngine.stopCutsceneAudio();
+        }
+        if (this.introOnComplete) {
+            const cb = this.introOnComplete;
+            this.introOnComplete = null;
+            cb();
+        } else {
+            this.startLevel(1, true);
+        }
+    }
+
+    hideIntroCutscene() {
+        if (this.typewriterTimer) {
+            clearInterval(this.typewriterTimer);
+            this.typewriterTimer = null;
+        }
+        if (this.cutsceneIntro) this.cutsceneIntro.classList.add('hidden');
+        if (this.activeCutscene === 'intro') this.activeCutscene = null;
+    }
+
+    // Level 10 Game Finish Scene
+    showFinishScene(stars = 3, score = 0, onComplete) {
+        this.closeModals();
+        this.hideLandingScreen();
+        this.activeCutscene = 'finish';
+        this.finishOnComplete = onComplete;
+        this.finishSlideIndex = 0;
+        this.finishLevelStars = stars;
+        this.finishLevelScore = score;
+
+        if (this.cutsceneFinish) this.cutsceneFinish.classList.remove('hidden');
+        if (this.finishDialogueDock) this.finishDialogueDock.classList.remove('hidden');
+        if (this.finishLaurelDock) this.finishLaurelDock.classList.add('hidden');
+
+        if (window.soundEngine) {
+            window.soundEngine.playGrandFinaleTheme();
+        }
+
+        this.startFireworks();
+        this.renderFinishSlide();
+    }
+
+    renderFinishSlide() {
+        if (this.finishSlideIndex < this.finishScript.length) {
+            if (this.finishDialogueDock) this.finishDialogueDock.classList.remove('hidden');
+            if (this.finishLaurelDock) this.finishLaurelDock.classList.add('hidden');
+
+            const slide = this.finishScript[this.finishSlideIndex];
+            if (this.finishRole) this.finishRole.textContent = slide.role;
+            if (this.finishSpeakerName) this.finishSpeakerName.textContent = slide.name;
+            if (this.finishAvatar) this.finishAvatar.textContent = slide.avatar;
+
+            if (this.finishStepDots) {
+                const dots = this.finishStepDots.querySelectorAll('.step-dot');
+                dots.forEach((dot, idx) => {
+                    dot.classList.toggle('active', idx === this.finishSlideIndex);
+                });
+            }
+
+            if (this.btnFinishPrev) {
+                this.btnFinishPrev.style.visibility = this.finishSlideIndex === 0 ? 'hidden' : 'visible';
+            }
+
+            if (this.btnFinishNext) {
+                this.btnFinishNext.textContent = this.finishSlideIndex === this.finishScript.length - 1 ? 'CAMPAIGN LAURELS 🏆' : 'Next ❯';
+            }
+
+            if (this.finishDialogueText) {
+                this.typewriterText(this.finishDialogueText, slide.text);
+            }
+        } else {
+            // Show Act 3: Grand Laurels Dashboard
+            if (this.finishDialogueDock) this.finishDialogueDock.classList.add('hidden');
+            if (this.finishLaurelDock) this.finishLaurelDock.classList.remove('hidden');
+            this.populateLaurelStats();
+        }
+    }
+
+    populateLaurelStats() {
+        const totalStars = this.getTotalStarsEarned();
+        const totalScore = this.getCampaignTotalScore();
+        if (this.laurelTotalStars) this.laurelTotalStars.textContent = `${totalStars} / 30 ⭐`;
+        if (this.laurelTotalScore) this.laurelTotalScore.textContent = totalScore.toLocaleString();
+        if (this.laurelRank) {
+            if (totalStars >= 28) this.laurelRank.textContent = "SUPREME SOVEREIGN ⭐⭐⭐";
+            else if (totalStars >= 20) this.laurelRank.textContent = "GRAND STRATEGIST ⭐⭐";
+            else this.laurelRank.textContent = "FRONTIER CONQUEROR ⭐";
+        }
+    }
+
+    nextFinishSlide() {
+        if (this.skipTypewriter()) return;
+        if (this.finishSlideIndex < this.finishScript.length) {
+            this.finishSlideIndex++;
+            this.renderFinishSlide();
+        }
+    }
+
+    prevFinishSlide() {
+        if (this.skipTypewriter()) return;
+        if (this.finishSlideIndex > 0) {
+            this.finishSlideIndex--;
+            this.renderFinishSlide();
+        }
+    }
+
+    hideFinishScene() {
+        if (this.typewriterTimer) {
+            clearInterval(this.typewriterTimer);
+            this.typewriterTimer = null;
+        }
+        this.stopFireworks();
+        if (this.cutsceneFinish) this.cutsceneFinish.classList.add('hidden');
+        if (this.activeCutscene === 'finish') this.activeCutscene = null;
+        if (window.soundEngine) {
+            window.soundEngine.stopCutsceneAudio();
+        }
+    }
+
+    startFireworks() {
+        this.stopFireworks();
+        if (!this.finishFireworksCanvas) return;
+        const canvas = this.finishFireworksCanvas;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        const resize = () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        };
+        resize();
+
+        const particles = [];
+        const colors = ['#facc15', '#38bdf8', '#4ade80', '#fb7171', '#c084fc', '#ffffff', '#f472b6'];
+
+        const launchBurst = () => {
+            const x = canvas.width * (0.15 + Math.random() * 0.7);
+            const y = canvas.height * (0.15 + Math.random() * 0.45);
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const count = 40 + Math.floor(Math.random() * 25);
+
+            if (window.soundEngine) {
+                window.soundEngine.playFireworkSound();
+            }
+
+            for (let i = 0; i < count; i++) {
+                const angle = (Math.PI * 2 / count) * i + (Math.random() - 0.5) * 0.4;
+                const speed = 2 + Math.random() * 5.5;
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    color: color,
+                    alpha: 1.0,
+                    size: 2.2 + Math.random() * 2.2,
+                    decay: 0.012 + Math.random() * 0.014
+                });
+            }
+        };
+
+        launchBurst();
+        this.fireworksInterval = setInterval(launchBurst, 1200);
+
+        const render = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.06;
+                p.alpha -= p.decay;
+
+                if (p.alpha <= 0) {
+                    particles.splice(i, 1);
+                    continue;
+                }
+
+                ctx.save();
+                ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = p.color;
+                ctx.shadowColor = p.color;
+                ctx.shadowBlur = 8;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            this.fireworksAnimationId = requestAnimationFrame(render);
+        };
+        this.fireworksAnimationId = requestAnimationFrame(render);
+    }
+
+    stopFireworks() {
+        if (this.fireworksInterval) {
+            clearInterval(this.fireworksInterval);
+            this.fireworksInterval = null;
+        }
+        if (this.fireworksAnimationId) {
+            cancelAnimationFrame(this.fireworksAnimationId);
+            this.fireworksAnimationId = null;
+        }
+        if (this.finishFireworksCanvas) {
+            const ctx = this.finishFireworksCanvas.getContext('2d');
+            if (ctx) ctx.clearRect(0, 0, this.finishFireworksCanvas.width, this.finishFireworksCanvas.height);
+        }
     }
 
     updateHUD() {
