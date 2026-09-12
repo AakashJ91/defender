@@ -44,18 +44,37 @@ body, html {
 }
 
 /* -------------------------------------------------------------
-   HUD (Top Bar)
+   HUD (Top Ribbon Bar - Black Translucent Semi-Frosted Glass)
 ------------------------------------------------------------- */
 #hud-top-bar {
     position: absolute;
-    top: max(10px, env(safe-area-inset-top));
-    left: max(12px, env(safe-area-inset-left));
-    right: max(12px, env(safe-area-inset-right));
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    min-height: 46px;
+    box-sizing: border-box;
+    padding: max(6px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) 6px max(14px, env(safe-area-inset-left));
     display: flex;
     justify-content: space-between;
     align-items: center;
-    pointer-events: none;
-    z-index: 10;
+    gap: 10px;
+    background: linear-gradient(180deg, rgba(8, 10, 15, 0.82) 0%, rgba(0, 0, 0, 0.65) 100%);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 
+        0 4px 24px rgba(0, 0, 0, 0.6), 
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.5);
+    pointer-events: auto;
+    z-index: 20;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+#hud-top-bar::-webkit-scrollbar {
+    display: none;
 }
 
 .hud-group {
@@ -63,88 +82,161 @@ body, html {
     align-items: center;
     gap: 8px;
     pointer-events: auto;
+    flex-shrink: 0;
 }
 
-.hud-stat-pill {
-    background: rgba(15, 23, 42, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(8px);
-    padding: 6px 14px;
-    border-radius: 9999px;
-    font-weight: 700;
-    font-size: 14px;
+.hud-left-section {
     display: flex;
     align-items: center;
-    gap: 6px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    gap: 8px;
 }
 
-.hud-stat-pill.lives {
-    color: #f87171;
-    border-color: rgba(239, 68, 68, 0.4);
+.hud-right-section {
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
-.hud-stat-pill.gold {
-    color: #fbbf24;
-    border-color: rgba(245, 158, 11, 0.4);
+/* Major Section Divider (Between Action Button and Telemetry) */
+.hud-section-divider {
+    width: 1px;
+    height: 20px;
+    background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.28) 30%, rgba(255, 255, 255, 0.28) 70%, transparent 100%);
+    margin: 0 3px;
+    flex-shrink: 0;
 }
 
-.hud-stat-pill.wave {
-    color: #38bdf8;
-    border-color: rgba(56, 189, 248, 0.4);
-}
-
-.hud-stat-pill.level {
-    color: #4ade80;
-    border-color: rgba(34, 197, 94, 0.4);
-}
-
-.hud-stat-pill.weather {
-    color: #e0f2fe;
-    border-color: rgba(56, 189, 248, 0.45);
-    background: rgba(15, 23, 42, 0.90);
-    cursor: default;
+/* Unified Non-Interactive Stats Cluster */
+.hud-stats-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     user-select: none;
-    transition: all 0.2s ease;
+}
+
+/* Clean Divider between each non-interactive metric */
+.hud-stat-divider {
+    width: 1px;
+    height: 15px;
+    background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.20) 25%, rgba(255, 255, 255, 0.20) 75%, transparent 100%);
+    flex-shrink: 0;
+}
+
+/* Individual Stat Item - Pure Clean Information, Zero Button Look */
+.hud-stat-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    white-space: nowrap;
+    line-height: 1;
+}
+
+.hud-stat-item .stat-icon {
+    font-size: 14px;
+    line-height: 1;
     display: inline-flex;
     align-items: center;
-    gap: 7px;
+    justify-content: center;
 }
 
-.hud-stat-pill.weather.thunderstorm {
-    border-color: rgba(168, 85, 247, 0.65);
-    box-shadow: 0 0 12px rgba(168, 85, 247, 0.35);
-    color: #f3e8ff;
+.hud-stat-item .stat-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
 }
 
-.hud-stat-pill.weather.blizzard {
-    border-color: rgba(56, 189, 248, 0.75);
-    box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+.hud-stat-item .stat-val {
+    font-weight: 800;
+    font-size: 13.5px;
+    letter-spacing: 0.2px;
+}
+
+/* Thematic Color Treatments for Telemetry Readouts */
+/* 1. Health / Lives */
+.hud-stat-item.lives .stat-icon {
+    filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.5));
+}
+.hud-stat-item.lives .stat-val {
+    color: #f87171;
+    text-shadow: 0 0 8px rgba(239, 68, 68, 0.35);
+}
+
+/* 2. Money / Gold */
+.hud-stat-item.gold .stat-icon {
+    filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.5));
+}
+.hud-stat-item.gold .stat-val {
+    color: #fbbf24;
+    text-shadow: 0 0 8px rgba(245, 158, 11, 0.35);
+}
+
+/* 3. Wave Count */
+.hud-stat-item.wave .stat-icon {
+    filter: drop-shadow(0 0 5px rgba(56, 189, 248, 0.5));
+}
+.hud-stat-item.wave .stat-val {
+    color: #38bdf8;
+    text-shadow: 0 0 8px rgba(56, 189, 248, 0.35);
+}
+
+/* 4. Level / Mission Name */
+.hud-stat-item.level .stat-val {
+    color: #4ade80;
+    font-size: 12px;
+    font-weight: 700;
+    text-shadow: 0 0 8px rgba(34, 197, 94, 0.3);
+}
+
+/* 5. Weather State */
+.hud-stat-item.weather {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    cursor: default;
+    transition: all 0.2s ease;
+}
+.hud-stat-item.weather .stat-val {
     color: #e0f2fe;
+    font-size: 12px;
+    font-weight: 700;
+}
+.hud-stat-item.weather #hud-weather-icon {
+    font-size: 14px;
 }
 
-.hud-stat-pill.weather.aurora {
-    border-color: rgba(52, 211, 153, 0.75);
-    box-shadow: 0 0 12px rgba(52, 211, 153, 0.4);
+.hud-stat-item.weather.thunderstorm .stat-val {
+    color: #e9d5ff;
+    text-shadow: 0 0 8px rgba(168, 85, 247, 0.6);
+}
+.hud-stat-item.weather.blizzard .stat-val {
+    color: #e0f2fe;
+    text-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+}
+.hud-stat-item.weather.aurora .stat-val {
     color: #d1fae5;
+    text-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
 }
-
-.hud-stat-pill.weather.clear {
-    border-color: rgba(251, 191, 36, 0.55);
+.hud-stat-item.weather.clear .stat-val {
     color: #fef3c7;
+    text-shadow: 0 0 8px rgba(251, 191, 36, 0.5);
 }
-
-.hud-stat-pill.weather.fog {
-    border-color: rgba(148, 163, 184, 0.55);
+.hud-stat-item.weather.fog .stat-val {
     color: #cbd5e1;
+    text-shadow: 0 0 8px rgba(148, 163, 184, 0.5);
 }
-
-.hud-stat-pill.weather.transitioning {
+.hud-stat-item.weather.transitioning {
     animation: weather-pulse 1.5s infinite alternate ease-in-out;
 }
 
 @keyframes weather-pulse {
-    0% { opacity: 0.8; transform: scale(0.99); }
+    0% { opacity: 0.75; transform: scale(0.98); }
     100% { opacity: 1.0; transform: scale(1.02); }
 }
 
@@ -211,25 +303,31 @@ body, html {
 
 
 .hud-btn {
-    background: rgba(30, 41, 59, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     color: #f8fafc;
-    padding: 7px 13px;
+    padding: 5px 11px;
     border-radius: 9999px;
     font-weight: 700;
-    font-size: 13px;
+    font-size: 12px;
     cursor: pointer;
     backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     transition: all 0.15s ease;
-    min-height: 36px;
+    min-height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.12), 0 2px 6px rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
+    user-select: none;
 }
 
 .hud-btn:hover {
-    background: rgba(51, 65, 85, 0.95);
+    background: rgba(255, 255, 255, 0.20);
+    border-color: rgba(255, 255, 255, 0.35);
     transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.25);
 }
 
 .hud-btn:active {
@@ -237,19 +335,21 @@ body, html {
 }
 
 .hud-btn.primary {
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
     border-color: #60a5fa;
-    color: white;
+    color: #ffffff;
+    box-shadow: 0 0 14px rgba(37, 99, 235, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+    font-weight: 800;
+    padding: 5px 14px;
 }
 
 .hud-btn.primary:hover {
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    box-shadow: 0 0 18px rgba(59, 130, 246, 0.65);
 }
 
-
-
 .hud-btn.disabled {
-    opacity: 0.5;
+    opacity: 0.45;
     pointer-events: none;
     filter: grayscale(1);
 }
@@ -822,6 +922,41 @@ body, html {
 }
 
 @media (max-width: 768px) {
+    #hud-top-bar {
+        padding: max(4px, env(safe-area-inset-top)) 8px 4px 8px;
+        min-height: 38px;
+        gap: 6px;
+    }
+    .hud-group {
+        gap: 4px;
+    }
+    .hud-stats-group {
+        gap: 8px;
+    }
+    .hud-stat-item {
+        gap: 3px;
+    }
+    .hud-stat-item .stat-icon {
+        font-size: 12px;
+    }
+    .hud-stat-item .stat-val {
+        font-size: 11.5px;
+    }
+    .hud-stat-item .stat-label {
+        display: none;
+    }
+    .hud-stat-divider {
+        height: 12px;
+    }
+    .hud-section-divider {
+        height: 16px;
+        margin: 0 1px;
+    }
+    .hud-btn {
+        padding: 3px 8px;
+        min-height: 24px;
+        font-size: 11px;
+    }
     #drawer-build {
         bottom: max(6px, env(safe-area-inset-bottom));
         left: 50%;
@@ -871,6 +1006,34 @@ body, html {
 }
 
 @media (max-width: 480px) {
+    #hud-top-bar {
+        padding: max(3px, env(safe-area-inset-top)) 6px 3px 6px;
+        min-height: 34px;
+        gap: 5px;
+    }
+    .hud-stats-group {
+        gap: 6px;
+    }
+    .hud-stat-item {
+        gap: 2px;
+    }
+    .hud-stat-item .stat-icon {
+        font-size: 11px;
+    }
+    .hud-stat-item .stat-val {
+        font-size: 10.5px;
+    }
+    .hud-stat-item.level {
+        display: none;
+    }
+    .hud-stat-divider {
+        height: 10px;
+    }
+    .hud-btn {
+        font-size: 10px;
+        padding: 2px 6px;
+        min-height: 22px;
+    }
     .bd-header-left {
         gap: 3px;
     }
