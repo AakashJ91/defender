@@ -5,15 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#030712">
     <title>Frontier Defense: Jungle & Frost</title>
-    <link rel="stylesheet" href="css/game.css?v=deploy_compact_v7">
+    <link rel="stylesheet" href="css/game.css">
 </head>
 <body>
     <div id="game-wrapper">
         <!-- LANDING / TITLE SCREEN OVERLAY -->
         <div id="screen-landing" class="landing-overlay">
-            <button id="btn-landing-fullscreen" class="landing-corner-btn" title="Toggle Fullscreen">⛶</button>
             <div class="landing-content">
                 <div class="landing-badge">TACTICAL TOWER DEFENSE</div>
                 <h1 class="landing-title">FRONTIER DEFENSE</h1>
@@ -60,10 +58,6 @@
                             <span class="btn-sub-text">Audio & Controls</span>
                         </div>
                     </button>
-                    <div class="landing-cinematic-row">
-                        <button id="btn-landing-intro" class="landing-cutscene-btn" title="Watch Level 1 Prologue">🎬 Prologue Intro</button>
-                        <button id="btn-landing-finish" class="landing-cutscene-btn finale" title="Watch Level 10 Grand Finale">🏆 Grand Finale</button>
-                    </div>
                 </div>
 
                 <div class="landing-footer">
@@ -74,205 +68,79 @@
             </div>
         </div>
 
-        <!-- TOP HUD BAR (Black Translucent Frosted Glass Ribbon) -->
+        <!-- TOP HUD BAR -->
         <header id="hud-top-bar" class="hidden">
-            <div class="hud-group hud-left-section">
+            <div class="hud-group">
                 <button id="btn-home-menu" class="hud-btn" title="Main Menu">🏠 Title</button>
-                
-                <div class="hud-section-divider"></div>
-
-                <div class="hud-stats-group">
-                    <!-- Health / Lives -->
-                    <div class="hud-stat-item lives" title="Castle Health / Lives">
-                        <span class="stat-icon">❤️</span>
-                        <span class="stat-val" id="hud-lives">20</span>
-                    </div>
-
-                    <div class="hud-stat-divider"></div>
-
-                    <!-- Money / Gold -->
-                    <div class="hud-stat-item gold" title="Current Gold">
-                        <span class="stat-icon">🪙</span>
-                        <span class="stat-val" id="hud-gold">450</span>
-                    </div>
-
-                    <div class="hud-stat-divider"></div>
-
-                    <!-- Wave Count -->
-                    <div class="hud-stat-item wave" title="Wave Progress">
-                        <span class="stat-icon">🌊</span>
-                        <span class="stat-label">Wave</span>
-                        <span class="stat-val" id="hud-wave">0/5</span>
-                    </div>
-
-                    <div class="hud-stat-divider"></div>
-
-                    <!-- Level Name -->
-                    <div class="hud-stat-item level" title="Current Mission">
-                        <span class="stat-val" id="hud-level-name">L1: Emerald Trail</span>
-                    </div>
-
-                    <div class="hud-stat-divider"></div>
-
-                    <!-- Weather -->
-                    <div class="hud-stat-item weather" id="hud-weather-pill" title="Current Level Weather">
-                        <span id="hud-weather-icon">☀️</span>
-                        <span class="stat-val" id="hud-weather-name">Sunlit Canopy</span>
-                    </div>
-                </div>
+                <div class="hud-stat-pill lives">❤️ <span id="hud-lives">20</span></div>
+                <div class="hud-stat-pill gold">🪙 <span id="hud-gold">450</span></div>
+                <div class="hud-stat-pill wave">🌊 Wave <span id="hud-wave">0/5</span></div>
+                <div class="hud-stat-pill level" id="hud-level-name">L1: Emerald Trail</div>
             </div>
 
-            <div class="hud-group hud-right-section">
+            <div class="hud-group">
                 <button id="btn-start-wave" class="hud-btn primary">NEXT WAVE ⚔️</button>
                 <button id="btn-speed" class="hud-btn">1x</button>
                 <button id="btn-pause" class="hud-btn">⏸️</button>
-                <button id="btn-fullscreen" class="hud-btn" title="Toggle Fullscreen">⛶</button>
                 <button id="btn-levels-menu" class="hud-btn">🗺️ Levels</button>
                 <button id="btn-settings-menu" class="hud-btn">⚙️</button>
             </div>
         </header>
 
-        <!-- ON-MAP CINEMATIC WEATHER ALERT BANNER -->
-        <div id="weather-banner" class="weather-banner hidden">
-            <div class="weather-banner-icon" id="weather-banner-icon">⛈️</div>
-            <div class="weather-banner-content">
-                <div class="weather-banner-title" id="weather-banner-title">WEATHER SHIFT: MONSOON TEMPEST</div>
-                <div class="weather-banner-sub" id="weather-banner-sub">Heavy tropical downpour with dangerous lightning strikes!</div>
-            </div>
-        </div>
-
         <!-- GAME CANVAS -->
         <canvas id="game-canvas"></canvas>
 
-        <!-- ACTIVE SPELLS (Bottom Left Floating Circular Action Orbs) -->
+        <!-- ACTIVE SPELLS DRAWER (Bottom Left) -->
         <div id="spells-drawer" class="hidden">
-            <button id="spell-meteor" class="spell-btn spell-meteor" title="Meteor Strike (Area Blast)">
-                <div class="spell-orb-glow"></div>
+            <button id="spell-meteor" class="spell-btn" title="Meteor Strike (Area Blast)">
                 <span class="spell-icon">☄️</span>
                 <span class="spell-cost">80G</span>
                 <div class="spell-cooldown-text"></div>
             </button>
-            <button id="spell-freeze" class="spell-btn spell-freeze" title="Glacial Frost (Map-wide Freeze)">
-                <div class="spell-orb-glow"></div>
+            <button id="spell-freeze" class="spell-btn" title="Glacial Frost (Map-wide Freeze)">
                 <span class="spell-icon">❄️</span>
                 <span class="spell-cost">65G</span>
                 <div class="spell-cooldown-text"></div>
             </button>
-            <button id="spell-rush" class="spell-btn spell-rush" title="Battle Horn (+60% Tower Speed)">
-                <div class="spell-orb-glow"></div>
+            <button id="spell-rush" class="spell-btn" title="Battle Horn (+60% Tower Speed)">
                 <span class="spell-icon">📯</span>
                 <span class="spell-cost">50G</span>
-                <div class="spell-cooldown-text"></div>
-            </button>
-            <button id="btn-spell-weather" class="spell-btn weather-spell-btn spell-weather" title="Weather Selector (Change Level Atmosphere)">
-                <div class="spell-orb-glow"></div>
-                <span class="spell-icon" id="spell-weather-icon">🌦️</span>
-                <span class="spell-cost">WEATHER</span>
                 <div class="spell-cooldown-text"></div>
             </button>
         </div>
 
         <!-- TOWER BUILD DRAWER (Appears when empty build plot tapped) -->
         <div id="drawer-build" class="hidden">
-            <div class="build-drawer-glass">
-                <div class="build-drawer-header">
-                    <div class="bd-header-left">
-                        <div class="bd-title-badge">
-                            <span class="bd-pulse-dot"></span>
-                            <span class="bd-title-text">DEPLOY TOWER</span>
-                        </div>
-                        <span class="bd-slot-badge" id="bd-slot-indicator">Plot #1</span>
-                    </div>
-                    <div class="bd-header-right">
-                        <div class="bd-gold-pill">
-                            <span class="bd-gold-icon">🪙</span>
-                            <span class="bd-gold-amount" id="bd-gold-display">450</span>
-                            <span class="bd-gold-label">GOLD</span>
-                        </div>
-                        <button id="btn-close-build" class="bd-close-btn" title="Cancel Build">✕</button>
-                    </div>
-                </div>
-
-                <div class="build-cards-container">
-                    <!-- Dart Spire -->
-                    <button class="btn-build-tower type-archer" data-type="archer">
-                        <div class="tower-card-glow"></div>
-                        <div class="tower-icon-wrapper">
-                            <span class="tower-icon-badge">🎯</span>
-                        </div>
-                        <span class="tower-label">Dart Spire</span>
-                        <div class="tower-cost-tag">
-                            <span class="cost-coin">🪙</span>
-                            <span class="cost-val">100G</span>
-                        </div>
-                    </button>
-
-                    <!-- Bombard -->
-                    <button class="btn-build-tower type-cannon" data-type="cannon">
-                        <div class="tower-card-glow"></div>
-                        <div class="tower-icon-wrapper">
-                            <span class="tower-icon-badge">💣</span>
-                        </div>
-                        <span class="tower-label">Bombard</span>
-                        <div class="tower-cost-tag">
-                            <span class="cost-coin">🪙</span>
-                            <span class="cost-val">150G</span>
-                        </div>
-                    </button>
-
-                    <!-- Cryo Obelisk -->
-                    <button class="btn-build-tower type-frost" data-type="frost">
-                        <div class="tower-card-glow"></div>
-                        <div class="tower-icon-wrapper">
-                            <span class="tower-icon-badge">❄️</span>
-                        </div>
-                        <span class="tower-label">Cryo Obelisk</span>
-                        <div class="tower-cost-tag">
-                            <span class="cost-coin">🪙</span>
-                            <span class="cost-val">125G</span>
-                        </div>
-                    </button>
-
-                    <!-- Tesla Tower -->
-                    <button class="btn-build-tower type-tesla" data-type="tesla">
-                        <div class="tower-card-glow"></div>
-                        <div class="tower-icon-wrapper">
-                            <span class="tower-icon-badge">⚡</span>
-                        </div>
-                        <span class="tower-label">Tesla Tower</span>
-                        <div class="tower-cost-tag">
-                            <span class="cost-coin">🪙</span>
-                            <span class="cost-val">175G</span>
-                        </div>
-                    </button>
-
-                    <!-- Solar Spire -->
-                    <button class="btn-build-tower type-flame" data-type="flame">
-                        <div class="tower-card-glow"></div>
-                        <div class="tower-icon-wrapper">
-                            <span class="tower-icon-badge">🔥</span>
-                        </div>
-                        <span class="tower-label">Solar Spire</span>
-                        <div class="tower-cost-tag">
-                            <span class="cost-coin">🪙</span>
-                            <span class="cost-val">160G</span>
-                        </div>
-                    </button>
-
-                    <!-- Wake Spire -->
-                    <button class="btn-build-tower type-wave" data-type="wave">
-                        <div class="tower-card-glow"></div>
-                        <div class="tower-icon-wrapper">
-                            <span class="tower-icon-badge">🌊</span>
-                        </div>
-                        <span class="tower-label">Wake Spire</span>
-                        <div class="tower-cost-tag">
-                            <span class="cost-coin">🪙</span>
-                            <span class="cost-val">140G</span>
-                        </div>
-                    </button>
-                </div>
-            </div>
+            <button class="btn-build-tower" data-type="archer">
+                <span class="tower-icon-badge">🎯</span>
+                <span class="tower-label">Dart Spire</span>
+                <span class="gold-badge">100G</span>
+            </button>
+            <button class="btn-build-tower" data-type="cannon">
+                <span class="tower-icon-badge">💣</span>
+                <span class="tower-label">Bombard</span>
+                <span class="gold-badge">150G</span>
+            </button>
+            <button class="btn-build-tower" data-type="frost">
+                <span class="tower-icon-badge">❄️</span>
+                <span class="tower-label">Cryo Obelisk</span>
+                <span class="gold-badge">125G</span>
+            </button>
+            <button class="btn-build-tower" data-type="tesla">
+                <span class="tower-icon-badge">⚡</span>
+                <span class="tower-label">Tesla Tower</span>
+                <span class="gold-badge">175G</span>
+            </button>
+            <button class="btn-build-tower" data-type="flame">
+                <span class="tower-icon-badge">🔥</span>
+                <span class="tower-label">Solar Spire</span>
+                <span class="gold-badge">160G</span>
+            </button>
+            <button class="btn-build-tower" data-type="wave">
+                <span class="tower-icon-badge">🌊</span>
+                <span class="tower-label">Wake Spire</span>
+                <span class="gold-badge">140G</span>
+            </button>
         </div>
 
         <!-- TOWER INSPECT PANEL (Appears when constructed tower is tapped) -->
@@ -326,68 +194,7 @@
                 <div id="grid-snow-levels" class="levels-grid"></div>
 
                 <div class="modal-actions">
-                    <button id="btn-levels-watch-intro" class="modal-btn secondary">🎬 Watch Intro</button>
-                    <button id="btn-levels-watch-finish" class="modal-btn secondary">🏆 Grand Finale</button>
-                    <button id="btn-close-levels" class="modal-btn" onclick="document.getElementById('modal-level-select').classList.add('hidden')">Back to Game</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- IN-LEVEL WEATHER SELECTION MODAL (Opened via the Weather Selector button in the spells drawer) -->
-        <div id="modal-inlevel-weather" class="modal-overlay hidden">
-            <div class="modal-card" style="max-width: 680px; text-align: center;">
-                <h2>🌦️ WEATHER SELECTOR</h2>
-                <p style="color: #94a3b8; font-size: 13px; margin: -6px 0 10px 0;">
-                    Select an atmospheric weather system for this level in real-time
-                </p>
-
-                <div class="inlevel-weather-grid">
-                    <button class="btn-iw-card" data-weather="clear">
-                        <span class="iw-icon">☀️</span>
-                        <span class="iw-name">Sunlit Canopy</span>
-                        <span class="iw-desc">Golden rays & calm breeze</span>
-                    </button>
-                    <button class="btn-iw-card" data-weather="rain_light">
-                        <span class="iw-icon">🌦️</span>
-                        <span class="iw-name">Tropical Rain</span>
-                        <span class="iw-desc">Soft rain & ground ripples</span>
-                    </button>
-                    <button class="btn-iw-card" data-weather="thunderstorm">
-                        <span class="iw-icon">⛈️</span>
-                        <span class="iw-name">Monsoon Tempest</span>
-                        <span class="iw-desc">Heavy deluge & lightning</span>
-                    </button>
-                    <button class="btn-iw-card" data-weather="fog">
-                        <span class="iw-icon">🌫️</span>
-                        <span class="iw-name">River Mist</span>
-                        <span class="iw-desc">Volumetric rolling fog</span>
-                    </button>
-                    <button class="btn-iw-card" data-weather="windy">
-                        <span class="iw-icon">🍃</span>
-                        <span class="iw-name">Emerald Gale</span>
-                        <span class="iw-desc">High winds & swirling leaves</span>
-                    </button>
-                    <button class="btn-iw-card" data-weather="snow_light">
-                        <span class="iw-icon">❄️</span>
-                        <span class="iw-name">Glacial Snow</span>
-                        <span class="iw-desc">Sub-zero drifting snow</span>
-                    </button>
-                    <button class="btn-iw-card" data-weather="blizzard">
-                        <span class="iw-icon">🌨️</span>
-                        <span class="iw-name">Arctic Blizzard</span>
-                        <span class="iw-desc">Howling blizzard whiteout</span>
-                    </button>
-                    <button class="btn-iw-card" data-weather="aurora">
-                        <span class="iw-icon">🌌</span>
-                        <span class="iw-name">Celestial Aurora</span>
-                        <span class="iw-desc">Northern lights & glow</span>
-                    </button>
-                </div>
-
-                <div class="inlevel-weather-actions">
-                    <button id="btn-iw-lightning" class="btn-iw-action lightning">⚡ Strike Lightning</button>
-                    <button id="btn-iw-autocycle" class="btn-iw-action cycle">🔄 Auto-Cycle: ON</button>
-                    <button id="btn-iw-close" class="btn-iw-action close">✓ Close</button>
+                    <button id="btn-close-levels" class="modal-btn secondary" onclick="document.getElementById('modal-level-select').classList.add('hidden')">Back to Game</button>
                 </div>
             </div>
         </div>
@@ -426,8 +233,6 @@
                 <h2>Settings</h2>
                 <div style="display: flex; flex-direction: column; gap: 12px; margin: 15px 0;">
                     <button id="btn-toggle-sound" class="modal-btn secondary">🔊 Sound: ON</button>
-                    <button id="btn-toggle-fullscreen" class="modal-btn secondary">⛶ Fullscreen: OFF</button>
-                    <button id="btn-toggle-weather" class="modal-btn secondary">🌦️ Weather: Dynamic (Full)</button>
                     <button id="btn-reset-data" class="modal-btn danger">⚠️ Reset Saved Campaign Progress</button>
                 </div>
                 <div class="modal-actions">
@@ -558,153 +363,15 @@
                     <button id="btn-close-codex" class="modal-btn">Done</button>
                 </div>
             </div>
-        <!-- LEVEL 1 INTRO CUTSCENE OVERLAY -->
-        <div id="cutscene-intro" class="cutscene-overlay hidden">
-            <div class="cutscene-letterbox top"></div>
-            <div class="cutscene-viewport">
-                <div id="intro-cutscene-bg" class="cutscene-bg intro-bg"></div>
-                <div class="cutscene-vignette"></div>
-                <div class="cutscene-ambient-particles" id="intro-particles"></div>
-
-                <!-- Top Header Bar -->
-                <div class="cutscene-header">
-                    <div class="cutscene-badge-group">
-                        <span class="cutscene-badge">📜 PROLOGUE</span>
-                        <span class="cutscene-title">THE BREACH AT EMERALD TRAIL</span>
-                    </div>
-                    <button id="btn-intro-skip" class="cutscene-btn-skip" title="Skip to Battle">SKIP ⏩</button>
-                </div>
-
-                <!-- Bottom Dialogue Box -->
-                <div class="cutscene-dialogue-dock">
-                    <div class="cutscene-dialogue-card">
-                        <div class="dialogue-speaker-row">
-                            <div class="speaker-avatar-frame">
-                                <div id="intro-speaker-avatar" class="speaker-avatar">🛡️</div>
-                            </div>
-                            <div class="speaker-meta">
-                                <span id="intro-speaker-role" class="speaker-role">TACTICAL COMMAND</span>
-                                <h3 id="intro-speaker-name" class="speaker-name">High Commander Valerius</h3>
-                            </div>
-                            <div class="dialogue-step-dots" id="intro-step-dots">
-                                <span class="step-dot active"></span>
-                                <span class="step-dot"></span>
-                                <span class="step-dot"></span>
-                            </div>
-                        </div>
-
-                        <div class="dialogue-text-body">
-                            <p id="intro-dialogue-text" class="dialogue-text">...</p>
-                        </div>
-
-                        <div class="dialogue-action-row">
-                            <button id="btn-intro-prev" class="dialogue-btn secondary">❮ Back</button>
-                            <div class="dialogue-hint-key">Press <kbd>Space</kbd> / <kbd>Enter</kbd></div>
-                            <button id="btn-intro-next" class="dialogue-btn primary">Next ❯</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="cutscene-letterbox bottom"></div>
-        </div>
-
-        <!-- LEVEL 10 GAME FINISH SCENE OVERLAY -->
-        <div id="cutscene-finish" class="cutscene-overlay hidden">
-            <div class="cutscene-letterbox top golden"></div>
-            <div class="cutscene-viewport">
-                <div id="finish-cutscene-bg" class="cutscene-bg finish-bg"></div>
-                <canvas id="finish-fireworks-canvas" class="cutscene-fireworks-canvas"></canvas>
-                <div class="cutscene-vignette golden"></div>
-
-                <!-- Top Header Bar -->
-                <div class="cutscene-header golden">
-                    <div class="cutscene-badge-group">
-                        <span class="cutscene-badge golden">👑 GRAND FINALE</span>
-                        <span class="cutscene-title">EPILOGUE: RESTORATION OF THE REALM</span>
-                    </div>
-                    <button id="btn-finish-skip" class="cutscene-btn-skip golden" title="Skip to Campaign Laurels">SKIP ⏩</button>
-                </div>
-
-                <!-- Bottom Dialogue Box (Acts 1 & 2) -->
-                <div id="finish-dialogue-dock" class="cutscene-dialogue-dock">
-                    <div class="cutscene-dialogue-card golden">
-                        <div class="dialogue-speaker-row">
-                            <div class="speaker-avatar-frame golden">
-                                <div id="finish-speaker-avatar" class="speaker-avatar">❄️</div>
-                            </div>
-                            <div class="speaker-meta">
-                                <span id="finish-speaker-role" class="speaker-role">FALLEN RULER OF THE FROST</span>
-                                <h3 id="finish-speaker-name" class="speaker-name">Glacial Behemoth</h3>
-                            </div>
-                            <div class="dialogue-step-dots" id="finish-step-dots">
-                                <span class="step-dot active"></span>
-                                <span class="step-dot"></span>
-                                <span class="step-dot"></span>
-                            </div>
-                        </div>
-
-                        <div class="dialogue-text-body">
-                            <p id="finish-dialogue-text" class="dialogue-text">...</p>
-                        </div>
-
-                        <div class="dialogue-action-row">
-                            <button id="btn-finish-prev" class="dialogue-btn secondary">❮ Back</button>
-                            <div class="dialogue-hint-key">Press <kbd>Space</kbd> / <kbd>Enter</kbd></div>
-                            <button id="btn-finish-next" class="dialogue-btn primary golden">Next ❯</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Grand Laurels Dashboard (Act 3) -->
-                <div id="finish-laurel-dock" class="cutscene-laurel-dock hidden">
-                    <div class="cutscene-laurel-card">
-                        <div class="laurel-trophy-badge">🏆</div>
-                        <div class="laurel-pretitle">VICTORY OVER THE GLACIAL BEHEMOTH</div>
-                        <h2 class="laurel-main-title">CAMPAIGN CONQUERED</h2>
-                        <div class="laurel-subtitle">The Ancient Frontier is Reunited & Free</div>
-
-                        <div class="laurel-stats-grid">
-                            <div class="laurel-stat-item">
-                                <span class="laurel-stat-label">TOTAL STARS EARNED</span>
-                                <span class="laurel-stat-val gold" id="laurel-total-stars">30 / 30 ⭐</span>
-                            </div>
-                            <div class="laurel-stat-item">
-                                <span class="laurel-stat-label">CAMPAIGN SCORE</span>
-                                <span class="laurel-stat-val cyan" id="laurel-total-score">32,500</span>
-                            </div>
-                            <div class="laurel-stat-item">
-                                <span class="laurel-stat-label">MISSIONS CLEARED</span>
-                                <span class="laurel-stat-val green">10 / 10 Complete</span>
-                            </div>
-                            <div class="laurel-stat-item">
-                                <span class="laurel-stat-label">DEFENSE RANK</span>
-                                <span class="laurel-stat-val purple" id="laurel-rank">SUPREME SOVEREIGN</span>
-                            </div>
-                        </div>
-
-                        <div class="laurel-tribute">
-                            "From the tangled canopies of the Emerald Trail to the frozen spires of the Glacial Throne, songs of your strategic mastery will echo for eternity."
-                        </div>
-
-                        <div class="laurel-actions">
-                            <button id="btn-finish-replay" class="dialogue-btn secondary">🔄 Replay Finale</button>
-                            <button id="btn-finish-levels" class="dialogue-btn secondary">🗺️ Mission Select</button>
-                            <button id="btn-finish-menu" class="dialogue-btn primary golden">🏠 Main Menu</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="cutscene-letterbox bottom golden"></div>
         </div>
     </div>
 
     <!-- SCRIPTS -->
-    <script src="js/audio.js?v=fullscreen_v1"></script>
-    <script src="js/config.js?v=fullscreen_v1"></script>
-    <script src="js/levels.js?v=fullscreen_v1"></script>
-    <script src="js/weather.js?v=fullscreen_v1"></script>
-    <script src="js/engine.js?v=fullscreen_v1"></script>
-    <script src="js/ui.js?v=fullscreen_v1"></script>
+    <script src="js/audio.js?v=20260912"></script>
+    <script src="js/config.js?v=20260912"></script>
+    <script src="js/levels.js?v=20260912"></script>
+    <script src="js/engine.js?v=20260912"></script>
+    <script src="js/ui.js?v=20260912"></script>
     <script>
         window.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById('game-canvas');
@@ -716,38 +383,6 @@
 
             // Load Level 1 by default
             engine.loadLevel(1);
-
-            // Hash navigation support (#play, #levels, #weather)
-            if (window.location.hash === '#play' || window.location.hash === '#autoplay') {
-                setTimeout(() => ui.startLevel(1), 80);
-            } else if (window.location.hash === '#levels') {
-                setTimeout(() => ui.showLevelSelect(), 80);
-            } else if (window.location.hash === '#weather') {
-                setTimeout(() => {
-                    ui.startLevel(1);
-                    if (ui.modalInlevelWeather) {
-                        ui.modalInlevelWeather.classList.remove('hidden');
-                        ui.updateInlevelWeatherModal();
-                    }
-                }, 100);
-            } else if (window.location.hash === '#build') {
-                setTimeout(() => {
-                    ui.startLevel(1);
-                    if (engine.currentLevel && engine.currentLevel.buildSlots && engine.currentLevel.buildSlots.length > 0) {
-                        const slot = engine.currentLevel.buildSlots[0];
-                        engine.selectedSlot = slot;
-                        ui.showBuildDrawer(slot);
-                    }
-                }, 100);
-            } else if (window.location.hash === '#intro') {
-                setTimeout(() => {
-                    ui.showIntroCutscene();
-                }, 100);
-            } else if (window.location.hash === '#finish') {
-                setTimeout(() => {
-                    ui.showFinishScene(3, 34200);
-                }, 100);
-            }
 
             // Game Loop
             let lastTimestamp = performance.now();

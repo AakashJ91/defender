@@ -287,7 +287,7 @@ const GAME_CONFIG = {
             armor: 0,
             reward: 10,
             damageToBase: 1,
-            size: 11,
+            size: 13,
             color: "#a3e635",
             biome: "jungle",
             type: "ground"
@@ -299,7 +299,7 @@ const GAME_CONFIG = {
             armor: 0,
             reward: 18,
             damageToBase: 1,
-            size: 15,
+            size: 16,
             color: "#059669",
             biome: "jungle",
             type: "air" // Flies straight over terrain towards goal

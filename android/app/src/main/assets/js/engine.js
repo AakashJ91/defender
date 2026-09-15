@@ -39,8 +39,6 @@ class GameEngine {
         this.particles = [];
         this.floatingTexts = [];
         this.weatherParticles = [];
-        const WClass = (typeof WeatherSystem !== 'undefined') ? WeatherSystem : ((typeof window !== 'undefined' && window.WeatherSystem) ? window.WeatherSystem : null);
-        this.weatherSystem = WClass ? new WClass(this) : null;
 
         // Waves
         this.currentWaveIndex = -1;
@@ -72,7 +70,7 @@ class GameEngine {
         this.bgImages.jungle.src = 'assets/images/jungle_map.jpg';
         this.bgImages.snow.src = 'assets/images/snow_map.jpg';
 
-        // Preload Enemy Sprites
+        // Preload Enemy Sprites (Transparent High-Res Top-Down PNGs with SVG fallback)
         this.enemySprites = {};
         const enemyTypes = [
             'scout', 'crawler', 'bat', 'gorilla', 'shaman', 'jungle_boss',
@@ -80,7 +78,13 @@ class GameEngine {
         ];
         enemyTypes.forEach(type => {
             const img = new Image();
-            img.src = `assets/images/enemies/${type}.svg`;
+            img.src = `assets/images/enemies/${type}.png?v=20260912`;
+            img.onerror = () => {
+                if (!img._fallback) {
+                    img._fallback = true;
+                    img.src = `assets/images/enemies/${type}.svg?v=20260912`;
+                }
+            };
             this.enemySprites[type] = img;
         });
 
@@ -101,7 +105,13 @@ class GameEngine {
             2: new Image(),
             3: new Image()
         };
-        this.bombardSprites[1].src = 'assets/images/bombard_t1.png';
+        this.bombardSprites[1].src = 'assets/images/bombard_At1.png';
+        this.bombardSprites[1].onerror = () => {
+            if (!this.bombardSprites[1]._fallback) {
+                this.bombardSprites[1]._fallback = true;
+                this.bombardSprites[1].src = 'assets/images/bombard_At1.jpg';
+            }
+        };
         this.bombardSprites[2].src = 'assets/images/bombard_t2.png';
         this.bombardSprites[3].src = 'assets/images/bombard_t3.png';
         this.bombardSprite = this.bombardSprites[1];
@@ -234,11 +244,7 @@ class GameEngine {
             this.spellCooldowns[k] = 0;
         }
 
-        if (this.weatherSystem) {
-            this.weatherSystem.initForBiome(this.currentLevel.biome, this.currentLevel.id);
-        } else {
-            this.initWeather();
-        }
+        this.initWeather();
         this.initRoadParticles();
         this.trampleParticles = [];
         if (window.ui) {
@@ -272,9 +278,6 @@ class GameEngine {
 
         if (window.soundEngine) {
             window.soundEngine.playWaveStart();
-        }
-        if (this.weatherSystem) {
-            this.weatherSystem.onWaveStart(this.currentWaveIndex, this.currentLevel.waves.length);
         }
         if (window.ui) {
             window.ui.updateHUD();
@@ -1163,21 +1166,17 @@ class GameEngine {
             ft.alpha = ft.life / ft.maxLife;
         }
 
-        // Update Weather Particles & Environmental Simulation
-        if (this.weatherSystem) {
-            this.weatherSystem.update(dt, effectiveDt);
-        } else {
-            this.weatherParticles.forEach(wp => {
-                wp.x += wp.vx * effectiveDt * 60;
-                wp.y += wp.vy * effectiveDt * 60;
-                if (wp.y > this.height) {
-                    wp.y = -10;
-                    wp.x = Math.random() * this.width;
-                }
-                if (wp.x < 0) wp.x = this.width;
-                if (wp.x > this.width) wp.x = 0;
-            });
-        }
+        // Update Weather Particles
+        this.weatherParticles.forEach(wp => {
+            wp.x += wp.vx * effectiveDt * 60;
+            wp.y += wp.vy * effectiveDt * 60;
+            if (wp.y > this.height) {
+                wp.y = -10;
+                wp.x = Math.random() * this.width;
+            }
+            if (wp.x < 0) wp.x = this.width;
+            if (wp.x > this.width) wp.x = 0;
+        });
     }
 
     fireTower(tower, target) {
@@ -2111,19 +2110,11 @@ class GameEngine {
             this.ctx.fillRect(0, 0, this.width, this.height);
         }
 
-        // 1.5 Atmospheric Lighting, God Rays & Aurora (Under terrain)
-        if (this.weatherSystem) {
-            this.weatherSystem.renderAtmosphere(this.ctx);
-        }
-
         // 2. Biome Path
         this.renderPath();
 
-        // 2.5 Road Trample Dust, Ground Ripples & Ambient Life Particles
+        // 2.5 Road Trample Dust & Ambient Life Particles (Drifting Fireflies / Frost Motes)
         this.renderTrampleParticles();
-        if (this.weatherSystem) {
-            this.weatherSystem.renderGroundEffects(this.ctx);
-        }
         this.renderRoadParticles();
 
         // 3. Decorations (Trees, Rocks, Icebergs, Ruins)
@@ -2147,17 +2138,8 @@ class GameEngine {
         // 9. Floating Combat Text
         this.renderFloatingTexts();
 
-        // 10. Weather Effects (Precipitation, Wind Debris, Fog Clouds)
-        if (this.weatherSystem) {
-            this.weatherSystem.renderPrecipitation(this.ctx);
-        } else {
-            this.renderWeather();
-        }
-
-        // 10.5 Post-Process Atmosphere (Lightning Bolts, Screen Flash, Frost Border Vignette)
-        if (this.weatherSystem) {
-            this.weatherSystem.renderPostOverlay(this.ctx);
-        }
+        // 10. Weather Effects (Rain / Snow)
+        this.renderWeather();
 
         // 11. Range Overlay for Selected Slot or Tower
         this.renderSelectionOverlay();
@@ -3203,7 +3185,42 @@ class GameEngine {
 
                 const drawSize = tier === 3 ? 98 : (tier === 2 ? 88 : 78);
                 const halfSize = drawSize / 2;
-                this.ctx.drawImage(bombardSprite, -halfSize, -halfSize, drawSize, drawSize);
+
+                if (tier === 1 && (bombardSprite.naturalWidth >= 512 || (bombardSprite.src && bombardSprite.src.includes('bombard_At1')))) {
+                    // Full 16-frame (4x4) spritesheet animation for Bombard Cannon Tier 1
+                    const totalFrames = 16;
+                    const cols = 4;
+                    const rows = 4;
+                    const cellW = bombardSprite.naturalWidth / cols;
+                    const cellH = bombardSprite.naturalHeight / rows;
+
+                    let frameIndex = 0;
+                    if (recoil > 0.02) {
+                        // Dynamic attack & recoil: at initial blast kick (recoil=1), start at blast frame (4),
+                        // and smoothly progress through heavy recoil, billowing smoke, and reset (frames 4..15)
+                        const recoilProgress = 1 - recoil; // 0 to 1
+                        frameIndex = Math.floor(4 + recoilProgress * 11) % totalFrames;
+                    } else {
+                        // Smooth ambient operational animation (rotating bronze gear turntable, cranks & gentle steam)
+                        const animFps = tower.currentTarget ? 11 : 7;
+                        const animTime = (now * 0.001 * animFps);
+                        frameIndex = Math.floor(animTime) % totalFrames;
+                    }
+
+                    const col = frameIndex % cols;
+                    const row = Math.floor(frameIndex / cols);
+                    const sx = col * cellW;
+                    const sy = row * cellH;
+
+                    this.ctx.save();
+                    this.ctx.beginPath();
+                    this.ctx.arc(0, 0, halfSize, 0, Math.PI * 2);
+                    this.ctx.clip();
+                    this.ctx.drawImage(bombardSprite, sx, sy, cellW, cellH, -halfSize, -halfSize, drawSize, drawSize);
+                    this.ctx.restore();
+                } else {
+                    this.ctx.drawImage(bombardSprite, -halfSize, -halfSize, drawSize, drawSize);
+                }
 
                 // Return to aiming axis for weapon recoil animation & muzzle blast
                 this.ctx.rotate(-spriteAngleOffset);
@@ -3224,25 +3241,6 @@ class GameEngine {
                     this.ctx.beginPath();
                     this.ctx.arc(-18, -6 + Math.sin(now * 0.005) * 1.5, 2.2 + fuseSpark * 0.6, 0, Math.PI * 2);
                     this.ctx.fill();
-
-                    // Elevation Hand-Wheel
-                    const wheelRot = now * 0.002;
-                    this.ctx.save();
-                    this.ctx.translate(-4, 11);
-                    this.ctx.rotate(wheelRot);
-                    this.ctx.strokeStyle = '#d97706';
-                    this.ctx.lineWidth = 1.5;
-                    this.ctx.beginPath();
-                    this.ctx.arc(0, 0, 4, 0, Math.PI * 2);
-                    this.ctx.stroke();
-                    for (let sp = 0; sp < 4; sp++) {
-                        const sa = sp * (Math.PI / 2);
-                        this.ctx.beginPath();
-                        this.ctx.moveTo(0, 0);
-                        this.ctx.lineTo(Math.cos(sa) * 5.5, Math.sin(sa) * 5.5);
-                        this.ctx.stroke();
-                    }
-                    this.ctx.restore();
 
                 } else if (tier === 2) {
                     // Dual Telescoping Hydraulic Elevation Pistons
@@ -3307,8 +3305,8 @@ class GameEngine {
                 // =========================================================================
                 const barrelKick = -Math.sin(recoil * Math.PI) * (tier === 3 ? 7 : (tier === 2 ? 6 : 4.5));
 
-                // Recoil breach slide
-                if (recoil > 0.05) {
+                // Recoil breach slide (for static tiered models)
+                if (tier > 1 && recoil > 0.05) {
                     this.ctx.fillStyle = 'rgba(15, 23, 42, 0.75)';
                     this.ctx.fillRect(-7 + barrelKick, -5, 14, 10);
                 }
@@ -4525,52 +4523,175 @@ class GameEngine {
     }
 
     renderCreeps() {
+        const drawRoundRect = (x, y, w, h, r) => {
+            if (w <= 0 || h <= 0) return;
+            r = Math.min(r, w / 2, h / 2);
+            this.ctx.beginPath();
+            this.ctx.moveTo(x + r, y);
+            this.ctx.arcTo(x + w, y, x + w, y + h, r);
+            this.ctx.arcTo(x + w, y + h, x, y + h, r);
+            this.ctx.arcTo(x, y + h, x, y, r);
+            this.ctx.arcTo(x, y, x + w, y, r);
+            this.ctx.closePath();
+        };
+
         this.creeps.forEach(creep => {
             this.ctx.save();
+            const walk = creep.walkTime || 0;
 
-            // Status Aura: Frozen
-            if (creep.frozenTime > 0) {
-                this.ctx.fillStyle = 'rgba(147, 197, 253, 0.45)';
+            // =========================================================================
+            // BOSS GROUND RUNIC CIRCLE
+            // =========================================================================
+            if (creep.isBoss) {
+                this.ctx.save();
+                this.ctx.translate(creep.x, creep.y);
+                const runeRot = walk * 0.7;
+                this.ctx.rotate(runeRot);
+                const br = creep.size * 1.9;
+                const isFrost = creep.biome === 'snow';
+
+                this.ctx.strokeStyle = isFrost ? 'rgba(56, 189, 248, 0.45)' : 'rgba(34, 197, 94, 0.45)';
+                this.ctx.lineWidth = 2;
                 this.ctx.beginPath();
-                this.ctx.arc(creep.x, creep.y, creep.size + 8, 0, Math.PI * 2);
-                this.ctx.fill();
-            } else if (creep.slowTime > 0) {
-                // Chilled / Slow Aura
-                this.ctx.strokeStyle = '#38bdf8';
-                this.ctx.lineWidth = 2.5;
-                this.ctx.beginPath();
-                this.ctx.arc(creep.x, creep.y, creep.size + 6, 0, Math.PI * 2);
+                this.ctx.arc(0, 0, br, 0, Math.PI * 2);
                 this.ctx.stroke();
-            }
 
-            // Status: Burning
-            if (creep.burnTime > 0) {
-                this.ctx.fillStyle = 'rgba(239, 68, 68, 0.35)';
+                this.ctx.setLineDash([6, 6]);
+                this.ctx.strokeStyle = isFrost ? 'rgba(186, 230, 253, 0.6)' : 'rgba(251, 191, 36, 0.6)';
                 this.ctx.beginPath();
-                this.ctx.arc(creep.x, creep.y, creep.size + 7, 0, Math.PI * 2);
-                this.ctx.fill();
-            }
-
-            // Shield Aura
-            if (creep.shield > 0) {
-                this.ctx.strokeStyle = '#60a5fa';
-                this.ctx.lineWidth = 3;
-                this.ctx.setLineDash([4, 4]);
-                this.ctx.beginPath();
-                this.ctx.arc(creep.x, creep.y, creep.size + 9, 0, Math.PI * 2);
+                this.ctx.arc(0, 0, br * 0.78, 0, Math.PI * 2);
                 this.ctx.stroke();
                 this.ctx.setLineDash([]);
+
+                for (let i = 0; i < 4; i++) {
+                    const a = (i * Math.PI) / 2;
+                    const gx = Math.cos(a) * br;
+                    const gy = Math.sin(a) * br;
+                    this.ctx.fillStyle = isFrost ? '#38bdf8' : '#eab308';
+                    this.ctx.beginPath();
+                    this.ctx.arc(gx, gy, 2.5, 0, Math.PI * 2);
+                    this.ctx.fill();
+                }
+                this.ctx.restore();
             }
 
-            // Ground Shadow
-            const shadowOffsetY = creep.isAir ? 26 : 8;
+            // =========================================================================
+            // STATUS AURAS (FROST, BURN, SHIELD)
+            // =========================================================================
+            // Status: Frozen (Radiating Ice Crystal Star)
+            if (creep.frozenTime > 0) {
+                this.ctx.save();
+                this.ctx.translate(creep.x, creep.y);
+                this.ctx.rotate(walk * 0.4);
+                this.ctx.fillStyle = 'rgba(186, 230, 253, 0.35)';
+                this.ctx.strokeStyle = 'rgba(56, 189, 248, 0.85)';
+                this.ctx.lineWidth = 1.5;
+                const cr = creep.size + 10;
+                this.ctx.beginPath();
+                for (let i = 0; i < 6; i++) {
+                    const a1 = (i * Math.PI) / 3;
+                    const a2 = a1 + Math.PI / 6;
+                    const x1 = Math.cos(a1) * cr;
+                    const y1 = Math.sin(a1) * cr;
+                    const x2 = Math.cos(a2) * (cr * 0.48);
+                    const y2 = Math.sin(a2) * (cr * 0.48);
+                    if (i === 0) this.ctx.moveTo(x1, y1);
+                    else this.ctx.lineTo(x1, y1);
+                    this.ctx.lineTo(x2, y2);
+                }
+                this.ctx.closePath();
+                this.ctx.fill();
+                this.ctx.stroke();
+                this.ctx.restore();
+            } else if (creep.slowTime > 0) {
+                // Chilled Frost Ring with orbiting frost motes
+                this.ctx.save();
+                this.ctx.strokeStyle = 'rgba(56, 189, 248, 0.7)';
+                this.ctx.lineWidth = 2;
+                this.ctx.beginPath();
+                this.ctx.arc(creep.x, creep.y, creep.size + 7, 0, Math.PI * 2);
+                this.ctx.stroke();
+                for (let i = 0; i < 3; i++) {
+                    const sa = walk * 3 + (i * Math.PI * 2) / 3;
+                    const sx = creep.x + Math.cos(sa) * (creep.size + 7);
+                    const sy = creep.y + Math.sin(sa) * (creep.size + 7);
+                    this.ctx.fillStyle = '#e0f2fe';
+                    this.ctx.beginPath();
+                    this.ctx.arc(sx, sy, 2, 0, Math.PI * 2);
+                    this.ctx.fill();
+                }
+                this.ctx.restore();
+            }
+
+            // Status: Burning (Rising Flame Embers)
+            if (creep.burnTime > 0) {
+                this.ctx.save();
+                const pulse = 1 + Math.sin(walk * 12) * 0.12;
+                const grad = this.ctx.createRadialGradient(creep.x, creep.y, creep.size * 0.3, creep.x, creep.y, (creep.size + 8) * pulse);
+                grad.addColorStop(0, 'rgba(239, 68, 68, 0.45)');
+                grad.addColorStop(0.6, 'rgba(249, 115, 22, 0.25)');
+                grad.addColorStop(1, 'rgba(249, 115, 22, 0)');
+                this.ctx.fillStyle = grad;
+                this.ctx.beginPath();
+                this.ctx.arc(creep.x, creep.y, (creep.size + 8) * pulse, 0, Math.PI * 2);
+                this.ctx.fill();
+
+                for (let i = 0; i < 3; i++) {
+                    const sparkPhase = (walk * 3.5 + i * 1.3) % 1;
+                    const sx = creep.x + Math.sin(walk * 4.5 + i * 2) * (creep.size * 0.65);
+                    const sy = creep.y - sparkPhase * (creep.size * 1.3);
+                    this.ctx.fillStyle = sparkPhase < 0.5 ? '#fef08a' : '#f97316';
+                    this.ctx.beginPath();
+                    this.ctx.arc(sx, sy, Math.max(0.5, 1.8 * (1 - sparkPhase * 0.5)), 0, Math.PI * 2);
+                    this.ctx.fill();
+                }
+                this.ctx.restore();
+            }
+
+            // Shield Aura (Rotating Hex Energy Barrier)
+            if (creep.shield > 0) {
+                this.ctx.save();
+                this.ctx.translate(creep.x, creep.y);
+                this.ctx.rotate(walk * 1.4);
+                const sr = creep.size + 9;
+                this.ctx.strokeStyle = 'rgba(96, 165, 250, 0.85)';
+                this.ctx.lineWidth = 2.2;
+                this.ctx.beginPath();
+                for (let i = 0; i < 6; i++) {
+                    const ha = (i * Math.PI) / 3;
+                    const hx = Math.cos(ha) * sr;
+                    const hy = Math.sin(ha) * sr;
+                    if (i === 0) this.ctx.moveTo(hx, hy);
+                    else this.ctx.lineTo(hx, hy);
+                }
+                this.ctx.closePath();
+                this.ctx.stroke();
+                this.ctx.fillStyle = 'rgba(96, 165, 250, 0.12)';
+                this.ctx.fill();
+
+                this.ctx.fillStyle = '#93c5fd';
+                for (let i = 0; i < 6; i++) {
+                    const ha = (i * Math.PI) / 3;
+                    this.ctx.beginPath();
+                    this.ctx.arc(Math.cos(ha) * sr, Math.sin(ha) * sr, 1.8, 0, Math.PI * 2);
+                    this.ctx.fill();
+                }
+                this.ctx.restore();
+            }
+
+            // =========================================================================
+            // DYNAMIC SHADOW
+            // =========================================================================
+            const shadowOffsetY = creep.isAir ? 24 : 7;
             const shadowScale = creep.isAir ? 0.9 : 1.0;
-            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.38)';
+            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
             this.ctx.beginPath();
-            this.ctx.ellipse(creep.x, creep.y + shadowOffsetY, creep.size * 1.15 * shadowScale, creep.size * 0.45 * shadowScale, 0, 0, Math.PI * 2);
+            this.ctx.ellipse(creep.x, creep.y + shadowOffsetY, creep.size * 1.12 * shadowScale, creep.size * 0.44 * shadowScale, 0, 0, Math.PI * 2);
             this.ctx.fill();
 
-            // Creep Unit Sprite (Oriented along creep.angle + Walking/Flying Animation)
+            // =========================================================================
+            // CREEP UNIT SPRITE
+            // =========================================================================
             this.ctx.save();
             this.ctx.translate(creep.x, creep.y);
 
@@ -4578,34 +4699,35 @@ class GameEngine {
             this.ctx.rotate(angle);
 
             // Dynamic movement animation
-            const walk = creep.walkTime || 0;
             if (creep.isAir) {
-                // Wing flap & aerial hovering bob
-                const flap = 1.0 + Math.sin(walk * 14) * 0.14;
+                // Wing flap, aerial hovering bob, and banking tilt into turns
+                const flap = 1.0 + Math.sin(walk * 12) * 0.12;
                 const hoverY = Math.sin(walk * 5) * 3;
+                const bank = Math.sin(walk * 6) * 0.05;
                 this.ctx.translate(0, hoverY);
+                this.ctx.rotate(bank);
                 this.ctx.scale(1.0, flap);
             } else if (creep.isBoss) {
                 // Colossal stomping cadence
-                const sway = Math.sin(walk * 4.5) * 0.08;
-                const bob = 1.0 + Math.abs(Math.sin(walk * 4.5)) * 0.06;
+                const sway = Math.sin(walk * 4.2) * 0.07;
+                const bob = 1.0 + Math.abs(Math.sin(walk * 4.2)) * 0.06;
                 this.ctx.rotate(sway);
                 this.ctx.scale(bob, 2 - bob);
             } else {
                 // Ground creep gait / scuttle / stride
-                const sway = Math.sin(walk * 9) * 0.10;
-                const bob = 1.0 + Math.abs(Math.sin(walk * 9)) * 0.07;
+                const sway = Math.sin(walk * 8.5) * 0.09;
+                const bob = 1.0 + Math.abs(Math.sin(walk * 8.5)) * 0.06;
                 this.ctx.rotate(sway);
                 this.ctx.scale(bob, 2 - bob);
             }
 
             const sprite = this.enemySprites ? this.enemySprites[creep.type] : null;
-            const spriteSize = creep.size * (creep.isBoss ? 2.4 : (creep.isAir ? 2.2 : 2.0));
+            const spriteSize = creep.size * (creep.isBoss ? 2.6 : (creep.isAir ? 2.2 : 2.0));
 
             if (sprite && sprite.complete && sprite.naturalWidth > 0) {
                 this.ctx.drawImage(sprite, -spriteSize, -spriteSize, spriteSize * 2, spriteSize * 2);
             } else {
-                // Crisp procedural avatar fallback while image loads
+                // Procedural avatar fallback
                 this.ctx.fillStyle = creep.color;
                 this.ctx.beginPath();
                 this.ctx.arc(0, 0, creep.size, 0, Math.PI * 2);
@@ -4614,7 +4736,6 @@ class GameEngine {
                 this.ctx.lineWidth = 2;
                 this.ctx.stroke();
 
-                // Eyes facing forward (+X)
                 this.ctx.fillStyle = '#fef08a';
                 this.ctx.beginPath();
                 this.ctx.arc(creep.size * 0.45, -creep.size * 0.25, 3, 0, Math.PI * 2);
@@ -4624,28 +4745,81 @@ class GameEngine {
 
             this.ctx.restore();
 
-            // Health Bar & Unit Plate
-            const barW = Math.max(30, creep.size * 2.4);
-            const barH = creep.isBoss ? 7 : 5;
+            // =========================================================================
+            // MODERN UNIT HEALTH BAR & DAMAGE BUFFER GAUGE
+            // =========================================================================
+            const barW = Math.max(32, creep.size * 2.4);
+            const barH = creep.isBoss ? 7 : 4.5;
             const barX = creep.x - barW / 2;
-            const barY = creep.y - creep.size - (creep.isBoss ? 18 : 13);
+            const barY = creep.y - creep.size - (creep.isBoss ? 20 : 13);
 
-            this.ctx.fillStyle = '#0f172a';
-            this.ctx.fillRect(barX - 1, barY - 1, barW + 2, barH + 2);
-            this.ctx.strokeStyle = creep.isBoss ? '#f59e0b' : '#334155';
+            // Lagging damage buffer interpolation
+            if (creep.displayedHp === undefined) creep.displayedHp = creep.hp;
+            if (creep.displayedHp > creep.hp) {
+                creep.displayedHp += (creep.hp - creep.displayedHp) * 0.12;
+            } else {
+                creep.displayedHp = creep.hp;
+            }
+
+            const hpPercent = Math.max(0, Math.min(1, creep.hp / creep.maxHp));
+            const bufferPercent = Math.max(0, Math.min(1, creep.displayedHp / creep.maxHp));
+
+            // Background pill
+            this.ctx.fillStyle = '#090d16';
+            drawRoundRect(barX - 1, barY - 1, barW + 2, barH + 2, 2.5);
+            this.ctx.fill();
+            this.ctx.strokeStyle = creep.isBoss ? '#f59e0b' : '#1e293b';
             this.ctx.lineWidth = 1;
-            this.ctx.strokeRect(barX - 1, barY - 1, barW + 2, barH + 2);
+            drawRoundRect(barX - 1, barY - 1, barW + 2, barH + 2, 2.5);
+            this.ctx.stroke();
 
-            const hpPercent = Math.max(0, creep.hp / creep.maxHp);
-            this.ctx.fillStyle = creep.isBoss ? '#f59e0b' : (hpPercent > 0.5 ? '#22c55e' : (hpPercent > 0.25 ? '#eab308' : '#ef4444'));
-            this.ctx.fillRect(barX, barY, barW * hpPercent, barH);
+            // Damage Lag Trail (Amber/Orange buffer bar)
+            if (bufferPercent > hpPercent) {
+                this.ctx.fillStyle = '#f59e0b';
+                drawRoundRect(barX, barY, barW * bufferPercent, barH, 2);
+                this.ctx.fill();
+            }
 
-            // Boss Crown & Name Label
+            // Current HP Fill
+            let hpColor = '#ef4444';
             if (creep.isBoss) {
-                this.ctx.font = 'bold 10px sans-serif';
-                this.ctx.fillStyle = '#fbbf24';
+                hpColor = hpPercent > 0.5 ? '#f59e0b' : (hpPercent > 0.25 ? '#fbbf24' : '#ef4444');
+            } else {
+                hpColor = hpPercent > 0.5 ? '#10b981' : (hpPercent > 0.25 ? '#eab308' : '#ef4444');
+            }
+            this.ctx.fillStyle = hpColor;
+            drawRoundRect(barX, barY, barW * hpPercent, barH, 2);
+            this.ctx.fill();
+
+            // Subtle glossy top highlight
+            this.ctx.fillStyle = 'rgba(255, 255, 255, 0.28)';
+            this.ctx.fillRect(barX, barY, barW * hpPercent, Math.max(1, barH * 0.35));
+
+            // Shield Bar Overlay (Cyan Segment)
+            if (creep.shield > 0) {
+                const shieldPct = Math.min(1, creep.shield / (creep.maxShield || creep.maxHp));
+                this.ctx.fillStyle = '#38bdf8';
+                drawRoundRect(barX, barY - 3, barW * shieldPct, 2, 1);
+                this.ctx.fill();
+            }
+
+            // Boss Crown & Stylized Nameplate with Outline
+            if (creep.isBoss) {
+                this.ctx.font = 'bold 11px sans-serif';
                 this.ctx.textAlign = 'center';
-                this.ctx.fillText(`👑 ${creep.name}`, creep.x, barY - 4);
+                this.ctx.strokeStyle = '#020617';
+                this.ctx.lineWidth = 3;
+                this.ctx.strokeText(`👑 ${creep.name}`, creep.x, barY - 5);
+                this.ctx.fillStyle = '#fbbf24';
+                this.ctx.fillText(`👑 ${creep.name}`, creep.x, barY - 5);
+            } else if (creep.type === 'shaman') {
+                this.ctx.font = '9px sans-serif';
+                this.ctx.textAlign = 'right';
+                this.ctx.fillText('⚕️', barX - 2, barY + barH);
+            } else if (creep.type === 'frost_witch') {
+                this.ctx.font = '9px sans-serif';
+                this.ctx.textAlign = 'right';
+                this.ctx.fillText('🛡️', barX - 2, barY + barH);
             }
 
             this.ctx.restore();
@@ -5305,10 +5479,6 @@ class GameEngine {
     }
 
     renderWeather() {
-        if (this.weatherSystem) {
-            this.weatherSystem.renderPrecipitation(this.ctx);
-            return;
-        }
         if (!this.biome) return;
         this.ctx.save();
         this.ctx.fillStyle = this.biome.rainColor;
